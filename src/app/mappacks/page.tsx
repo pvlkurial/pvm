@@ -9,7 +9,7 @@ interface Mappack {
 }
 
 export default function Home() {
-  const [mappacks, setMappacks] = useState([]);
+    const [mappacks, setMappacks] = useState([]);
   useEffect(() => {
   axios.get('http://localhost:8080/mappacks')
     .then(response => setMappacks(response.data))
@@ -21,7 +21,7 @@ export default function Home() {
       <h1>Welcome to the Mappack Manager</h1>
       <ul>
         {mappacks.map((mappack: Mappack) => (
-          <Link key={mappack.id} href={mappack.id} className="">{mappack.name}</Link>
+          <Link key={mappack.id} href={"/mappacks/" + mappack.id} className="">{mappack.name}</Link>
         ))}
       </ul>
     </span>
