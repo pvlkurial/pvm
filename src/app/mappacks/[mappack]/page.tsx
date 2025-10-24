@@ -25,10 +25,10 @@ export default function Mappack({
   }, []);
   return (
     <span>
-      <h1>Welcome to the Mappack Manager</h1>
+      <h1>Tracks of this mappack</h1>
       <ul>
         {tracks.map((track: Track) => (
-          <Link key={track.id} href={track.id} className="">{track.name}
+          <Link key={track.id} href={'/mappacks/' + mappack + '/' + track.id} className="">{track.name}
             <img src={track.thumbnailUrl} alt={track.name} />
           </Link>
         ))}
