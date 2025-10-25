@@ -1,7 +1,7 @@
 "use client"
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Link from "next/link";
+import MappackCard from "../_components/MappackCard";
 
 interface Mappack {
   id: string;
@@ -19,11 +19,11 @@ export default function Home() {
   return (
     <span>
       <h1>Welcome to the Mappack Manager</h1>
-      <ul>
+        <div className="flex grid grid-cols-2 md:grid-cols-4 gap-3 p-10">
         {mappacks.map((mappack: Mappack) => (
-          <Link key={mappack.id} href={"/mappacks/" + mappack.id} className="">{mappack.name}</Link>
+            <MappackCard key={mappack.id} mappack={mappack} />
         ))}
-      </ul>
+        </div>
     </span>
   );
 }
