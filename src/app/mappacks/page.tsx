@@ -18,7 +18,6 @@ export default function Home() {
   }, []);
   return (
     <span>
-      <h1>Welcome to the Mappack Manager</h1>
         <div className="flex grid grid-cols-2 md:grid-cols-4 gap-3 p-10">
         {mappacks.map((mappack: Mappack) => (
             <MappackCard key={mappack.id} mappack={mappack} />

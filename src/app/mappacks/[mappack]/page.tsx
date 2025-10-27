@@ -60,7 +60,6 @@ export default function Mappack({
     }, [mappack]);
   return (
     <span>
-      <h1>Tracks of this mappack</h1>
       <div className="flex grid grid-cols-2 md:grid-cols-4 gap-3 p-10">
         {tracks.map((track: Track) => (
           <TrackCard 

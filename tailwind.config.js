@@ -7,7 +7,11 @@ module.exports = {
     "./node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}"
 ],
   theme: {
-    extend: {},
+    extend: {
+      fontFamily: {
+        'bebas-neue': ['var(--font-bebas-neue)']
+      }
+    },
   },
   darkMode: "class",
   plugins: [heroui()],
