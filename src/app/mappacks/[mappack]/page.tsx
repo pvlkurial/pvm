@@ -2,12 +2,17 @@
 import React, { useState, useEffect, use } from "react";
 import axios from "axios";
 import TrackCard from "@/app/_components/TrackCard";
+import AddTrackModal from "@/app/_components/AddTrackModal";
 
 interface Track {
     id: string;
     name: string;
     author: string;
     thumbnailUrl: string;
+}
+interface MappackTimeGoals {
+  id: string;
+  name: string;
 }
 
 export default function Mappack({
@@ -70,6 +75,9 @@ export default function Mappack({
             mappackId={mappack}
           />
         ))}
+      </div>
+      <div className="absolute">
+        <AddTrackModal timegoals={timeGoalDefinitions}/>
       </div>
     </span>
   );

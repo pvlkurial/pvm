@@ -31,25 +31,25 @@ export default function RootLayout({
       </NavbarBrand>
         <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
-          <Link color="foreground" href="/mappacks" className="hover:bg-sky-700 p-3 rounded-lg transition duration-200 ease-in-out">
+          <Link color="foreground" href="/mappacks" className="hover:bg-neutral-600 p-3 rounded-lg transition duration-200 ease-in-out">
             Mappacks
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link aria-current="page" href="/dashboard" className="hover:bg-sky-700 p-3 rounded-lg transition duration-200 ease-in-out">
+          <Link aria-current="page" href="/dashboard" className="hover:bg-neutral-600 p-3 rounded-lg transition duration-200 ease-in-out">
             Dashboard
           </Link>
         </NavbarItem>
         <NavbarItem>
-          <Link color="foreground" href="/tracks" className="hover:bg-sky-700 p-3 rounded-lg transition duration-200 ease-in-out">
+          <Link color="foreground" href="/tracks" className="hover:bg-neutral-600 p-3 rounded-lg transition duration-200 ease-in-out">
             Tracks
           </Link>
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem>
-          <Button as={Link} color="primary" href="/login" variant="flat">
-            Sign Up
+          <Button as={Link} color="default" href="/login" variant="bordered">
+            Login With Trackmania
           </Button>
         </NavbarItem>
       </NavbarContent>

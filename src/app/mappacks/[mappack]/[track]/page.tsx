@@ -88,7 +88,7 @@ export default function Track({
           <Card className="sm:col-span-2 relative bg-neutral-800 p-6 rounded-lg bg-[radial-gradient(#ffffff33_1px,transparent_1px)] bg-[size:12px_12px] z-2">
             <FaRoute className="absolute inset-0 w-1/3 h-full text-white-300/50 opacity-30 p-2 items-start rotate-3 scale-130 z-5" />
             <div className="relative z-10">
-              <h1 className="text-3xl font-bold">{trackData.name}</h1>
+              <h1 className="text-4xl font-bold">{trackData.name}</h1>
               <p className="text-neutral-400 font-ruigslay ">{trackData.author}</p>
             </div>
           </Card>
