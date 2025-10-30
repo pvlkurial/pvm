@@ -84,33 +84,36 @@ export default function Track({
             width={500}
           />
         </div>
-        <div className="w-full md:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-4">
-          <Card className="sm:col-span-2 relative bg-gray-800 p-6 rounded-lg bg-[radial-gradient(#ffffff33_1px,transparent_1px)] bg-[size:12px_12px] z-2">
+        <div className="w-full md:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-4 ">
+          <Card className="sm:col-span-2 relative bg-neutral-800 p-6 rounded-lg bg-[radial-gradient(#ffffff33_1px,transparent_1px)] bg-[size:12px_12px] z-2">
             <FaRoute className="absolute inset-0 w-1/3 h-full text-white-300/50 opacity-30 p-2 items-start rotate-3 scale-130 z-5" />
             <div className="relative z-10">
               <h1 className="text-3xl font-bold">{trackData.name}</h1>
-              <p className="text-gray-400">By: {trackData.author}</p>
+              <p className="text-neutral-400 font-ruigslay ">{trackData.author}</p>
             </div>
           </Card>
-          <Card className="bg-linear-to-r to-gray-800 from-red-900 p-6 rounded-lg">
+          <Card className="bg-linear-to-r to-neutral-800 from-lime-900 p-6 rounded-lg justify-between">
             <IoDiamond className="absolute inset-0 w-1/3 h-full text-white-300/50 opacity-30 p-2 items-end rotate-0 scale-150" />
             <p className="text-sm">Tier</p>
-            <h2 className="text-4xl font-bold">{trackData.tier || 'N/A'}</h2>
+            <h2 className="text-4xl font-bold font-ruigslay">{trackData.tier || 'N/A'}</h2>
           </Card>
-          <Card className="bg-gray-800 p-6 rounded-lg">
+          <Card className="bg-neutral-800 p-6 rounded-lg justify-between">
             <FaDatabase className="absolute inset-0 w-1/3 h-full text-white-300/50 opacity-30 p-2 items-start" />
             <p className="text-sm">Records Tracked</p>
-            <h2 className="text-4xl font-bold">{trackData.records.length}</h2>
+            <h2 className="text-4xl font-bold font-ruigslay">{trackData.records.length}</h2>
           </Card>
-          <Card className="md:col-span-2 bg-gray-800 p-6 rounded-lg">
+          <Card className="md:col-span-2 bg-neutral-800 p-6 rounded-lg justify-between rounded-lg bg-[radial-gradient(#ffffff33_1px,transparent_1px)] bg-[size:12px_12px] z-2">
             <FaTrophy className="absolute inset-0 w-1/3 h-full text-white-300/50 opacity-30 p-2 items-start rotate-0 scale-140" />
-            <p className="text-sm">Time Goals</p>
-            <div className="flex gap-4">
+            <div className="grid grid-cols-[auto_1fr] items-center gap-4">
+              <p className="text-4xl font-ruigslay">Time Goals</p>
+              <div className="flex-1 h-[10px] bg-neutral-300"></div>
+            </div>
+            <div className="flex gap-0 justify-between">
               {trackData.timegoals.length > 0 ? (
                 trackData.timegoals.map((goal, index) => (
-                  <div key={index}>
-                    <p className="text-sm">{goal.name}</p>
-                    <h2 className="text-2xl font-bold">{toTimeFromMilliseconds(goal.time)}</h2>
+                  <div key={index} className="text-center">
+                    <p className="text-md font-bold">{goal.name}</p>
+                    <h2 className="lg:text-2xl text-lg font-bold">{toTimeFromMilliseconds(goal.time)}</h2>
                   </div>
                 ))
               ) : (

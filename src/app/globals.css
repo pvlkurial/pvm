@@ -8,17 +8,21 @@
   --background: #ffffff;
   --foreground: #171717;
 }
-
+@theme {
+  --font-ruigslay: var(--font-my-custom);
+  --font-heathergreen: var(--font-heathergreen);
+}
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #141414;
+    --background: #262626;
     --foreground: #ededed;
   }
 }
@@ -27,3 +31,4 @@ body {
   color: var(--foreground);
   font-family: Verdana, Geneva, sans-serif;
 }
+

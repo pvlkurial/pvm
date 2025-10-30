@@ -7,6 +7,8 @@ import React from "react";
 import Link from "next/link";
 import { Button } from "@heroui/react";
 import { Inter } from 'next/font/google'
+import { myCustomFont } from '@/fonts'
+import { HeatherGreen } from '@/fonts'
 
 const inter = Inter({ 
   weight: '900',
@@ -21,11 +23,11 @@ export default function RootLayout({
 }>) {
 
   return (
-    <html lang="en">
-      <body className="antialiased min-h-screen w-screen bg-gradient-to-b from-gray-900 via-white-600 to-white-800">
+    <html lang="en" className={`${myCustomFont.variable} ${HeatherGreen.variable}`}>
+      <body className="antialiased min-h-screen w-screen bg-gradient-to-b from-neutral-900 via-white-600 to-white-800">
       <Navbar position="static" isBlurred isBordered className="bg-black-900">
         <NavbarBrand>
-        <p className={inter.className}>THE PVM APP</p>
+        <p className="font-ruigslay font-bold scale-140">Player vs Map</p>
       </NavbarBrand>
         <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
