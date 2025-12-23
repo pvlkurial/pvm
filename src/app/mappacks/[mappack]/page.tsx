@@ -1,84 +1,204 @@
-"use client"
-import React, { useState, useEffect, use } from "react";
+"use client";
+import React, { useState, useEffect, use, useRef } from "react";
 import axios from "axios";
 import TrackCard from "@/app/_components/TrackCard";
 import AddTrackModal from "@/app/_components/AddTrackModal";
 
-interface Track {
-    id: string;
-    name: string;
-    author: string;
-    thumbnailUrl: string;
+interface TimeGoal {
+  ID: number;
+  name: string;
 }
-interface MappackTimeGoals {
+interface Tier {
+  name: string;
+  multiplier: number;
+  color: string;
+}
+
+interface TimeGoalMappackTrack {
+  TimeGoalID: number;
+  time: number;
+}
+
+interface MappackTrack {
+  mappack_id: string;
+  track_id: string;
+  track: Track;
+  TimeGoalMappackTrack: TimeGoalMappackTrack[];
+  tier: Tier;
+  mapStyle: string;
+}
+
+interface Mappack {
   id: string;
   name: string;
+  description: string;
+  thumbnailURL: string;
+  isActive: boolean;
+  MappackTrack: MappackTrack[];
+  timeGoals: TimeGoal[];
+}
+
+interface Track {
+  id: string;
+  name: string;
+  author: string;
+  thumbnailUrl: string;
+  dominantColor : string;
 }
 
 export default function Mappack({
-    params,
+  params,
 }: {
-    params: Promise<{ mappack: string }>
+  params: Promise<{ mappack: string }>;
 }) {
-    const { mappack } = use(params);
-    const [tracks, setTracks] = useState([]);
-    const [timeGoalsByTrack, setTimeGoalsByTrack] = useState({});
-    const [timeGoalDefinitions, setTimeGoalDefinitions] = useState([]);
-    const [loading, setLoading] = useState(true);
-      useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const [tracksRes, timeGoalsDefsRes] = await Promise.all([
-                    axios.get(`http://localhost:8080/mappacks/${mappack}/tracks`),
-                    axios.get(`http://localhost:8080/mappacks/${mappack}/timegoals`)
-                ]);
+  const { mappack } = use(params);
+  const [activeTier, setActiveTier] = useState<string>("");
+  const tierRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
-                const tracksData = tracksRes.data;
-                setTracks(tracksData);
-                setTimeGoalDefinitions(timeGoalsDefsRes.data);
+  const [mappacks, setMappacks] = useState<Mappack | null>(null);
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8080/mappacks/${mappack}`)
+      .then((response) => setMappacks(response.data))
+      .catch((err) => {
+        console.log("Error details:", err.message, err.config);
+      });
+  }, []);
+  const tracksByTier = mappacks?.MappackTrack.reduce((acc, mappackTrack) => {
+    const tierName = mappackTrack.tier?.name || "Unranked";
+    if (!acc[tierName]) {
+      acc[tierName] = {
+        tier: mappackTrack.tier,
+        tracks: [],
+      };
+    }
+    acc[tierName].tracks.push(mappackTrack);
+    return acc;
+  }, {} as Record<string, { tier: Tier; tracks: typeof mappacks.MappackTrack }>);
 
-                const timeGoalsPromises = tracksData.map(track =>
-                    axios.get(`http://localhost:8080/mappacks/${mappack}/tracks/${track.id}/timegoals`)
-                        .then(res => ({ trackId: track.id, timeGoals: res.data }))
-                        .catch(err => {
-                            console.log(`Error fetching time goals for track ${track.id}:`, err);
-                            return { trackId: track.id, timeGoals: [] };
-                        })
-                );
+  const sortedTiers = Object.keys(tracksByTier || {}).sort((a, b) => {
+    const multiplierA = tracksByTier[a].tier?.multiplier || 0;
+    const multiplierB = tracksByTier[b].tier?.multiplier || 0;
+    return multiplierB - multiplierA;
+  });
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setActiveTier(entry.target.getAttribute("data-tier") || "");
+          }
+        });
+      },
+      { threshold: 0.5, rootMargin: "-20% 0px -20% 0px" }
+    );
 
-                const timeGoalsResults = await Promise.all(timeGoalsPromises);
+    Object.values(tierRefs.current).forEach((ref) => {
+      if (ref) observer.observe(ref);
+    });
 
-                const timeGoalsMap = timeGoalsResults.reduce((acc, { trackId, timeGoals }) => {
-                    acc[trackId] = timeGoals;
-                    return acc;
-                }, {});
+    return () => observer.disconnect();
+  }, [tracksByTier]);
 
-                setTimeGoalsByTrack(timeGoalsMap);
-            } catch (err) {
-                console.log('Error fetching data:', err);
-            } finally {
-                setLoading(false);
-            }
-        };
+  const scrollToTier = (tier: string) => {
+    tierRefs.current[tier]?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
 
-        fetchData();
-    }, [mappack]);
   return (
-    <span>
-      <div className="flex grid grid-cols-2 md:grid-cols-4 gap-3 p-10">
-        {tracks.map((track: Track) => (
-          <TrackCard 
-            key={track.id} 
-            track={track} 
-            timeGoals={timeGoalsByTrack[track.id] || []}
-            timeGoalDefinitions={timeGoalDefinitions}
-            mappackId={mappack}
-          />
-        ))}
+    <div className="grid lg:grid-rows-1 lg:grid-cols-6 gap-10">
+      <div className="lg:col-start-1 lg:col-span-1 col-span-1 bg-white-900 lg:sticky lg:top-4 lg:self-start">
+        <div className="flex flex-col gap-4 p-4">
+          <div className="flex justify-center items-center">
+            <p className="font-bold text-3xl font-ruigslay overline">
+              {mappacks?.name.toUpperCase()}
+            </p>
+          </div>
+          <div className="flex justify-center items-center">
+            <p className="font-bold text-sm ">{mappacks?.description}</p>
+          </div>
+          <hr></hr>
+          <div className="flex justify-center items-center">
+            <p className="text-lg font-ruigslay">TIMEGOALS</p>
+          </div>
+          {mappacks?.timeGoals.map((timeGoal) => (
+            <div key={timeGoal.ID} className="flex justify-center items-center">
+              <p className="text-sm">{timeGoal.name}</p>
+            </div>
+          ))}
+          <div className="border-t border-gray-700 pt-4">
+            <p className="font-semibold text-lg mb-2 text-center font-ruigslay">Tiers</p>
+            {sortedTiers.map((tierName) => {
+              const tierData = tracksByTier[tierName];
+              return (
+                <button
+                  key={tierName}
+                  onClick={() => scrollToTier(tierName)}
+                  style={{
+                    backgroundColor:
+                      activeTier === tierName
+                        ? tierData.tier.color
+                        : "transparent",
+                  }}
+                  className={`w-full py-2 px-4 rounded-lg transition-all duration-200  ${
+                    activeTier === tierName
+                      ? "text-white font-semibold"
+                      : "text-gray-300 hover:opacity-80"
+                  }`}
+                >
+                  {tierName.toUpperCase()} TIER ({tierData.tracks.length})
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="flex justify-center items-center">
+            <AddTrackModal
+              timegoals={mappacks?.timeGoals}
+              mappackId={mappack}
+            />
+          </div>
+        </div>
       </div>
-      <div className="absolute">
-        <AddTrackModal timegoals={timeGoalDefinitions}/>
+      <div className="lg:col-start-2 lg:col-span-4 col-span-1">
+        <div className="flex flex-col gap-8">
+          {sortedTiers.map((tierName) => {
+            const tierData = tracksByTier[tierName];
+            return (
+              <div
+                key={tierName}
+                ref={(el) => {
+                  tierRefs.current[tierName] = el;
+                }}
+                data-tier={tierName}
+                className="scroll-mt-4"
+              >
+                <div className="mb-4 pt-4 justify-center items-center flex">
+                  <h2
+                    className="text-3xl font-bold justify-center font-ruigslay"
+                    style={{ color: tierData.tier.color }}
+                  >
+                    {tierName.toUpperCase()} TIER
+                  </h2>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                  {tierData.tracks.map((mappackTrack) => (
+                    <TrackCard
+                      key={mappackTrack.track_id}
+                      track={mappackTrack.track}
+                      timeGoals={mappackTrack.TimeGoalMappackTrack || []}
+                      timeGoalDefinitions={mappacks.timeGoals}
+                      mappackId={mappacks.id}
+                    />
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
-    </span>
+    </div>
   );
 }

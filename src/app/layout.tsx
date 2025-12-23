@@ -9,6 +9,7 @@ import { Button } from "@heroui/react";
 import { Inter } from 'next/font/google'
 import { myCustomFont } from '@/fonts'
 import { HeatherGreen } from '@/fonts'
+import Footer from "./_components/Footer";
 
 const inter = Inter({ 
   weight: '900',
@@ -24,7 +25,7 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={`${myCustomFont.variable} ${HeatherGreen.variable}`}>
-      <body className="antialiased min-h-screen w-screen bg-gradient-to-b from-neutral-900 via-white-600 to-white-800">
+      <body className="antialiased min-h-screen w-full bg-neutral-900">
       <Navbar position="static" isBlurred isBordered className="bg-black-900">
         <NavbarBrand>
         <p className="font-ruigslay font-bold scale-140">Player vs Map</p>
@@ -54,10 +55,14 @@ export default function RootLayout({
         </NavbarItem>
       </NavbarContent>
       </Navbar>
-          <div className="h-full w-full smooth-scroll">
+      <hr className="h-px bg-white-300"/>
+          <div className="w-full smooth-scroll">
             {children}
           </div>
       </body>
+          <footer className="pt-10">
+            <Footer></Footer>
+          </footer>
     </html>
   );
 }

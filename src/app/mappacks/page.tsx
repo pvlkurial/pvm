@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import MappackCard from "../_components/MappackCard";
+import CreateMappackModal from "../_components/CreateMappackModal";
 
 interface Mappack {
   id: string;
@@ -9,7 +10,7 @@ interface Mappack {
 }
 
 export default function Home() {
-    const [mappacks, setMappacks] = useState([]);
+  const [mappacks, setMappacks] = useState([]);
   useEffect(() => {
   axios.get('http://localhost:8080/mappacks')
     .then(response => setMappacks(response.data))
@@ -23,6 +24,7 @@ export default function Home() {
             <MappackCard key={mappack.id} mappack={mappack} />
         ))}
         </div>
+        <CreateMappackModal/>
     </span>
   );
 }

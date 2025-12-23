@@ -9,6 +9,12 @@ import { IoDiamond } from "react-icons/io5";
 import { FaTrophy } from "react-icons/fa";
 import { FaDatabase } from 'react-icons/fa';
 import { toTimeFromMilliseconds } from "@/app/_utils/converters";
+import { FormattedText } from "@/app/_utils/textConverter";
+
+interface Player {
+  ID: string;
+  name: string;
+}
 
 interface TimeGoal {
   name: string;
@@ -22,7 +28,7 @@ interface Record {
   zoneName: string;
   position: number;
   timestamp: number;
-  playerName: string;
+  player: Player;
 }
 
 interface Track {
@@ -51,6 +57,7 @@ interface Track {
   updatedAt: string;
   records: Record[];
   timegoals: TimeGoal[];
+  dominantColor : string;
 }
 
 export default function Track({
@@ -68,15 +75,26 @@ export default function Track({
         console.log('Error details:', err.message, err.config);
       });
   }, [mappack, trackId]);
-
+  console.log("TRACKCOLOR:" + trackData?.dominantColor)
   if (!trackData) {
     return <div>Loading...</div>;
   }
 
   return (
     <div className="lg:max-w-[80%] mx-auto">
-      <div className="flex relative gap-4 p-2 md:p-6 max-xl:flex-col">
-        <div className="w-full md:w-1/3 xl:pl-0 pl-5">
+      <div className="flex relative gap-4 p-2 md:p-6 max-xl:flex-col ">
+        <div
+          className="w-full md:w-1/3 xl:pl-0 rounded-lg"
+          style={{
+            boxShadow: `0 20px 25px -5px rgba(${parseInt(
+              trackData.dominantColor.slice(0, 2),
+              16
+            )}, ${parseInt(
+              trackData.dominantColor.slice(2, 4),
+              16
+            )}, ${parseInt(trackData.dominantColor.slice(4, 6), 16)}, 0.3)`,
+          }}
+        >
           <Image
             className="w-full h-full object-cover transition-transform hover:scale-110 duration-300 hover:z-20 transform-gpu"
             alt="Track Thumbnail"
@@ -88,19 +106,32 @@ export default function Track({
           <Card className="sm:col-span-2 relative bg-neutral-800 p-6 rounded-lg bg-[radial-gradient(#ffffff33_1px,transparent_1px)] bg-[size:12px_12px] z-2">
             <FaRoute className="absolute inset-0 w-1/3 h-full text-white-300/50 opacity-30 p-2 items-start rotate-3 scale-130 z-5" />
             <div className="relative z-10">
-              <h1 className="text-4xl font-bold">{trackData.name}</h1>
-              <p className="text-neutral-400 font-ruigslay ">{trackData.author}</p>
+              <h1 className="text-4xl font-bold">
+                <FormattedText text={trackData.name} />
+              </h1>
+              <p className="text-neutral-400 font-ruigslay ">
+                {trackData.author}
+              </p>
             </div>
           </Card>
-          <Card className="bg-linear-to-r to-neutral-800 from-lime-900 p-6 rounded-lg justify-between">
+          <Card
+            className="p-6 rounded-lg justify-between"
+            style={{
+              background: `linear-gradient(to right, #${trackData.dominantColor}, #262626)`,
+            }}
+          >
             <IoDiamond className="absolute inset-0 w-1/3 h-full text-white-300/50 opacity-30 p-2 items-end rotate-0 scale-150" />
             <p className="text-sm">Tier</p>
-            <h2 className="text-4xl font-bold font-ruigslay">{trackData.tier || 'N/A'}</h2>
+            <h2 className="text-5xl font-bold font-ruigslay">
+              {trackData.tier || "N/A"}
+            </h2>
           </Card>
           <Card className="bg-neutral-800 p-6 rounded-lg justify-between">
             <FaDatabase className="absolute inset-0 w-1/3 h-full text-white-300/50 opacity-30 p-2 items-start" />
             <p className="text-sm">Records Tracked</p>
-            <h2 className="text-4xl font-bold font-ruigslay">{trackData.records.length}</h2>
+            <h2 className="text-5xl font-bold font-ruigslay">
+              {trackData.records?.length || "0"}
+            </h2>
           </Card>
           <Card className="md:col-span-2 bg-neutral-800 p-6 rounded-lg justify-between rounded-lg bg-[radial-gradient(#ffffff33_1px,transparent_1px)] bg-[size:12px_12px] z-2">
             <FaTrophy className="absolute inset-0 w-1/3 h-full text-white-300/50 opacity-30 p-2 items-start rotate-0 scale-140" />
@@ -113,7 +144,9 @@ export default function Track({
                 trackData.timegoals.map((goal, index) => (
                   <div key={index} className="text-center">
                     <p className="text-md font-bold">{goal.name}</p>
-                    <h2 className="lg:text-2xl text-lg font-bold">{toTimeFromMilliseconds(goal.time)}</h2>
+                    <h2 className="lg:text-2xl text-lg font-bold">
+                      {toTimeFromMilliseconds(goal.time)}
+                    </h2>
                   </div>
                 ))
               ) : (
