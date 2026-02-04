@@ -32,3 +32,22 @@ body {
   font-family: Verdana, Geneva, sans-serif;
 }
 
+.react-colorful {
+  width: 200px;
+  height: 200px;
+}
+
+.react-colorful__saturation {
+  border-radius: 4px 4px 0 0;
+}
+
+.react-colorful__hue {
+  height: 24px;
+  border-radius: 0 0 4px 4px;
+}
+
+.react-colorful__pointer {
+  width: 20px;
+  height: 20px;
+}
+

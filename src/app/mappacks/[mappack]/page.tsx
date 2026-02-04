@@ -3,14 +3,20 @@ import React, { useState, useEffect, use, useRef } from "react";
 import axios from "axios";
 import TrackCard from "@/app/_components/TrackCard";
 import AddTrackModal from "@/app/_components/AddTrackModal";
+import { Casko } from "@/fonts";
+import { Button } from "@heroui/react";
+import { EditMappackModal } from "@/app/_components/EditMappackModal";
 
 interface TimeGoal {
-  ID: number;
-  name: string;
-}
-interface Tier {
+  id: number;
   name: string;
   multiplier: number;
+}
+interface Tier {
+  id: number;
+  mappack_id: string;
+  name: string;
+  points: number;
   color: string;
 }
 
@@ -24,7 +30,7 @@ interface MappackTrack {
   track_id: string;
   track: Track;
   TimeGoalMappackTrack: TimeGoalMappackTrack[];
-  tier: Tier;
+  tier: Tier | null;
   mapStyle: string;
 }
 
@@ -36,14 +42,16 @@ interface Mappack {
   isActive: boolean;
   MappackTrack: MappackTrack[];
   timeGoals: TimeGoal[];
+  mappackTiers: Tier[];
 }
 
 interface Track {
   id: string;
   name: string;
   author: string;
+  authorName: string;
   thumbnailUrl: string;
-  dominantColor : string;
+  dominantColor: string;
 }
 
 export default function Mappack({
@@ -53,9 +61,11 @@ export default function Mappack({
 }) {
   const { mappack } = use(params);
   const [activeTier, setActiveTier] = useState<string>("");
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const tierRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   const [mappacks, setMappacks] = useState<Mappack | null>(null);
+  
   useEffect(() => {
     axios
       .get(`http://localhost:8080/mappacks/${mappack}`)
@@ -64,6 +74,7 @@ export default function Mappack({
         console.log("Error details:", err.message, err.config);
       });
   }, []);
+
   const tracksByTier = mappacks?.MappackTrack.reduce((acc, mappackTrack) => {
     const tierName = mappackTrack.tier?.name || "Unranked";
     if (!acc[tierName]) {
@@ -74,13 +85,14 @@ export default function Mappack({
     }
     acc[tierName].tracks.push(mappackTrack);
     return acc;
-  }, {} as Record<string, { tier: Tier; tracks: typeof mappacks.MappackTrack }>);
+  }, {} as Record<string, { tier: Tier | null; tracks: typeof mappacks.MappackTrack }>);
 
   const sortedTiers = Object.keys(tracksByTier || {}).sort((a, b) => {
-    const multiplierA = tracksByTier[a].tier?.multiplier || 0;
-    const multiplierB = tracksByTier[b].tier?.multiplier || 0;
-    return multiplierB - multiplierA;
+    const pointsA = tracksByTier[a].tier?.points || 0;
+    const pointsB = tracksByTier[b].tier?.points || 0;
+    return pointsB - pointsA;
   });
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -121,17 +133,24 @@ export default function Mappack({
           </div>
           <hr></hr>
           <div className="flex justify-center items-center">
-            <p className="text-lg font-ruigslay">TIMEGOALS</p>
+            <p className="text-lg font-ruigslay">Timegoals</p>
           </div>
           {mappacks?.timeGoals.map((timeGoal) => (
-            <div key={timeGoal.ID} className="flex justify-center items-center">
-              <p className="text-sm">{timeGoal.name}</p>
+            <div
+              key={timeGoal.name}
+              className="flex justify-center items-center"
+            >
+              <p className="text-bold">{timeGoal.name}</p>
             </div>
           ))}
           <div className="border-t border-gray-700 pt-4">
-            <p className="font-semibold text-lg mb-2 text-center font-ruigslay">Tiers</p>
+            <p className="font-semibold text-lg mb-2 text-center font-ruigslay">
+              Tiers
+            </p>
             {sortedTiers.map((tierName) => {
               const tierData = tracksByTier[tierName];
+              const tierColor = tierData.tier?.color || "#6b7280";
+              
               return (
                 <button
                   key={tierName}
@@ -139,7 +158,7 @@ export default function Mappack({
                   style={{
                     backgroundColor:
                       activeTier === tierName
-                        ? tierData.tier.color
+                        ? tierColor
                         : "transparent",
                   }}
                   className={`w-full py-2 px-4 rounded-lg transition-all duration-200  ${
@@ -156,8 +175,23 @@ export default function Mappack({
 
           <div className="flex justify-center items-center">
             <AddTrackModal
-              timegoals={mappacks?.timeGoals}
-              mappackId={mappack}
+              timegoals={mappacks?.timeGoals || []}
+              mappackId={mappacks?.id || ""}
+              tiers={mappacks?.mappackTiers || []}
+            />
+          </div>
+          <div className="flex justify-center items-center">
+            <Button onPress={() => setIsEditOpen(true)}>Edit Mappack</Button>
+            <EditMappackModal
+              mappack={mappacks}
+              isOpen={isEditOpen}
+              onClose={() => setIsEditOpen(false)}
+              onSave={() => {
+                axios
+                  .get(`http://localhost:8080/mappacks/${mappack}`)
+                  .then((response) => setMappacks(response.data))
+                  .catch((err) => console.log("Error reloading:", err));
+              }}
             />
           </div>
         </div>
@@ -166,6 +200,8 @@ export default function Mappack({
         <div className="flex flex-col gap-8">
           {sortedTiers.map((tierName) => {
             const tierData = tracksByTier[tierName];
+            const tierColor = tierData.tier?.color || "#6b7280";
+            
             return (
               <div
                 key={tierName}
@@ -177,8 +213,8 @@ export default function Mappack({
               >
                 <div className="mb-4 pt-4 justify-center items-center flex">
                   <h2
-                    className="text-3xl font-bold justify-center font-ruigslay"
-                    style={{ color: tierData.tier.color }}
+                    className={`text-3xl justify-center ${Casko.className} underline`}
+                    style={{ color: tierColor }}
                   >
                     {tierName.toUpperCase()} TIER
                   </h2>
@@ -187,8 +223,7 @@ export default function Mappack({
                   {tierData.tracks.map((mappackTrack) => (
                     <TrackCard
                       key={mappackTrack.track_id}
-                      track={mappackTrack.track}
-                      timeGoals={mappackTrack.TimeGoalMappackTrack || []}
+                      mappackTrack={mappackTrack}
                       timeGoalDefinitions={mappacks.timeGoals}
                       mappackId={mappacks.id}
                     />

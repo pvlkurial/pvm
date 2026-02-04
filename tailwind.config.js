@@ -12,6 +12,7 @@ module.exports = {
         'bebas-neue': ['var(--font-bebas-neue)'],
         'custom': ['var(--font-my-custom)'],
         'heathergreen': ['var(--font-heathergreen)'],
+        'mileast': ['var(--font-mileast)'],
       },
     },
   },

@@ -14,10 +14,21 @@ export const myCustomFont = localFont({
 export const HeatherGreen = localFont({
   src: [
     {
-      path: './Heathergreen.otf',
+      path: './casko.otf',
       weight: '900',
       style: 'italic',
     },
   ],
   variable: '--font-heathergreen',
+})
+
+export const Casko = localFont({
+  src: [
+    {
+      path: './casko.otf',
+      weight: '900',
+      style: 'italic',
+    },
+  ],
+  variable: '--font-casko',
 })

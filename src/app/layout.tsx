@@ -7,7 +7,7 @@ import React from "react";
 import Link from "next/link";
 import { Button } from "@heroui/react";
 import { Inter } from 'next/font/google'
-import { myCustomFont } from '@/fonts'
+import { Casko, myCustomFont } from '@/fonts'
 import { HeatherGreen } from '@/fonts'
 import Footer from "./_components/Footer";
 
@@ -24,7 +24,8 @@ export default function RootLayout({
 }>) {
 
   return (
-    <html lang="en" className={`${myCustomFont.variable} ${HeatherGreen.variable}`}>
+    <span>
+    <html lang="en" className={`${myCustomFont.variable} ${HeatherGreen.variable} ${Casko.variable}`}>
       <body className="antialiased min-h-screen w-full bg-neutral-900">
       <Navbar position="static" isBlurred isBordered className="bg-black-900">
         <NavbarBrand>
@@ -60,9 +61,8 @@ export default function RootLayout({
             {children}
           </div>
       </body>
-          <footer className="pt-10">
-            <Footer></Footer>
-          </footer>
     </html>
+      <Footer></Footer>
+</span>
   );
 }
