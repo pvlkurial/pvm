@@ -130,7 +130,7 @@ export default function AddTrackModal({ timegoals, mappackId, tiers }: AddTrackM
       }
 
       // Fetch records for the track
-      await axios.post(`http://localhost:8080/tracks/${trackId}/records`);
+      //await axios.post(`http://localhost:8080/tracks/${trackId}/records`);
 
       // Reset form
       setTrackUuid("");

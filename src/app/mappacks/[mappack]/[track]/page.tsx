@@ -115,13 +115,13 @@ export default function Track({
           <div
             className="relative rounded-2xl overflow-hidden aspect-square w-full h-full"
             style={{
-              boxShadow: `0 25px 100px 0px rgba(${parseInt(
+              boxShadow: `0 25px 40px 0px rgba(${parseInt(
                 trackData.dominantColor.slice(0, 2),
                 16,
               )}, ${parseInt(
                 trackData.dominantColor.slice(2, 4),
                 16,
-              )}, ${parseInt(trackData.dominantColor.slice(4, 6), 16)}, 0.9)`,
+              )}, ${parseInt(trackData.dominantColor.slice(4, 6), 16)}, 0.7)`,
             }}
           >
             <Image
@@ -139,7 +139,7 @@ export default function Track({
         <div className="flex flex-col gap-6">
           {/* Track Name Card with Gradient */}
           <Card
-            className="relative overflow-hidden border border-white/10"
+            className="relative overflow-hidden "
             style={{
               background: `linear-gradient(135deg, #${trackData.dominantColor}, #${trackData.dominantColor}10)`,
             }}

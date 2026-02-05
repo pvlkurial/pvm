@@ -16,6 +16,7 @@ import {
 import { useState, useEffect } from "react";
 import { ColorPicker } from "../_utils/colorPicker";
 import { FormattedText } from "../_utils/textConverter";
+import { ConfirmDialog } from "./ConfirmDialog";
 
 // Backend-aligned interfaces - match Go JSON tags exactly
 interface TimeGoal {
@@ -31,6 +32,26 @@ interface MappackTier {
   mappack_id: string;
   points: number;
   color: string;
+}
+
+interface MappackRank {
+  id?: number;
+  name: string;
+  mappack_id: string;
+  pointsNeeded: number;
+  color: string;
+  backgroundGlow: boolean;
+  invertedColor: boolean;
+  textShadow: boolean;
+  glowIntensity: number;
+  borderWidth: number;
+  borderColor?: string | null;
+  symbolsAround?: string | null;
+  animationType: string;
+  cardStyle: string;
+  backgroundPattern: string;
+  fontSize: string;
+  fontWeight: string;
 }
 
 interface TimeGoalMappackTrack {
@@ -52,7 +73,7 @@ interface MappackTrack {
   mappack_id: string;
   track_id: string;
   track: Track;
-  timeGoalMappackTrack: TimeGoalMappackTrack[]; // Match backend casing
+  timeGoalMappackTrack: TimeGoalMappackTrack[];
   tier_id: number | null;
   tier: MappackTier | null;
   mapStyle: string | null;
@@ -64,9 +85,10 @@ interface Mappack {
   description: string;
   thumbnailURL: string;
   isActive: boolean;
-  MappackTrack: MappackTrack[]; // Capital M to match backend
+  MappackTrack: MappackTrack[];
   timeGoals: TimeGoal[];
   mappackTiers: MappackTier[];
+  mappackRanks: MappackRank[];
 }
 
 interface EditMappackModalProps {
@@ -112,23 +134,27 @@ export function EditMappackModal({
   onClose,
 }: EditMappackModalProps) {
   const [editData, setEditData] = useState<Mappack | null>(null);
-  const [availableTiers, setAvailableTiers] = useState<MappackTier[]>([]);
   const [isSaving, setIsSaving] = useState(false);
-  const [timeInputValues, setTimeInputValues] = useState<
-    Record<string, Record<number, string>>
-  >({});
+  const [timeInputValues, setTimeInputValues] = useState<Record<string, Record<number, string>>>({});
+const [confirmDialog, setConfirmDialog] = useState<{
+  isOpen: boolean;
+  title: string;
+  message: string;
+  onConfirm: () => void;
+} | null>(null);
   useEffect(() => {
     if (isOpen && mappack) {
-      console.log("Loading mappack into editor:", mappack); // DEBUG
+      console.log("Loading mappack into editor:", mappack);
 
       const deepCopy = JSON.parse(JSON.stringify(mappack));
-      const initialTimeInputs: Record<string, Record<number, string>> = {};
+      
       // Initialize all arrays to prevent undefined errors
       const sanitizedData = {
         ...deepCopy,
         timeGoals: deepCopy.timeGoals || [],
         mappackTiers: deepCopy.mappackTiers || [],
-        MappackTrack: (deepCopy.MappackTrack || []).map((track) => ({
+        mappackRanks: deepCopy.mappackRanks || [],
+        MappackTrack: (deepCopy.MappackTrack || []).map((track: any) => ({
           ...track,
           timeGoalMappackTrack: track.timeGoalMappackTrack || [],
           tier: track.tier || null,
@@ -167,6 +193,25 @@ export function EditMappackModal({
           mappack_id: editData.id,
           points: tier.points,
           color: tier.color,
+        })),
+        mappackRanks: editData.mappackRanks.map((rank) => ({
+          id: rank.id,
+          name: rank.name,
+          mappack_id: editData.id,
+          pointsNeeded: rank.pointsNeeded,
+          color: rank.color,
+          backgroundGlow: rank.backgroundGlow,
+          invertedColor: rank.invertedColor,
+          textShadow: rank.textShadow,
+          glowIntensity: rank.glowIntensity,
+          borderWidth: rank.borderWidth,
+          borderColor: rank.borderColor,
+          symbolsAround: rank.symbolsAround,
+          animationType: rank.animationType,
+          cardStyle: rank.cardStyle,
+          backgroundPattern: rank.backgroundPattern,
+          fontSize: rank.fontSize,
+          fontWeight: rank.fontWeight,
         })),
         MappackTrack: editData.MappackTrack.map((track) => ({
           mappack_id: track.mappack_id,
@@ -219,88 +264,110 @@ export function EditMappackModal({
     });
   };
 
-  const removeTimeGoal = (id: number | undefined) => {
+  const removeTimeGoal = async (id: number | undefined) => {
     if (!id) {
+      // Just remove from state if not saved yet
       setEditData({
         ...editData,
         timeGoals: editData.timeGoals.slice(0, -1),
       });
       return;
     }
+  setConfirmDialog({
+    isOpen: true,
+    title: "Delete Time Goal",
+    message: "This will permanently delete this time goal and all associated player achievements. This action cannot be undone.",
+    onConfirm: async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/mappacks/${editData.id}/timegoals/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
 
-    setEditData({
-      ...editData,
-      timeGoals: editData.timeGoals.filter((tg) => tg.id !== id),
-      MappackTrack: editData.MappackTrack.map((track) => ({
-        ...track,
-        timeGoalMappackTrack: track.timeGoalMappackTrack.filter(
-          (tgmt) => tgmt.time_goal_id !== id,
-        ),
-      })),
-    });
-  };
+        if (!response.ok) throw new Error("Failed to delete");
+
+        // Remove from state after successful deletion
+        setEditData({
+          ...editData,
+          timeGoals: editData.timeGoals.filter((tg) => tg.id !== id),
+          MappackTrack: editData.MappackTrack.map((track) => ({
+            ...track,
+            timeGoalMappackTrack: track.timeGoalMappackTrack.filter(
+              (tgmt) => tgmt.time_goal_id !== id
+            ),
+          })),
+        });
+      } catch (error) {
+        console.error("Error deleting time goal:", error);
+        alert("Failed to delete time goal");
+      }
+    },
+  });
+};
 
   const updateTimeGoal = (
     index: number,
     field: keyof TimeGoal,
-    value: string | number,
+    value: string | number
   ) => {
     setEditData({
       ...editData,
       timeGoals: editData.timeGoals.map((tg, i) =>
-        i === index ? { ...tg, [field]: value } : tg,
+        i === index ? { ...tg, [field]: value } : tg
       ),
     });
   };
 
-const updateTrackTime = (
-  trackId: string,
-  timeGoalId: number,
-  timeString: string,
-) => {
-  setTimeInputValues(prev => ({
-    ...prev,
-    [trackId]: {
-      ...(prev[trackId] || {}),
-      [timeGoalId]: timeString
-    }
-  }));
-  
-  const milliseconds = timeStringToMilliseconds(timeString);
-  
-  setEditData({
-    ...editData,
-    MappackTrack: editData.MappackTrack.map((track) => {
-      if (track.track_id !== trackId) return track;
-      
-      const existingIndex = track.timeGoalMappackTrack.findIndex(
-        (tgmt) => tgmt.time_goal_id === timeGoalId,
-      );
-      
-      if (existingIndex >= 0) {
-        return {
-          ...track,
-          timeGoalMappackTrack: track.timeGoalMappackTrack.map((tgmt, i) =>
-            i === existingIndex ? { ...tgmt, time: milliseconds } : tgmt,
-          ),
-        };
-      } else {
-        return {
-          ...track,
-          timeGoalMappackTrack: [
-            ...track.timeGoalMappackTrack,
-            {
-              track_id: trackId,
-              mappack_id: editData.id,
-              time_goal_id: timeGoalId,
-              time: milliseconds,
-            },
-          ],
-        };
-      }
-    }),
-  });
-};
+  const updateTrackTime = (
+    trackId: string,
+    timeGoalId: number,
+    timeString: string
+  ) => {
+    setTimeInputValues((prev) => ({
+      ...prev,
+      [trackId]: {
+        ...(prev[trackId] || {}),
+        [timeGoalId]: timeString,
+      },
+    }));
+
+    const milliseconds = timeStringToMilliseconds(timeString);
+
+    setEditData({
+      ...editData,
+      MappackTrack: editData.MappackTrack.map((track) => {
+        if (track.track_id !== trackId) return track;
+
+        const existingIndex = track.timeGoalMappackTrack.findIndex(
+          (tgmt) => tgmt.time_goal_id === timeGoalId
+        );
+
+        if (existingIndex >= 0) {
+          return {
+            ...track,
+            timeGoalMappackTrack: track.timeGoalMappackTrack.map((tgmt, i) =>
+              i === existingIndex ? { ...tgmt, time: milliseconds } : tgmt
+            ),
+          };
+        } else {
+          return {
+            ...track,
+            timeGoalMappackTrack: [
+              ...track.timeGoalMappackTrack,
+              {
+                track_id: trackId,
+                mappack_id: editData.id,
+                time_goal_id: timeGoalId,
+                time: milliseconds,
+              },
+            ],
+          };
+        }
+      }),
+    });
+  };
 
   const addTier = () => {
     const newTier: MappackTier = {
@@ -318,10 +385,10 @@ const updateTrackTime = (
   const updateTier = (
     index: number,
     field: keyof MappackTier,
-    value: string | number,
+    value: string | number
   ) => {
     const updatedTiers = editData.mappackTiers.map((tier, i) =>
-      i === index ? { ...tier, [field]: value } : tier,
+      i === index ? { ...tier, [field]: value } : tier
     );
     setEditData({
       ...editData,
@@ -329,18 +396,123 @@ const updateTrackTime = (
     });
   };
 
-  const removeTier = (index: number) => {
-    const tierToRemove = editData.mappackTiers[index];
+  const removeTier = async (id: number | undefined) => {
+    if (!id) {
+      // Just remove from state if not saved yet
+      setEditData({
+        ...editData,
+        mappackTiers: editData.mappackTiers.slice(0, -1),
+      });
+      return;
+    }
+
+   setConfirmDialog({
+    isOpen: true,
+    title: "Delete Tier",
+    message: "This will remove this tier. Tracks assigned to this tier will become unranked.",
+    onConfirm: async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/mappacks/${editData.id}/tiers/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (!response.ok) throw new Error("Failed to delete");
+
+        setEditData({
+          ...editData,
+          mappackTiers: editData.mappackTiers.filter((t) => t.id !== id),
+          MappackTrack: editData.MappackTrack.map((track) =>
+            track.tier_id === id
+              ? { ...track, tier_id: null, tier: null }
+              : track
+          ),
+        });
+      } catch (error) {
+        console.error("Error deleting tier:", error);
+        alert("Failed to delete tier");
+      }
+    },
+  });
+};
+
+  const addRank = () => {
+    const newRank: MappackRank = {
+      name: "",
+      mappack_id: editData.id,
+      pointsNeeded: 0,
+      color: "#ffffff",
+      backgroundGlow: false,
+      invertedColor: false,
+      textShadow: false,
+      glowIntensity: 50,
+      borderWidth: 2,
+      borderColor: null,
+      symbolsAround: null,
+      animationType: "none",
+      cardStyle: "normal",
+      backgroundPattern: "none",
+      fontSize: "normal",
+      fontWeight: "normal",
+    };
     setEditData({
       ...editData,
-      mappackTiers: editData.mappackTiers.filter((_, i) => i !== index),
-      MappackTrack: editData.MappackTrack.map((track) =>
-        track.tier_id === tierToRemove.id
-          ? { ...track, tier_id: null, tier: null }
-          : track,
-      ),
+      mappackRanks: [...editData.mappackRanks, newRank],
     });
   };
+
+  const updateRank = (
+    index: number,
+    field: keyof MappackRank,
+    value: string | number | boolean | null
+  ) => {
+    const updatedRanks = editData.mappackRanks.map((rank, i) =>
+      i === index ? { ...rank, [field]: value } : rank
+    );
+    setEditData({
+      ...editData,
+      mappackRanks: updatedRanks,
+    });
+  };
+
+  const removeRank = async (id: number | undefined) => {
+    if (!id) {
+      // Just remove from state if not saved yet
+      setEditData({
+        ...editData,
+        mappackRanks: editData.mappackRanks.slice(0, -1),
+      });
+      return;
+    }
+
+    setConfirmDialog({
+    isOpen: true,
+    title: "Delete Rank",
+    message: "This will permanently delete this rank. Players with this rank will be re-assigned based on their points.",
+    onConfirm: async () => {
+      try {
+        const response = await fetch(
+          `http://localhost:8080/mappacks/${editData.id}/ranks/${id}`,
+          {
+            method: "DELETE",
+          }
+        );
+
+        if (!response.ok) throw new Error("Failed to delete");
+
+        setEditData({
+          ...editData,
+          mappackRanks: editData.mappackRanks.filter((r) => r.id !== id),
+        });
+      } catch (error) {
+        console.error("Error deleting rank:", error);
+        alert("Failed to delete rank");
+      }
+    },
+  });
+};
 
   const assignTierToTrack = (trackId: string, tierId: number | null) => {
     const tier = tierId
@@ -351,7 +523,7 @@ const updateTrackTime = (
       MappackTrack: editData.MappackTrack.map((track) =>
         track.track_id === trackId
           ? { ...track, tier_id: tierId, tier: tier || null }
-          : track,
+          : track
       ),
     });
   };
@@ -470,7 +642,7 @@ const updateTrackTime = (
                             updateTimeGoal(
                               index,
                               "multiplier",
-                              parseInt(value) || 1,
+                              parseInt(value) || 1
                             )
                           }
                           className="w-32"
@@ -536,7 +708,7 @@ const updateTrackTime = (
                           <Button
                             color="default"
                             variant="flat"
-                            onPress={() => removeTier(index)}
+                            onPress={() => removeTier(tier.id)}
                             isIconOnly
                           >
                             ✕
@@ -585,7 +757,7 @@ const updateTrackTime = (
                                 mappackTrack.track_id,
                                 selectedTierId
                                   ? parseInt(selectedTierId)
-                                  : null,
+                                  : null
                               );
                             }}
                             className="w-48"
@@ -601,7 +773,7 @@ const updateTrackTime = (
                               (No Tier)
                             </SelectItem>
                             {editData.mappackTiers
-                              .filter((tier) => tier.id) // Only show saved tiers
+                              .filter((tier) => tier.id)
                               .map((tier) => (
                                 <SelectItem
                                   key={tier.id!.toString()}
@@ -629,6 +801,324 @@ const updateTrackTime = (
                         </p>
                       )}
                     </div>
+                  </div>
+                </Tab>
+
+                <Tab key="ranks" title="Ranks">
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-[auto_1fr] items-center gap-2">
+                      <p className="text-xl font-ruigslay">Player Ranks</p>
+                      <div className="flex-1 h-[5px] bg-neutral-300"></div>
+                    </div>
+                    <p className="text-sm text-gray-400 mb-4">
+                      Ranks are awarded to players based on their total points.
+                      Customize the appearance of each rank.
+                    </p>
+
+                    {editData.mappackRanks.map((rank, index) => (
+                      <div
+                        key={rank.id || `new-${index}`}
+                        className="border border-gray-600 rounded-lg p-4 bg-neutral-700 space-y-4"
+                      >
+                        {/* Basic Info */}
+                        <div className="grid grid-cols-2 gap-3">
+                          <Input
+                            label="Rank Name"
+                            variant="bordered"
+                            value={rank.name}
+                            onValueChange={(value) =>
+                              updateRank(index, "name", value)
+                            }
+                            classNames={inputClassNames}
+                          />
+                          <Input
+                            label="Points Needed"
+                            type="number"
+                            variant="bordered"
+                            value={rank.pointsNeeded.toString()}
+                            onValueChange={(value) =>
+                              updateRank(
+                                index,
+                                "pointsNeeded",
+                                parseInt(value) || 0
+                              )
+                            }
+                            classNames={inputClassNames}
+                          />
+                        </div>
+
+                        {/* Colors */}
+                        <div className="grid grid-cols-3 gap-3 items-end">
+                          <ColorPicker
+                            value={rank.color}
+                            onChange={(value) =>
+                              updateRank(index, "color", value)
+                            }
+                            label="Primary Color"
+                          />
+                          <ColorPicker
+                            value={rank.borderColor || rank.color}
+                            onChange={(value) =>
+                              updateRank(index, "borderColor", value)
+                            }
+                            label="Border Color"
+                          />
+                          <Input
+                            label="Border Width (px)"
+                            type="number"
+                            variant="bordered"
+                            value={rank.borderWidth.toString()}
+                            onValueChange={(value) =>
+                              updateRank(
+                                index,
+                                "borderWidth",
+                                parseInt(value) || 2
+                              )
+                            }
+                            classNames={inputClassNames}
+                          />
+                        </div>
+
+                        {/* Visual Effects Toggles */}
+                        <div className="grid grid-cols-3 gap-4">
+                          <Switch
+                            isSelected={rank.backgroundGlow}
+                            onValueChange={(checked) =>
+                              updateRank(index, "backgroundGlow", checked)
+                            }
+                            classNames={{
+                              wrapper:
+                                "group-data-[selected=true]:bg-white bg-neutral-600",
+                            }}
+                          >
+                            <span className="text-white text-sm">
+                              Background Glow
+                            </span>
+                          </Switch>
+                          <Switch
+                            isSelected={rank.invertedColor}
+                            onValueChange={(checked) =>
+                              updateRank(index, "invertedColor", checked)
+                            }
+                            classNames={{
+                              wrapper:
+                                "group-data-[selected=true]:bg-white bg-neutral-600",
+                            }}
+                          >
+                            <span className="text-white text-sm">
+                              Inverted Colors
+                            </span>
+                          </Switch>
+                          <Switch
+                            isSelected={rank.textShadow}
+                            onValueChange={(checked) =>
+                              updateRank(index, "textShadow", checked)
+                            }
+                            classNames={{
+                              wrapper:
+                                "group-data-[selected=true]:bg-white bg-neutral-600",
+                            }}
+                          >
+                            <span className="text-white text-sm">
+                              Text Shadow
+                            </span>
+                          </Switch>
+                        </div>
+
+                        {/* Glow Intensity */}
+                        <Input
+                          label="Glow Intensity (0-100)"
+                          type="number"
+                          variant="bordered"
+                          value={rank.glowIntensity.toString()}
+                          onValueChange={(value) =>
+                            updateRank(
+                              index,
+                              "glowIntensity",
+                              Math.min(100, Math.max(0, parseInt(value) || 50))
+                            )
+                          }
+                          classNames={inputClassNames}
+                        />
+
+                        {/* Symbols */}
+                        <Input
+                          label="Symbols Around Name (e.g., ◆ or ★★)"
+                          variant="bordered"
+                          value={rank.symbolsAround || ""}
+                          onValueChange={(value) =>
+                            updateRank(index, "symbolsAround", value || null)
+                          }
+                          placeholder="Leave empty for no symbols"
+                          classNames={inputClassNames}
+                        />
+
+                        {/* Dropdown Selects */}
+                        <div className="grid grid-cols-2 gap-3">
+                          <Select
+                            label="Animation Type"
+                            variant="bordered"
+                            selectedKeys={[rank.animationType]}
+                            onSelectionChange={(keys) => {
+                              const value = Array.from(keys)[0] as string;
+                              updateRank(index, "animationType", value);
+                            }}
+                            classNames={{
+                              ...inputClassNames,
+                              listboxWrapper: "bg-neutral-800",
+                              popoverContent: "bg-neutral-800",
+                              label: "text-white",
+                              value: "text-white",
+                            }}
+                          >
+                            <SelectItem key="none" value="none">
+                              None
+                            </SelectItem>
+                            <SelectItem key="shine" value="shine">
+                              Shine
+                            </SelectItem>
+                            <SelectItem key="pulse" value="pulse">
+                              Pulse
+                            </SelectItem>
+                            <SelectItem key="shimmer" value="shimmer">
+                              Shimmer
+                            </SelectItem>
+                          </Select>
+
+                          <Select
+                            label="Card Style"
+                            variant="bordered"
+                            selectedKeys={[rank.cardStyle]}
+                            onSelectionChange={(keys) => {
+                              const value = Array.from(keys)[0] as string;
+                              updateRank(index, "cardStyle", value);
+                            }}
+                            classNames={{
+                              ...inputClassNames,
+                              listboxWrapper: "bg-neutral-800",
+                              popoverContent: "bg-neutral-800",
+                              label: "text-white",
+                              value: "text-white",
+                            }}
+                          >
+                            <SelectItem key="normal" value="normal">
+                              Normal
+                            </SelectItem>
+                            <SelectItem key="metallic" value="metallic">
+                              Metallic
+                            </SelectItem>
+                            <SelectItem key="holographic" value="holographic">
+                              Holographic
+                            </SelectItem>
+                            <SelectItem key="neon" value="neon">
+                              Neon
+                            </SelectItem>
+                          </Select>
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-3">
+                          <Select
+                            label="Background Pattern"
+                            variant="bordered"
+                            selectedKeys={[rank.backgroundPattern]}
+                            onSelectionChange={(keys) => {
+                              const value = Array.from(keys)[0] as string;
+                              updateRank(index, "backgroundPattern", value);
+                            }}
+                            classNames={{
+                              ...inputClassNames,
+                              listboxWrapper: "bg-neutral-800",
+                              popoverContent: "bg-neutral-800",
+                              label: "text-white",
+                              value: "text-white",
+                            }}
+                          >
+                            <SelectItem key="none" value="none">
+                              None
+                            </SelectItem>
+                            <SelectItem key="dots" value="dots">
+                              Dots
+                            </SelectItem>
+                            <SelectItem key="grid" value="grid">
+                              Grid
+                            </SelectItem>
+                            <SelectItem key="diagonal" value="diagonal">
+                              Diagonal
+                            </SelectItem>
+                          </Select>
+
+                          <Select
+                            label="Font Size"
+                            variant="bordered"
+                            selectedKeys={[rank.fontSize]}
+                            onSelectionChange={(keys) => {
+                              const value = Array.from(keys)[0] as string;
+                              updateRank(index, "fontSize", value);
+                            }}
+                            classNames={{
+                              ...inputClassNames,
+                              listboxWrapper: "bg-neutral-800",
+                              popoverContent: "bg-neutral-800",
+                              label: "text-white",
+                              value: "text-white",
+                            }}
+                          >
+                            <SelectItem key="normal" value="normal">
+                              Normal
+                            </SelectItem>
+                            <SelectItem key="large" value="large">
+                              Large
+                            </SelectItem>
+                            <SelectItem key="xl" value="xl">
+                              Extra Large
+                            </SelectItem>
+                          </Select>
+
+                          <Select
+                            label="Font Weight"
+                            variant="bordered"
+                            selectedKeys={[rank.fontWeight]}
+                            onSelectionChange={(keys) => {
+                              const value = Array.from(keys)[0] as string;
+                              updateRank(index, "fontWeight", value);
+                            }}
+                            classNames={{
+                              ...inputClassNames,
+                              listboxWrapper: "bg-neutral-800",
+                              popoverContent: "bg-neutral-800",
+                              label: "text-white",
+                              value: "text-white",
+                            }}
+                          >
+                            <SelectItem key="normal" value="normal">
+                              Normal
+                            </SelectItem>
+                            <SelectItem key="bold" value="bold">
+                              Bold
+                            </SelectItem>
+                            <SelectItem key="black" value="black">
+                              Black
+                            </SelectItem>
+                          </Select>
+                        </div>
+
+                        {/* Remove Button */}
+                        <div className="flex justify-end">
+                          <Button
+                            color="danger"
+                            variant="flat"
+                            onPress={() => removeRank(rank.id)}
+                            size="sm"
+                          >
+                            Remove Rank
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+
+                    <Button color="default" onPress={addRank}>
+                      Add Rank
+                    </Button>
                   </div>
                 </Tab>
 
@@ -676,7 +1166,7 @@ const updateTrackTime = (
                                 (t) =>
                                   t.track_id === mappackTrack.track_id
                                     ? { ...t, mapStyle: value || null }
-                                    : t,
+                                    : t
                               ),
                             });
                           }}
@@ -694,7 +1184,7 @@ const updateTrackTime = (
                               .map((timegoal) => {
                                 const inputValue =
                                   timeInputValues[mappackTrack.track_id]?.[
-                                    timegoal.id
+                                    timegoal.id!
                                   ] || "";
 
                                 return (
@@ -708,7 +1198,7 @@ const updateTrackTime = (
                                       updateTrackTime(
                                         mappackTrack.track_id,
                                         timegoal.id!,
-                                        value,
+                                        value
                                       );
                                     }}
                                     classNames={inputClassNames}
@@ -742,6 +1232,19 @@ const updateTrackTime = (
           </>
         )}
       </ModalContent>
+      {/* Confirmation Dialog */}
+      {confirmDialog && (
+        <ConfirmDialog
+          isOpen={confirmDialog.isOpen}
+          onClose={() => setConfirmDialog(null)}
+          onConfirm={confirmDialog.onConfirm}
+          title={confirmDialog.title}
+          message={confirmDialog.message}
+          confirmText="Delete"
+          cancelText="Cancel"
+          isDangerous={true}
+        />
+      )}
     </Modal>
   );
 }
