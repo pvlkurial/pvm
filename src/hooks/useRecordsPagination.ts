@@ -1,18 +1,18 @@
+// hooks/useRecordsPagination.ts
 import { useState, useMemo } from 'react';
 import { Record } from '@/types/mappack.types';
 
-export function useRecordsPagination(records: Record[], itemsPerPage: number = 10) {
+export function useRecordsPagination(records: Record[], itemsPerPage: number = 20) {
   const [page, setPage] = useState(1);
   const [sortDescriptor, setSortDescriptor] = useState<{
     column: string;
     direction: 'ascending' | 'descending';
   }>({
-    column: 'position',
-    direction: 'ascending',
+    column: 'score',
+    direction: 'ascending', // Lower time is better
   });
 
   const sortedRecords = useMemo(() => {
-    if (!records) return [];
     return [...records].sort((a, b) => {
       let first: any = a[sortDescriptor.column as keyof Record];
       let second: any = b[sortDescriptor.column as keyof Record];
@@ -23,6 +23,13 @@ export function useRecordsPagination(records: Record[], itemsPerPage: number = 1
         second = b.player.name;
       }
 
+      // For numeric values, compare directly
+      if (typeof first === 'number' && typeof second === 'number') {
+        const cmp = first < second ? -1 : first > second ? 1 : 0;
+        return sortDescriptor.direction === 'descending' ? cmp * -1 : cmp;
+      }
+
+      // For strings, compare with fallback
       const cmp = (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
       return sortDescriptor.direction === 'descending' ? cmp * -1 : cmp;
     });
@@ -35,8 +42,6 @@ export function useRecordsPagination(records: Record[], itemsPerPage: number = 1
     const end = start + itemsPerPage;
     return sortedRecords.slice(start, end);
   }, [sortedRecords, page, itemsPerPage]);
-    
-  const totalRecordsPre = records ? records.length : 0;
 
   return {
     page,
@@ -45,6 +50,6 @@ export function useRecordsPagination(records: Record[], itemsPerPage: number = 1
     sortDescriptor,
     setSortDescriptor,
     paginatedRecords,
-    totalRecords: totalRecordsPre
+    totalRecords: records.length,
   };
 }

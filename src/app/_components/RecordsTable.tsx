@@ -1,3 +1,4 @@
+// components/RecordsTable.tsx
 "use client";
 import { Pagination } from "@heroui/react";
 import { Record } from "@/types/mappack.types";
@@ -48,14 +49,16 @@ export default function RecordsTable({ records, timeGoals = [] }: RecordsTablePr
         ) : (
           paginatedRecords.map((record, index) => {
             const achievedGoal = getBestAchievedTimeGoal(record.score, timeGoals);
+            // Calculate display position based on current page and index
+            const displayPosition = (page - 1) * 10 + index + 1;
             
             return (
               <div key={record.mapRecordId}>
                 <div className="grid grid-cols-[50px_1fr_140px_140px_100px] gap-6 px-2 py-4 hover:bg-white/[0.02] transition-colors">
                   {/* Rank */}
                   <div className="flex items-center justify-center">
-                    <span className={`text-lg font-mono ${getPositionStyle(record.position)}`}>
-                      {record.position}
+                    <span className={`text-lg font-mono ${getPositionStyle(displayPosition)}`}>
+                      {displayPosition}
                     </span>
                   </div>
 
