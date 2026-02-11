@@ -192,7 +192,7 @@ export default function AddTrackModal({ timegoals, mappackId, tiers }: AddTrackM
                   onSelectionChange={(key) => setSelectedTab(key as string)}
                   classNames={{
                     tabList: "bg-neutral-700",
-                    cursor: "bg-neutral-800",
+                    cursor: "bg-blue-400",
                     tab: "data-[selected=true]:bg-neutral-400 data-[selected=true]:!text-white",
                     tabContent: "group-data-[selected=true]:text-white",
                   }}

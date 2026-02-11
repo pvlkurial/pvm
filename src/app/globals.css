@@ -11,6 +11,8 @@
 @theme {
   --font-ruigslay: var(--font-my-custom);
   --font-heathergreen: var(--font-heathergreen);
+  --font-casko: var(--font-casko);
+  
 }
 @theme inline {
   --color-background: var(--background);

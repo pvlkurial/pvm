@@ -1,12 +1,15 @@
 "use client";
 import React, { useState, useEffect, use, useRef } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 import axios from "axios";
 import TrackCard from "@/app/_components/TrackCard";
 import AddTrackModal from "@/app/_components/AddTrackModal";
 import LeaderboardTab from "@/app/_components/LeaderboardTab";
 import { Casko } from "@/fonts";
-import { Button, Tabs, Tab } from "@heroui/react";
+import { Button, Tabs, Tab, Switch } from "@heroui/react";
 import { EditMappackModal } from "@/app/_components/EditMappackModal";
+import RequireRole from "@/app/_components/RequireRole";
+import TrackFilter from "@/app/_components/TrackFilter";
 
 interface TimeGoal {
   id: number;
@@ -45,17 +48,20 @@ interface MappackRank {
 }
 
 interface TimeGoalMappackTrack {
-  TimeGoalID: number;
+  time_goal_id: number;
   time: number;
+  is_achieved?: boolean;
+  player_time?: number;
 }
 
 interface MappackTrack {
   mappack_id: string;
   track_id: string;
   track: Track;
-  TimeGoalMappackTrack: TimeGoalMappackTrack[];
+  timeGoalMappackTrack: TimeGoalMappackTrack[];
   tier: Tier | null;
   mapStyle: string;
+  personal_best?: number;
 }
 
 interface Mappack {
@@ -85,6 +91,10 @@ export default function Mappack({
   params: Promise<{ mappack: string }>;
 }) {
   const { mappack } = use(params);
+  const { user } = useAuth();
+  const [alwaysShowTrackDetails, setAlwaysShowTrackDetails] = useState(false);
+  const [filteredTracks, setFilteredTracks] = useState<MappackTrack[]>([]);
+
   const [activeTier, setActiveTier] = useState<string>("");
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [selectedTab, setSelectedTab] = useState("maps");
@@ -93,30 +103,38 @@ export default function Mappack({
   const [mappacks, setMappacks] = useState<Mappack | null>(null);
   
   useEffect(() => {
+    let url = `http://localhost:8080/mappacks/${mappack}`;
+    if (user?.id) {
+      url += `?player_id=${user.id}`;
+    }
+
     axios
-      .get(`http://localhost:8080/mappacks/${mappack}`)
-      .then((response) => setMappacks(response.data))
+      .get(url)
+      .then((response) => {
+      setMappacks(response.data);
+      setFilteredTracks(response.data.MappackTrack);
+    })
       .catch((err) => {
         console.log("Error details:", err.message, err.config);
       });
-  }, []);
+  }, [mappack, user?.id]);
 
-  const tracksByTier = mappacks?.MappackTrack.reduce((acc, mappackTrack) => {
-    const tierName = mappackTrack.tier?.name || "Unranked";
-    if (!acc[tierName]) {
-      acc[tierName] = {
-        tier: mappackTrack.tier,
-        tracks: [],
-      };
-    }
-    acc[tierName].tracks.push(mappackTrack);
-    return acc;
-  }, {} as Record<string, { tier: Tier | null; tracks: typeof mappacks.MappackTrack }>);
+const tracksByTier = filteredTracks?.reduce((acc, mappackTrack) => {
+  const tierName = mappackTrack.tier?.name || "Unranked";
+  if (!acc[tierName]) {
+    acc[tierName] = {
+      tier: mappackTrack.tier,
+      tracks: [],
+    };
+  }
+  acc[tierName].tracks.push(mappackTrack);
+  return acc;
+}, {} as Record<string, { tier: Tier | null; tracks: typeof filteredTracks }>);
 
   const sortedTiers = Object.keys(tracksByTier || {}).sort((a, b) => {
     const pointsA = tracksByTier[a].tier?.points || 0;
     const pointsB = tracksByTier[b].tier?.points || 0;
-    return pointsB - pointsA;
+    return pointsA - pointsB;
   });
 
   useEffect(() => {
@@ -201,16 +219,19 @@ export default function Mappack({
               </div>
 
               <div className="flex justify-center items-center">
+                <RequireRole role="admin">
                 <AddTrackModal
                   timegoals={mappacks?.timeGoals || []}
                   mappackId={mappacks?.id || ""}
                   tiers={mappacks?.mappackTiers || []}
                 />
+                </RequireRole>
               </div>
             </>
           )}
 
           <div className="flex justify-center items-center">
+            <RequireRole role="admin">
             <Button onPress={() => setIsEditOpen(true)}>Edit Mappack</Button>
             <EditMappackModal
               mappack={mappacks}
@@ -223,11 +244,31 @@ export default function Mappack({
                   .catch((err) => console.log("Error reloading:", err));
               }}
             />
+            </RequireRole>
           </div>
         </div>
       </div>
 
       <div className="lg:col-start-2 lg:col-span-4 col-span-1">
+      <div className="flex items-center gap-4 mb-4 pt-3">  
+        <TrackFilter
+          timeGoals={mappacks?.timeGoals || []}
+          tracks={mappacks?.MappackTrack || []}
+          onFilterChange={setFilteredTracks}
+          />
+        <Switch
+          isSelected={alwaysShowTrackDetails}
+          onValueChange={setAlwaysShowTrackDetails}
+          size="sm"
+          classNames={{
+            wrapper: "group-data-[selected=true]:bg-white bg-neutral-600",
+          }}
+        >
+          <span className="text-sm text-white">
+            Always Show Track Details
+          </span>
+        </Switch>
+      </div>
         <Tabs
           selectedKey={selectedTab}
           onSelectionChange={(key) => setSelectedTab(key as string)}
@@ -236,44 +277,45 @@ export default function Mappack({
           variant="underlined"
           classNames={{
             tabList:
-              "gap-6 w-full relative rounded-none p-0 border-b border-white/10",
+            "gap-6 w-full relative rounded-none p-0 border-b border-white/10",
             cursor: "w-full bg-white",
             tab: "max-w-fit px-0 h-12",
             tabContent:
-              "group-data-[selected=true]:text-white text-white/60 font-semibold text-lg",
+            "group-data-[selected=true]:text-white text-white/60 font-semibold text-lg",
           }}
           className="mb-6"
-        >
+          >
           <Tab key="maps" title="Maps">
             <div className="flex flex-col gap-8">
               {sortedTiers.map((tierName) => {
                 const tierData = tracksByTier[tierName];
                 const tierColor = tierData.tier?.color || "#6b7280";
-
                 return (
                   <div
-                    key={tierName}
-                    ref={(el) => {
-                      tierRefs.current[tierName] = el;
-                    }}
-                    data-tier={tierName}
-                    className="scroll-mt-4"
+                  key={tierName}
+                  ref={(el) => {
+                    tierRefs.current[tierName] = el;
+                  }}
+                  data-tier={tierName}
+                  className="scroll-mt-4"
                   >
+                      <hr className="border-1 border-white/10 my-2 w-full" />
                     <div className="mb-4 pt-4 justify-center items-center flex">
                       <h2
-                        className={`text-3xl justify-center ${Casko.className} underline`}
+                        className={`text-3xl justify-center uppercase`}
                         style={{ color: tierColor }}
-                      >
+                        >
                         {tierName.toUpperCase()} TIER
                       </h2>
                     </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
+                    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
                       {tierData.tracks.map((mappackTrack) => (
                         <TrackCard
-                          key={mappackTrack.track_id}
-                          mappackTrack={mappackTrack}
-                          timeGoalDefinitions={mappacks.timeGoals}
-                          mappackId={mappacks.id}
+                        key={mappackTrack.track_id}
+                        mappackTrack={mappackTrack}
+                        timeGoalDefinitions={mappacks.timeGoals}
+                        mappackId={mappacks.id}
+                        alwaysShowDetails={alwaysShowTrackDetails}
                         />
                       ))}
                     </div>
@@ -287,9 +329,10 @@ export default function Mappack({
             <LeaderboardTab
               mappackId={mappack}
               mappackRanks={mappacks?.mappackRanks || []}
-            />
+              />
           </Tab>
         </Tabs>
+        
       </div>
     </div>
   );

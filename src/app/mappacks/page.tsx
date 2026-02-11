@@ -3,10 +3,12 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import MappackCard from "../_components/MappackCard";
 import CreateMappackModal from "../_components/CreateMappackModal";
+import RequireRole from "../_components/RequireRole";
 
 interface Mappack {
   id: string;
   name: string;
+  thumbnailURL: string;
 }
 
 export default function Home() {
@@ -24,7 +26,9 @@ export default function Home() {
             <MappackCard key={mappack.id} mappack={mappack} />
         ))}
         </div>
-        <CreateMappackModal/>
+        <RequireRole role="admin">
+          <CreateMappackModal/>
+        </RequireRole>
     </span>
   );
 }

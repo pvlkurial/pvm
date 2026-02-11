@@ -18,7 +18,6 @@ import { ColorPicker } from "../_utils/colorPicker";
 import { FormattedText } from "../_utils/textConverter";
 import { ConfirmDialog } from "./ConfirmDialog";
 
-// Backend-aligned interfaces - match Go JSON tags exactly
 interface TimeGoal {
   id?: number;
   name: string;
@@ -148,7 +147,6 @@ const [confirmDialog, setConfirmDialog] = useState<{
 
       const deepCopy = JSON.parse(JSON.stringify(mappack));
       
-      // Initialize all arrays to prevent undefined errors
       const sanitizedData = {
         ...deepCopy,
         timeGoals: deepCopy.timeGoals || [],
@@ -266,7 +264,6 @@ const [confirmDialog, setConfirmDialog] = useState<{
 
   const removeTimeGoal = async (id: number | undefined) => {
     if (!id) {
-      // Just remove from state if not saved yet
       setEditData({
         ...editData,
         timeGoals: editData.timeGoals.slice(0, -1),
@@ -288,7 +285,6 @@ const [confirmDialog, setConfirmDialog] = useState<{
 
         if (!response.ok) throw new Error("Failed to delete");
 
-        // Remove from state after successful deletion
         setEditData({
           ...editData,
           timeGoals: editData.timeGoals.filter((tg) => tg.id !== id),
@@ -398,7 +394,6 @@ const [confirmDialog, setConfirmDialog] = useState<{
 
   const removeTier = async (id: number | undefined) => {
     if (!id) {
-      // Just remove from state if not saved yet
       setEditData({
         ...editData,
         mappackTiers: editData.mappackTiers.slice(0, -1),
@@ -621,7 +616,7 @@ const [confirmDialog, setConfirmDialog] = useState<{
                     {editData.timeGoals.map((timegoal, index) => (
                       <div
                         key={timegoal.id || `new-${index}`}
-                        className="flex gap-2 items-center bg-neutral-700 p-3 rounded-lg"
+                        className="flex gap-2 items-center bg-neutral-800 p-3 rounded-lg"
                       >
                         <Input
                           label="Name"
@@ -650,7 +645,7 @@ const [confirmDialog, setConfirmDialog] = useState<{
                         />
                         <Button
                           size="sm"
-                          color="default"
+                          color="danger"
                           variant="flat"
                           onPress={() => removeTimeGoal(timegoal.id)}
                           isIconOnly
@@ -675,7 +670,7 @@ const [confirmDialog, setConfirmDialog] = useState<{
                       {editData.mappackTiers.map((tier, index) => (
                         <div
                           key={tier.id || `new-${index}`}
-                          className="flex gap-2 mb-3 items-end bg-neutral-700 p-3 rounded-lg"
+                          className="flex gap-2 mb-3 items-end bg-neutral-800 p-3 rounded-lg"
                         >
                           <Input
                             label="Tier Name"
@@ -706,7 +701,7 @@ const [confirmDialog, setConfirmDialog] = useState<{
                             label="Tier Color"
                           />
                           <Button
-                            color="default"
+                            color="danger"
                             variant="flat"
                             onPress={() => removeTier(tier.id)}
                             isIconOnly
@@ -721,7 +716,7 @@ const [confirmDialog, setConfirmDialog] = useState<{
                     </div>
 
                     <div>
-                      <div className="grid grid-cols-[auto_1fr] items-center gap-2 mb-4">
+                      <div className="grid grid-cols-[auto_2fr] items-center gap-2 mb-4">
                         <p className="text-xl font-ruigslay">
                           Track Tier Assignment
                         </p>
@@ -769,9 +764,6 @@ const [confirmDialog, setConfirmDialog] = useState<{
                               value: "text-white",
                             }}
                           >
-                            <SelectItem key="" value="">
-                              (No Tier)
-                            </SelectItem>
                             {editData.mappackTiers
                               .filter((tier) => tier.id)
                               .map((tier) => (

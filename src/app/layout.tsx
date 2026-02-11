@@ -10,6 +10,8 @@ import { Inter } from 'next/font/google'
 import { Casko, myCustomFont } from '@/fonts'
 import { HeatherGreen } from '@/fonts'
 import Footer from "./_components/Footer";
+import LoginButton from "./_components/LoginButton";
+import { AuthProvider } from "@/contexts/AuthContext";
 
 const inter = Inter({ 
   weight: '900',
@@ -26,8 +28,9 @@ export default function RootLayout({
   return (
     <span>
     <html lang="en" className={`${myCustomFont.variable} ${HeatherGreen.variable} ${Casko.variable}`}>
-      <body className="antialiased min-h-screen w-full bg-neutral-900">
-      <Navbar position="static" isBlurred isBordered className="bg-black-900">
+      <AuthProvider>
+      <body className="antialiased min-h-screen w-full bg-gradient-to-b from-zinc-900 via-zinc-900 to-black">
+      <Navbar position="static" isBlurred isBordered>
         <NavbarBrand>
         <p className="font-ruigslay font-bold scale-140">Player vs Map</p>
       </NavbarBrand>
@@ -37,22 +40,10 @@ export default function RootLayout({
             Mappacks
           </Link>
         </NavbarItem>
-        <NavbarItem>
-          <Link aria-current="page" href="/dashboard" className="hover:bg-neutral-600 p-3 rounded-lg transition duration-200 ease-in-out">
-            Dashboard
-          </Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Link color="foreground" href="/tracks" className="hover:bg-neutral-600 p-3 rounded-lg transition duration-200 ease-in-out">
-            Tracks
-          </Link>
-        </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
         <NavbarItem>
-          <Button as={Link} color="default" href="/login" variant="bordered">
-            Login With Trackmania
-          </Button>
+          <LoginButton/>
         </NavbarItem>
       </NavbarContent>
       </Navbar>
@@ -61,6 +52,7 @@ export default function RootLayout({
             {children}
           </div>
       </body>
+      </AuthProvider>
     </html>
       <Footer></Footer>
 </span>

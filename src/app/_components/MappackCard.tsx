@@ -16,8 +16,8 @@ export default function MappackCard({ mappack }) {
         <Image
           removeWrapper
           alt="Card background"
-          className="z-0 w-full h-full object-cover"
-          src="https://heroui.com/images/card-example-4.jpeg"
+          className="z-0 w-full h-full object-cover scale-175"
+          src={mappack.thumbnailURL}
         />
       </Card>
     </div>
