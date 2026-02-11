@@ -1,0 +1,5 @@
+{
+  "/mappacks/[mappack]/[track]/page": "app/mappacks/[mappack]/[track]/page.js",
+  "/mappacks/[mappack]/page": "app/mappacks/[mappack]/page.js",
+  "/mappacks/page": "app/mappacks/page.js"
+}
