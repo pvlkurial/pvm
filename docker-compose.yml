@@ -1,0 +1,64 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: pvm_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: pvm
+      POSTGRES_USER: pvm_user
+      POSTGRES_PASSWORD: pvm_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - pvm_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pvm_user -d pvm"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./pvm-backend          # CHANGED
+      dockerfile: Dockerfile
+    container_name: pvm_backend
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      DB_CONNECTION_STRING: ${CONNECTION_STRING}
+      TRACKMANIA_CLIENT_ID: ${TRACKMANIA_CLIENT_ID}
+      TRACKMANIA_CLIENT_SECRET: ${TRACKMANIA_CLIENT_SECRET}
+      TRACKMANIA_REDIRECT_URI: ${TRACKMANIA_REDIRECT_URI}
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - pvm_network
+
+  frontend:
+    build:
+      context: ./pvm-frontend         # CHANGED
+      dockerfile: Dockerfile
+    container_name: pvm_frontend
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      NEXT_PUBLIC_API_URL: http://localhost:8080
+    depends_on:
+      - backend
+    networks:
+      - pvm_network
+
+networks:
+  pvm_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
