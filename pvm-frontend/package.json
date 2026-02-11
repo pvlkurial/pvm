@@ -1,0 +1,37 @@
+{
+  "name": "pvm",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --turbopack",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@heroui/navbar": "^2.2.22",
+    "@heroui/react": "^2.8.2",
+    "@heroui/system": "^2.4.20",
+    "@heroui/theme": "^2.4.20",
+    "@react-stately/data": "^3.14.1",
+    "axios": "^1.12.2",
+    "fast-average-color": "^9.5.0",
+    "framer-motion": "^12.23.12",
+    "next": "15.4.5",
+    "react": "19.1.0",
+    "react-colorful": "^5.6.1",
+    "react-dom": "19.1.0",
+    "react-icons": "^5.5.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.4.5",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
