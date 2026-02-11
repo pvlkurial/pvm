@@ -1,0 +1,27 @@
+/* [project]/src/fonts/mycustomfont_f078f4a2.module.css [app-client] (css) */
+@font-face {
+  font-family: myCustomFont;
+  src: url("../media/Ruigslay-s.p.c9f5ea8b.otf") format("opentype");
+  font-display: swap;
+  font-weight: 900;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: myCustomFont Fallback;
+  src: local(Arial);
+  ascent-override: 61.3%;
+  descent-override: 13.03%;
+  line-gap-override: 0.0%;
+  size-adjust: 124.32%;
+}
+
+.mycustomfont_f078f4a2-module__Qj6oiq__className {
+  font-family: myCustomFont, myCustomFont Fallback;
+}
+
+.mycustomfont_f078f4a2-module__Qj6oiq__variable {
+  --font-my-custom: "myCustomFont", "myCustomFont Fallback";
+}
+
+/*# sourceMappingURL=src_fonts_mycustomfont_f078f4a2_module_css_e59ae46c._.single.css.map*/

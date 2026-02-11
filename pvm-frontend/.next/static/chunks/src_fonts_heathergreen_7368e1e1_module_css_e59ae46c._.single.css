@@ -1,0 +1,27 @@
+/* [project]/src/fonts/heathergreen_7368e1e1.module.css [app-client] (css) */
+@font-face {
+  font-family: HeatherGreen;
+  src: url("../media/casko-s.p.71b8d2a7.otf") format("opentype");
+  font-display: swap;
+  font-weight: 900;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: HeatherGreen Fallback;
+  src: local(Arial);
+  ascent-override: 75.98%;
+  descent-override: 15.2%;
+  line-gap-override: 15.2%;
+  size-adjust: 131.61%;
+}
+
+.heathergreen_7368e1e1-module__oNltAa__className {
+  font-family: HeatherGreen, HeatherGreen Fallback;
+}
+
+.heathergreen_7368e1e1-module__oNltAa__variable {
+  --font-heathergreen: "HeatherGreen", "HeatherGreen Fallback";
+}
+
+/*# sourceMappingURL=src_fonts_heathergreen_7368e1e1_module_css_e59ae46c._.single.css.map*/
