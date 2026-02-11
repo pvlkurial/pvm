@@ -16,7 +16,7 @@ export default function Home() {
               PLAYER VS MAP
             </h1>
             <p className="text-xl md:text-2xl text-zinc-400 max-w-2xl mx-auto">
-              Push your limits on technical Trackmania maps
+              Push your limits on prestigious Trackmania maps
             </p>
           </div>
 
@@ -33,7 +33,7 @@ export default function Home() {
               <Button
                 size="lg"
                 className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8"
-                onPress={() => router.push("/mappacks/pvm")}
+                onPress={() => router.push("/mappacks")}
               >
                 View Mappacks
               </Button>
@@ -95,7 +95,7 @@ export default function Home() {
                     <h4 className="text-lg font-semibold text-white">Install the Plugin</h4>
                   </div>
                   <p className="text-sm text-zinc-400 pl-11">
-                    Download the PvM plugin from Openplanet to access all maps directly in-game
+                    Download the PvM plugin by Nax from Openplanet to access all maps directly in-game
                   </p>
                 </CardBody>
               </Card>
@@ -109,7 +109,7 @@ export default function Home() {
                     <h4 className="text-lg font-semibold text-white">Login & Track Progress</h4>
                   </div>
                   <p className="text-sm text-zinc-400 pl-11">
-                    Sign in with your Trackmania account to save records and track achievements
+                    Sign in with your Trackmania account to track achievements
                   </p>
                 </CardBody>
               </Card>
@@ -137,7 +137,7 @@ export default function Home() {
                     <h4 className="text-lg font-semibold text-white">Climb the Ranks</h4>
                   </div>
                   <p className="text-sm text-zinc-400 pl-11">
-                    Earn points for achievements and compete on the global leaderboard
+                    Earn points for achievements and compete on the mappack leaderboard
                   </p>
                 </CardBody>
               </Card>
@@ -149,7 +149,7 @@ export default function Home() {
               <CardBody className="p-8 text-center space-y-4">
                 <h3 className="text-2xl font-bold text-white">Ready to Challenge Yourself?</h3>
                 <p className="text-zinc-400">
-                  Join the community and start your journey through technical Trackmania maps
+                  Join the community and start your journey through hand-picked Trackmania maps
                 </p>
                 <div className="flex flex-wrap justify-center gap-4 pt-4">
                   {!isAuthenticated ? (
@@ -174,7 +174,7 @@ export default function Home() {
                     variant="bordered"
                     className="border-zinc-700 text-white hover:bg-zinc-800"
                     as="a"
-                    href="#"
+                    href="https://docs.google.com/spreadsheets/d/18iCfnvcRBmZW8fD3UzfZX17vCvH2OjDRm-XCQiQDNng/edit?pli=1&gid=1813424925#gid=1813424925"
                     target="_blank"
                   >
                     View Spreadsheet

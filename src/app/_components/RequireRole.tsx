@@ -19,12 +19,10 @@ export default function RequireRole({
     return <>{fallback}</>;
   }
 
-  // Admin can access everything
   if (user?.role === "admin") {
     return <>{children}</>;
   }
 
-  // Check if user has required role
   if (user?.role === role) {
     return <>{children}</>;
   }

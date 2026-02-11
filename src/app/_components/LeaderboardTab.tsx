@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Spinner } from "@heroui/react";
 import { Casko } from "@/fonts";
+import { MappackRank } from "@/types/mappack.types";
 
 interface LeaderboardEntry {
   player_id: string;
@@ -16,26 +17,6 @@ interface LeaderboardEntry {
     name: string;
     Records: null;
   };
-}
-
-interface MappackRank {
-  id: number;
-  mappack_id: string;
-  name: string;
-  pointsNeeded: number;
-  color: string;
-  backgroundGlow: boolean;
-  invertedColor: boolean;
-  textShadow: boolean;
-  glowIntensity: number;
-  borderWidth: number;
-  borderColor?: string | null;
-  symbolsAround?: string | null;
-  animationType: string;
-  cardStyle: string;
-  backgroundPattern: string;
-  fontSize: string;
-  fontWeight: string;
 }
 
 interface LeaderboardTabProps {

@@ -32,7 +32,7 @@ export default function RootLayout({
       <body className="antialiased min-h-screen w-full bg-gradient-to-b from-zinc-900 via-zinc-900 to-black">
       <Navbar position="static" isBlurred isBordered>
         <NavbarBrand>
-        <p className="font-ruigslay font-bold scale-140">Player vs Map</p>
+        <Link className="font-ruigslay font-bold scale-140 hover:animate-pulse" href="/">Player vs Map</Link>
       </NavbarBrand>
         <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>

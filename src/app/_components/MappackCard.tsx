@@ -1,6 +1,12 @@
 import { Card, CardHeader, Image } from "@heroui/react";
 import { useRouter } from "next/navigation";
-export default function MappackCard({ mappack }) {
+import {Mappack} from "@/types/mappack.types";
+
+interface MappackCardProps {
+  mappack: Mappack;
+}
+
+export default function MappackCard({ mappack }: MappackCardProps) {
   const router = useRouter();
   return (
     <div>

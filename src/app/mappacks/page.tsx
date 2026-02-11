@@ -4,12 +4,8 @@ import axios from "axios";
 import MappackCard from "../_components/MappackCard";
 import CreateMappackModal from "../_components/CreateMappackModal";
 import RequireRole from "../_components/RequireRole";
+import {Mappack} from "@/types/mappack.types";
 
-interface Mappack {
-  id: string;
-  name: string;
-  thumbnailURL: string;
-}
 
 export default function Home() {
   const [mappacks, setMappacks] = useState([]);
