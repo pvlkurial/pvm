@@ -1,0 +1,13 @@
+# Database
+CONNECTION_STRING=host=localhost user=pvm password=123 dbname=pvm port=5432 sslmode=disable TimeZone=Europe/Paris 
+
+# Trackmania OAuth
+TRACKMANIA_CLIENT_ID=get_from_trackmania_dev_portal
+TRACKMANIA_CLIENT_SECRET=get_from_trackmania_dev_portal
+TRACKMANIA_REDIRECT_URI=http://localhost:3000/auth/callback
+
+# JWT Secret (generate with: openssl rand -base64 32)
+JWT_SECRET=generate_random_32_char_string
+
+# Frontend
+NEXT_PUBLIC_API_URL=http://localhost:8080
