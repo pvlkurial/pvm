@@ -53,7 +53,7 @@ export default function TrackCard({
         <p className="text-white/30 text-sm">{track.author}</p>
         
         {/* Tier Badge */}
-        {tier && <TrackCardTier tier={tier} />}
+        
       </CardHeader>
       
       <Image
