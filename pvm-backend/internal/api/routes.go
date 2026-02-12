@@ -110,5 +110,5 @@ func (r *Routes) InitRoutes() {
 	r.GET("/mappacks/:mappack_id/players/:player_id/rank", controllers.AchievementController.GetPlayerRank)
 	r.GET("/mappacks/:mappack_id/players/:player_id/leaderboard-entry", controllers.AchievementController.GetPlayerLeaderboardEntry)
 
-	r.Run("localhost:8080")
+	r.Run(":8080")
 }
