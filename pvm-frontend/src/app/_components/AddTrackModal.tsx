@@ -71,8 +71,7 @@ export default function AddTrackModal({
       const timeGoalsWithValues = getTimeGoalsWithValues(timegoals);
       await trackService.addTimeGoals(mappackId, trackId, timeGoalsWithValues);
 
-      // Fetch records
-      // await trackService.fetchRecords(trackId);
+      await trackService.fetchRecords(trackId);
 
       resetForm();
       onOpenChange();

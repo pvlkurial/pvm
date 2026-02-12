@@ -55,7 +55,7 @@ export const trackService = {
   },
 
   // FETCH TRACKS RIGHT AFTER ADDING A NEW TRACK
-  // fetchRecords: async (trackId: string): Promise<void> => {
-  //   await axios.post(`${API_BASE}/tracks/${trackId}/records`);
-  // },
+  fetchRecords: async (trackId: string): Promise<void> => {
+    await axios.post(`${API_BASE}/tracks/${trackId}/records`);
+  },
 }
