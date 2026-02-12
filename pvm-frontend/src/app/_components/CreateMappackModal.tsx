@@ -64,7 +64,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
     try {
       const mappackId = generateId(name);
       
-      await axios.post(`${API_BASE}/mappacks/`, {
+      await axios.post(`${API_BASE}/mappacks`, {
         id: mappackId,
         name: name,
         description: description,
