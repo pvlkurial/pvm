@@ -10,7 +10,7 @@ const (
 	RecordsPerRequest              = 100
 	TimesOfRecordsFetchPerTrack    = 1
 	FetchIntervalInHours           = 1
-	FetchIntervalDelayInSeconds    = 2
+	FetchIntervalDelayInSeconds    = 5
 	NadeoOAuthTokenURL             = "https://api.trackmania.com/api/access_token"
 	NadeoAPIBaseURL                = "https://api.trackmania.com/api"
 	GetMapRecordByAccountURL       = "https://prod.trackmania.core.nadeo.online/v2/mapRecords/"

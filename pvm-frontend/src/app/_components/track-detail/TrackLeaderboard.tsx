@@ -28,13 +28,13 @@ export function TrackLeaderboard({ records, timeGoals, trackId }: TrackLeaderboa
         <div className="flex items-center gap-3 mb-6">
           <FaDatabase className="w-6 h-6 text-blue-500/70" />
           <h3 className="text-3xl font-ruigslay font-bold">Leaderboard</h3>
-      <ProtectedContent>
+      <RequireRole role="admin">
         <UpdateRecordsButton 
           trackId={trackId || ""} 
           playerId={user?.id || ""} 
           onSuccess={() => window.location.reload()}
         />
-      </ProtectedContent>
+      </RequireRole>
         </div>
         <RecordsTable records={records} timeGoals={timeGoals} />
       </CardBody>
