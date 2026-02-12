@@ -25,7 +25,7 @@ export function MappackContent({
   onTabChange,
   tierRefs,
 }: MappackContentProps) {
-  const [alwaysShowTrackDetails, setAlwaysShowTrackDetails] = useState(false);
+  const [alwaysShowTrackDetails, setAlwaysShowTrackDetails] = useState(true);
   const [selectedTab, setSelectedTab] = useState("maps");
 
   const handleTabChange = (key: string) => {

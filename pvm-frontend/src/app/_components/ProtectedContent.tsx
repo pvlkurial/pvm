@@ -20,7 +20,6 @@ export default function ProtectedContent({
   if (!isAuthenticated) {
     return (
       <div className="flex flex-col items-center justify-center p-8">
-        <p className="text-white/60 mb-4">Please login to view this content</p>
         <Button onClick={login} color="primary">
           Login with Trackmania
         </Button>

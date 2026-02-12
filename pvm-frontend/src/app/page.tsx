@@ -1,5 +1,5 @@
 "use client";
-import { Button, Card, CardBody, Chip } from "@heroui/react";
+import { Button, Card, CardBody } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -76,7 +76,7 @@ export default function Home() {
                 <div className="text-4xl">⭐</div>
                 <h3 className="text-xl font-bold text-white">Tiered Maps</h3>
                 <p className="text-sm text-zinc-400">
-                  Progress through difficulty tiers from beginner to extreme tech
+                  Progress through difficulty tiers from beginner to extreme
                 </p>
               </CardBody>
             </Card>
@@ -92,10 +92,11 @@ export default function Home() {
                     <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
                       1
                     </div>
-                    <h4 className="text-lg font-semibold text-white">Install the Plugin</h4>
+                    <h4 className="text-lg font-semibold text-white">Install the Plugin (Optional)</h4>
                   </div>
                   <p className="text-sm text-zinc-400 pl-11">
                     Download the PvM plugin by Nax from Openplanet to access all maps directly in-game
+                    (Not tied to this site, just good for some PVMs)
                   </p>
                 </CardBody>
               </Card>
@@ -164,21 +165,12 @@ export default function Home() {
                     <Button
                       size="lg"
                       className="bg-blue-500 hover:bg-blue-600 text-white font-semibold"
-                      onPress={() => router.push("/mappacks/pvm")}
+                      onPress={() => router.push("/mappacks")}
                     >
-                      Browse Maps
+                      Pick a PVM
                     </Button>
                   )}
-                  <Button
-                    size="lg"
-                    variant="bordered"
-                    className="border-zinc-700 text-white hover:bg-zinc-800"
-                    as="a"
-                    href="https://docs.google.com/spreadsheets/d/18iCfnvcRBmZW8fD3UzfZX17vCvH2OjDRm-XCQiQDNng/edit?pli=1&gid=1813424925#gid=1813424925"
-                    target="_blank"
-                  >
-                    View Spreadsheet
-                  </Button>
+
                 </div>
               </CardBody>
             </Card>

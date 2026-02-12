@@ -58,7 +58,7 @@ export default function MappackPage({
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-white text-xl">Loading mappack...</p>
+        <p className="text-white text-xl font-ruigslay animate-pulse">Loading mappack...</p>
       </div>
     );
   }

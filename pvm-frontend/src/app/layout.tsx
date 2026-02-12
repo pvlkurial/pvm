@@ -5,19 +5,11 @@ import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/navbar";
 import "./globals.css";
 import React from "react";
 import Link from "next/link";
-import { Button } from "@heroui/react";
-import { Inter } from 'next/font/google'
 import { Casko, myCustomFont } from '@/fonts'
 import { HeatherGreen } from '@/fonts'
 import Footer from "./_components/Footer";
 import LoginButton from "./_components/LoginButton";
 import { AuthProvider } from "@/contexts/AuthContext";
-
-const inter = Inter({ 
-  weight: '900',
-  style: 'italic',
-  subsets: ['latin'] 
-})
 
 export default function RootLayout({
   children,
@@ -27,12 +19,17 @@ export default function RootLayout({
 
   return (
     <span>
-    <html lang="en" className={`${myCustomFont.variable} ${HeatherGreen.variable} ${Casko.variable}`}>
+    <html lang="en" className={`${myCustomFont.variable} ${HeatherGreen.variable} ${Casko.variable}`}
+    style={{ backgroundColor: '#000' }}>
+      <body className="antialiased min-h-screen w-full bg-gradient-to-b from-zinc-900 via-zinc-900 to-black
+      flex flex-col">
       <AuthProvider>
-      <body className="antialiased min-h-screen w-full bg-gradient-to-b from-zinc-900 via-zinc-900 to-black">
       <Navbar position="static" isBlurred isBordered>
         <NavbarBrand>
-        <Link className="font-ruigslay font-bold scale-140 hover:animate-pulse" href="/">Player vs Map</Link>
+        <Link className="font-ruigslay font-bold scale-140 hover:animate-pulse" href="/">
+        <span className="sm:hidden">PvM</span>
+        <span className="hidden md:inline">Player vs Map</span>
+        </Link>
       </NavbarBrand>
         <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
@@ -48,13 +45,13 @@ export default function RootLayout({
       </NavbarContent>
       </Navbar>
       <hr className="h-px bg-white-300"/>
-          <div className="w-full smooth-scroll">
+          <div className="w-full smooth-scroll flex-1">
             {children}
           </div>
-      </body>
+        <Footer/>
       </AuthProvider>
+      </body>
     </html>
-      <Footer></Footer>
 </span>
   );
 }
