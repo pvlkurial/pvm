@@ -12,7 +12,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-ENV NEXT_PUBLIC_API_URL=http://pvm.czechout.club/api
+ENV NEXT_PUBLIC_API_URL=https://pvm.czechout.club/api
 
 ENV NEXT_TELEMETRY_DISABLED=1
 
