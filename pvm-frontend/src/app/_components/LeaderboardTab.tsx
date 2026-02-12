@@ -106,10 +106,10 @@ export default function LeaderboardTab({ mappackId, mappackRanks }: LeaderboardT
   const [loading, setLoading] = useState(true);
   const [activeRank, setActiveRank] = useState<string>("");
   const rankRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
-
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/mappacks/${mappackId}/leaderboard?limit=100`)
+      .get(`${API_BASE}/mappacks/${mappackId}/leaderboard?limit=100`)
       .then((response) => {
         setLeaderboard(response.data);
         setLoading(false);
