@@ -38,6 +38,9 @@ export default function CreateMappackModal() {
   const [currentGoalDifficulty, setCurrentGoalDifficulty] = useState(1);
   const router = useRouter();
 
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
+
   const generateId = (name: string) => {
     return name.toLowerCase().replace(/\s+/g, '_');
   };
@@ -61,7 +64,7 @@ export default function CreateMappackModal() {
     try {
       const mappackId = generateId(name);
       
-      await axios.post("http://localhost:8080/mappacks", {
+      await axios.post(`${API_BASE}/mappacks/`, {
         id: mappackId,
         name: name,
         description: description,
@@ -70,7 +73,7 @@ export default function CreateMappackModal() {
       });
 
       for (const goal of timeGoals) {
-        await axios.post(`http://localhost:8080/mappacks/${mappackId}/timegoals`, {
+        await axios.post(`${API_BASE}/mappacks/${mappackId}/timegoals`, {
           name: goal.name,
           difficulty: goal.difficulty,
           mappack_id: mappackId,
