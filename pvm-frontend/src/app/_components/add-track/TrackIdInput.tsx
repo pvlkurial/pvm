@@ -53,7 +53,7 @@ export function TrackIdInput({
             label="TMX ID"
             placeholder="170211"
             variant="bordered"
-            value={tmxId}
+            value="DOESNT WORK YET"
             onValueChange={onTmxIdChange}
             classNames={inputClassNames}
           />

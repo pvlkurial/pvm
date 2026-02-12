@@ -41,7 +41,7 @@ export default function TrackCard({
 
   return (
     <Card
-      className="h-50h group transition-transform md:hover:scale-105 duration-300 hover:z-20 transform-gpu overflow-hidden relative"
+      className="aspect-square h-50h group transition-transform md:hover:scale-105 duration-300 hover:z-20 transform-gpu overflow-hidden relative"
       shadow="sm"
       isPressable
       onPress={() => router.push(`${mappackId}/${track.id}`)}
