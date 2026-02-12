@@ -88,7 +88,6 @@ export function MappackSidebar({
                 <AddTrackModal
                   timegoals={mappack.timeGoals}
                   mappackId={mappack.id}
-                  tiers={mappack.mappackTiers}
                 />
               </RequireRole>
             </div>

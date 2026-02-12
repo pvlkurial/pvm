@@ -7,39 +7,32 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@heroui/react";
-import { TimeGoal, MappackTier } from "@/types/mappack.types";
+import { TimeGoal } from "@/types/mappack.types";
 import { useAddTrackForm } from "@/hooks/useAddTrackForm";
 import { trackService } from "@/services/track.service";
 import { TrackIdInput } from "./add-track/TrackIdInput";
-import { TrackMetadataSelectors } from "./add-track/TrackMetadataSelectors";
 import { TimeGoalsInput } from "./add-track/TimeGoalsInput";
 import { MODAL_INPUT_CLASSNAMES, MODAL_CLASSNAMES } from "@/constants/modal-styles";
 
 interface AddTrackModalProps {
   timegoals: TimeGoal[];
   mappackId: string;
-  tiers: MappackTier[];
 }
 
 export default function AddTrackModal({
   timegoals,
   mappackId,
-  tiers,
 }: AddTrackModalProps) {
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const {
     trackUuid,
     tmxId,
-    tierId,
-    mapStyleName,
     timeGoalValues,
     selectedTab,
     isLoading,
     setTrackUuid,
     setTmxId,
-    setTierId,
-    setMapStyleName,
     setSelectedTab,
     setIsLoading,
     handleTimeGoalChange,
@@ -60,12 +53,9 @@ export default function AddTrackModal({
       setIsLoading(true);
       const trackId = getTrackId();
 
-      // Add track to mappack
       await trackService.addToMappack({
         mappackId,
         trackId,
-        tierId,
-        mapStyle: mapStyleName,
       });
 
       const timeGoalsWithValues = getTimeGoalsWithValues(timegoals);
@@ -114,15 +104,6 @@ export default function AddTrackModal({
                   onTabChange={setSelectedTab}
                   onUuidChange={setTrackUuid}
                   onTmxIdChange={setTmxId}
-                  inputClassNames={MODAL_INPUT_CLASSNAMES}
-                />
-
-                <TrackMetadataSelectors
-                  tiers={tiers}
-                  tierId={tierId}
-                  mapStyleName={mapStyleName}
-                  onTierChange={setTierId}
-                  onStyleChange={setMapStyleName}
                   inputClassNames={MODAL_INPUT_CLASSNAMES}
                 />
 

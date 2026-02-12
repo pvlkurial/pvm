@@ -5,8 +5,6 @@ import { TimeGoal } from '@/types/mappack.types';
 export function useAddTrackForm() {
   const [trackUuid, setTrackUuid] = useState("");
   const [tmxId, setTmxId] = useState("");
-  const [tierId, setTierId] = useState<number | null>(null);
-  const [mapStyleName, setMapStyleName] = useState("");
   const [timeGoalValues, setTimeGoalValues] = useState<Record<number, string>>({});
   const [selectedTab, setSelectedTab] = useState("uuid");
   const [isLoading, setIsLoading] = useState(false);
@@ -24,7 +22,7 @@ export function useAddTrackForm() {
 
   const getTimeGoalsWithValues = (timeGoals: TimeGoal[]) => {
     return timeGoals
-      .filter(tg => tg.id) // Filter out items without id
+      .filter(tg => tg.id)
       .filter(tg => timeGoalValues[tg.id!] && timeGoalValues[tg.id!].trim() !== "")
       .map(tg => ({
         time_goal_id: tg.id!,
@@ -35,8 +33,6 @@ export function useAddTrackForm() {
   const resetForm = () => {
     setTrackUuid("");
     setTmxId("");
-    setTierId(null);
-    setMapStyleName("");
     setTimeGoalValues({});
   };
 
@@ -45,24 +41,17 @@ export function useAddTrackForm() {
     if (!trackId) {
       return { isValid: false, error: "Track ID is required" };
     }
-    if (!mapStyleName) {
-      return { isValid: false, error: "Map Style is required" };
-    }
     return { isValid: true };
   };
 
   return {
     trackUuid,
     tmxId,
-    tierId,
-    mapStyleName,
     timeGoalValues,
     selectedTab,
     isLoading,
     setTrackUuid,
     setTmxId,
-    setTierId,
-    setMapStyleName,
     setSelectedTab,
     setIsLoading,
     handleTimeGoalChange,
