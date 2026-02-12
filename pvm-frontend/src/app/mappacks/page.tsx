@@ -9,8 +9,9 @@ import {Mappack} from "@/types/mappack.types";
 
 export default function Home() {
   const [mappacks, setMappacks] = useState([]);
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
   useEffect(() => {
-  axios.get('http://localhost:8080/mappacks')
+  axios.get(`${API_BASE}/mappacks`)
     .then(response => setMappacks(response.data))
     .catch(err => {
     console.log('Error details:', err.message, err.config);})

@@ -23,25 +23,6 @@ func (m *MappackSeeder) seedMappacks() error {
 	m.DB.Save(mapStyles)
 	dbMapStyles := []models.MapStyle{}
 	m.DB.Find(&dbMapStyles)
-	mappacks := []models.Mappack{
-		{
-			ID:          "mappack-beginner",
-			Name:        "Beginner Pack",
-			Description: "A collection of beginner-friendly tracks to get you started.",
-			MapStyle:    dbMapStyles[0],
-		},
-		{
-			ID:          "mappack-advanced",
-			Name:        "Advanced Pack",
-			Description: "Challenging tracks for experienced players.",
-			MapStyle:    dbMapStyles[1],
-		},
-		{
-			ID:          "mappack-pro",
-			Name:        "Pro Pack",
-			Description: "The ultimate test for pro players with the toughest tracks.",
-			MapStyle:    dbMapStyles[2],
-		},
-	}
+	mappacks := []models.Mappack{}
 	return m.DB.Save(mappacks).Error
 }
