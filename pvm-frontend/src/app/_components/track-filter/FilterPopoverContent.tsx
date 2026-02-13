@@ -1,4 +1,3 @@
-// components/track-filter/FilterPopoverContent.tsx
 import { Button } from "@heroui/react";
 import { TimeGoal, MappackTrack } from "@/types/mappack.types";
 import { getNotAchievedCount } from "@/utils/track-filter.utils";
@@ -21,7 +20,6 @@ export function FilterPopoverContent({
   onApply,
   onClear,
 }: FilterPopoverContentProps) {
-  // Sort time goals by multiplier (highest first)
   const sortedTimeGoals = [...timeGoals].sort((a, b) => b.multiplier - a.multiplier);
 
   return (
@@ -35,7 +33,7 @@ export function FilterPopoverContent({
       </div>
 
       {/* Body */}
-      <div className="p-4 space-y-3 max-h-[60vh] overflow-y-auto">
+      <div className="p-4 space-y-3 max-h-[60vh] overflow-y-auto scrollbar-hide">
         <p className="text-xs text-zinc-400 font-semibold uppercase tracking-wider">
           Select Time Goal
         </p>
@@ -43,7 +41,6 @@ export function FilterPopoverContent({
           {sortedTimeGoals.map((timeGoal) => {
             const notAchieved = getNotAchievedCount(tracks, timeGoal.id!);
             const isSelected = selectedTimeGoal === timeGoal.id;
-
             return (
               <TimeGoalOption
                 key={timeGoal.id}

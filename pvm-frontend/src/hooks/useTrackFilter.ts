@@ -1,29 +1,41 @@
-import { useState } from 'react';
-import { MappackTrack } from '@/types/mappack.types';
-import { filterTracksByTimeGoal } from '@/utils/track-filter.utils';
+import { useState, useCallback } from "react";
+import { MappackTrack } from "@/types/mappack.types";
 
 export function useTrackFilter(
   tracks: MappackTrack[],
-  onFilterChange: (filtered: MappackTrack[]) => void
+  onFilterChange: (filteredTracks: MappackTrack[]) => void
 ) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTimeGoal, setSelectedTimeGoal] = useState<number | null>(null);
+  const [isFilterActive, setIsFilterActive] = useState(false);
 
-  const applyFilter = () => {
-    const filtered = filterTracksByTimeGoal(tracks, selectedTimeGoal);
-    onFilterChange(filtered);
+  const toggleTimeGoal = useCallback((id: number) => {
+    setSelectedTimeGoal((prev) => (prev === id ? null : id));
+  }, []);
+
+  const applyFilter = useCallback(() => {
+    if (selectedTimeGoal === null) {
+      onFilterChange(tracks);
+      setIsFilterActive(false);
+    } else {
+      const filtered = tracks.filter((track) => {
+        const timeGoalTrack = track.timeGoalMappackTrack?.find(
+          (tg) => tg.time_goal_id === selectedTimeGoal
+        );
+        return !timeGoalTrack || !timeGoalTrack.is_achieved;
+      });
+      onFilterChange(filtered);
+      setIsFilterActive(true);
+    }
     setIsOpen(false);
-  };
+  }, [tracks, selectedTimeGoal, onFilterChange]);
 
-  const clearFilter = () => {
+  const clearFilter = useCallback(() => {
     setSelectedTimeGoal(null);
+    setIsFilterActive(false);
     onFilterChange(tracks);
     setIsOpen(false);
-  };
-
-  const toggleTimeGoal = (timeGoalId: number) => {
-    setSelectedTimeGoal(selectedTimeGoal === timeGoalId ? null : timeGoalId);
-  };
+  }, [tracks, onFilterChange]);
 
   return {
     isOpen,
@@ -32,6 +44,6 @@ export function useTrackFilter(
     applyFilter,
     clearFilter,
     toggleTimeGoal,
-    isFilterActive: selectedTimeGoal !== null,
+    isFilterActive,
   };
 }

@@ -1,10 +1,11 @@
-// components/mappack-page/MappackContent.tsx
 import { useState } from "react";
 import { Switch, Tabs, Tab } from "@heroui/react";
 import TrackFilter from "@/app/_components/TrackFilter";
 import LeaderboardTab from "@/app/_components/LeaderboardTab";
 import { TierSection } from "./TierSection";
 import { Mappack, MappackTrack, MappackTier } from "@/types/mappack.types";
+import { MappackProgressBar } from "./mappack-page/MappackProgressBar";
+import { TierSortButton } from "./TierSortButton";
 
 interface MappackContentProps {
   mappack: Mappack;
@@ -12,8 +13,10 @@ interface MappackContentProps {
   tracksByTier: Record<string, { tier: MappackTier | null; tracks: MappackTrack[] }>;
   filteredTracks: MappackTrack[];
   onFilterChange: (tracks: MappackTrack[]) => void;
+  onSortOrderChange: (order: "asc" | "desc") => void;
   onTabChange: (tab: string) => void;
   tierRefs: React.MutableRefObject<{ [key: string]: HTMLDivElement | null }>;
+  playerId?: string;
 }
 
 export function MappackContent({
@@ -22,8 +25,10 @@ export function MappackContent({
   tracksByTier,
   filteredTracks,
   onFilterChange,
+  onSortOrderChange,
   onTabChange,
   tierRefs,
+  playerId,
 }: MappackContentProps) {
   const [alwaysShowTrackDetails, setAlwaysShowTrackDetails] = useState(true);
   const [selectedTab, setSelectedTab] = useState("maps");
@@ -33,6 +38,17 @@ export function MappackContent({
     onTabChange(key);
   };
 
+  const completionCurrent = playerId 
+    ? mappack.MappackTrack.reduce((total, track) => {
+        const achievedCount = track.timeGoalMappackTrack?.filter(tg => tg.is_achieved).length || 0;
+        return total + achievedCount;
+      }, 0)
+    : 0;
+
+  const completionTotal = mappack.MappackTrack.reduce((total, track) => {
+    return total + (track.timeGoalMappackTrack?.length || 0);
+  }, 0);
+
   return (
     <div className="lg:col-start-2 lg:col-span-4 col-span-1">
       <div className="flex items-center gap-4 mb-4 pt-3">
@@ -41,6 +57,7 @@ export function MappackContent({
           tracks={mappack.MappackTrack}
           onFilterChange={onFilterChange}
         />
+        <TierSortButton onSortOrderChange={onSortOrderChange} />
         <Switch
           isSelected={alwaysShowTrackDetails}
           onValueChange={setAlwaysShowTrackDetails}
@@ -52,7 +69,6 @@ export function MappackContent({
           <span className="text-sm text-white">Always Show Track Details</span>
         </Switch>
       </div>
-
       <Tabs
         selectedKey={selectedTab}
         onSelectionChange={(key) => handleTabChange(key as string)}
@@ -68,6 +84,12 @@ export function MappackContent({
         className="mb-6"
       >
         <Tab key="maps" title="Maps">
+          {playerId && (
+            <MappackProgressBar
+              completionCurrent={completionCurrent}
+              completionTotal={completionTotal}
+            />
+          )}
           <div className="flex flex-col gap-8">
             {sortedTiers.map((tierName) => {
               const tierData = tracksByTier[tierName];
@@ -87,7 +109,6 @@ export function MappackContent({
             })}
           </div>
         </Tab>
-
         <Tab key="leaderboard" title="Leaderboard">
           <LeaderboardTab
             mappackId={mappack.id}

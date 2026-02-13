@@ -242,7 +242,6 @@ func (t *NadeoAPIClient) FetchRecordsOfTrack(trackuid string, length int, offset
 }
 
 func (t *NadeoAPIClient) FetchRecordsOfTrackForPlayer(trackID string, playerId string, trackUID string) (models.Record, error) {
-	// First request - get player's record time
 	url := fmt.Sprintf("%sby-account/?accountIdList=%s&mapId=%s",
 		constants.GetMapRecordByAccountURL, playerId, trackID)
 	req, err := http.NewRequest("GET", url, nil)
@@ -272,7 +271,6 @@ func (t *NadeoAPIClient) FetchRecordsOfTrackForPlayer(trackID string, playerId s
 		return models.Record{}, fmt.Errorf("no records found for player")
 	}
 
-	// Extract position and zone info
 	position := 0
 	zoneID := "-"
 	zoneName := "World"

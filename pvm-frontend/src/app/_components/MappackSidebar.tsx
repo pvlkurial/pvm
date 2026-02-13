@@ -30,6 +30,8 @@ export function MappackSidebar({
   onEditSave,
 }: MappackSidebarProps) {
   return (
+    <div className="bg-white-900 lg:sticky lg:top-4 lg:self-start lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto scrollbar-hide scrollbar-thumb-gray-600 scrollbar-track-transparent">
+      <div className="flex flex-col gap-4 p-4">
     <div className="bg-white-900 lg:sticky lg:top-4 lg:self-start">
       <div className="flex flex-col gap-4 p-4">
         <div className="flex justify-center items-center">
@@ -106,6 +108,8 @@ export function MappackSidebar({
           </RequireRole>
         </div>
       </div>
+    </div>
+    </div>
     </div>
   );
 }

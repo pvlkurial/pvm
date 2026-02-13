@@ -8,6 +8,7 @@ import { groupTracksByTier, sortTiersByPoints } from "@/utils/mappack.utils";
 import { useTierScroll } from "@/hooks/useTierScroll";
 import { MappackSidebar } from "@/app/_components/MappackSidebar";
 import { MappackContent } from "@/app/_components/MappackContent";
+import { PlayerStats } from "@/app/_components/PlayerStats";
 
 export default function MappackPage({
   params,
@@ -16,12 +17,12 @@ export default function MappackPage({
 }) {
   const { mappack: mappackId } = use(params);
   const { user } = useAuth();
-
   const [mappack, setMappack] = useState<Mappack | null>(null);
   const [filteredTracks, setFilteredTracks] = useState<MappackTrack[]>([]);
   const [selectedTab, setSelectedTab] = useState("maps");
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [tierSortOrder, setTierSortOrder] = useState<"asc" | "desc">("asc");
 
   useEffect(() => {
     const fetchMappack = async () => {
@@ -36,12 +37,11 @@ export default function MappackPage({
         setLoading(false);
       }
     };
-
     fetchMappack();
   }, [mappackId, user?.id]);
 
   const tracksByTier = groupTracksByTier(filteredTracks);
-  const sortedTiers = sortTiersByPoints(tracksByTier);
+  const sortedTiers = sortTiersByPoints(tracksByTier, tierSortOrder);
 
   const { activeTier, tierRefs, scrollToTier } = useTierScroll(tracksByTier);
 
@@ -87,16 +87,26 @@ export default function MappackPage({
           onEditSave={handleEditSave}
         />
       </div>
-
       <MappackContent
         mappack={mappack}
         sortedTiers={sortedTiers}
         tracksByTier={tracksByTier}
         filteredTracks={filteredTracks}
         onFilterChange={setFilteredTracks}
+        onSortOrderChange={setTierSortOrder}
         onTabChange={setSelectedTab}
         tierRefs={tierRefs}
+        playerId={user?.id}
       />
+      {user?.id && (
+        <PlayerStats
+          mappackId={mappackId}
+          playerId={user.id}
+          totalTracks={mappack.MappackTrack.length}
+          totalTimeGoals={mappack.timeGoals.length}
+          ranks={mappack.mappackRanks}
+        />
+      )}
     </div>
   );
 }

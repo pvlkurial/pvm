@@ -44,6 +44,11 @@ func (n *nadeoWorker) Start() {
 						if err != nil {
 							fmt.Printf("Error in nadeo worker while fetching records: %v\n", err)
 						}
+						if len(records) < 100 {
+							fmt.Printf("Fetched %d records for track %s, stopping fetch for this track.\n", len(records), track.ID)
+							time.Sleep(constants.FetchIntervalDelayInSeconds * time.Second)
+							break
+						}
 						for j := range records {
 							(records)[j].TrackID = track.ID
 							(records)[j].ID = fmt.Sprintf("%s_%s", track.ID, (records)[j].PlayerID)
