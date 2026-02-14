@@ -113,6 +113,7 @@ export function MappackContent({
           <LeaderboardTab
             mappackId={mappack.id}
             mappackRanks={mappack.mappackRanks}
+            loggedInMappack={playerId ? mappack : undefined}
           />
         </Tab>
       </Tabs>

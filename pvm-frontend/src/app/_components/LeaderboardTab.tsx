@@ -3,7 +3,8 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { Spinner } from "@heroui/react";
 import { Casko } from "@/fonts";
-import { MappackRank } from "@/types/mappack.types";
+import { MappackRank, Mappack } from "@/types/mappack.types";
+import PlayerDetailModal from "./player-detail/PlayerDetailModal";
 
 interface LeaderboardEntry {
   player_id: string;
@@ -22,6 +23,7 @@ interface LeaderboardEntry {
 interface LeaderboardTabProps {
   mappackId: string;
   mappackRanks: MappackRank[];
+  loggedInMappack?: Mappack;
 }
 
 const getPlayerRank = (points: number, ranks: MappackRank[]): MappackRank | null => {
@@ -101,12 +103,17 @@ const getFontWeightClass = (fontWeight: string): string => {
   }
 };
 
-export default function LeaderboardTab({ mappackId, mappackRanks }: LeaderboardTabProps) {
+export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappack }: LeaderboardTabProps) {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeRank, setActiveRank] = useState<string>("");
+  const [selectedPlayer, setSelectedPlayer] = useState<{
+    playerId: string;
+    playerName: string;
+  } | null>(null);
   const rankRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+
   useEffect(() => {
     axios
       .get(`${API_BASE}/mappacks/${mappackId}/leaderboard?limit=100`)
@@ -161,6 +168,10 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
     return () => observer.disconnect();
   }, [playersByRank]);
 
+  const handlePlayerClick = (playerId: string, playerName: string) => {
+    setSelectedPlayer({ playerId, playerName });
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-96">
@@ -183,127 +194,198 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
   }
 
   return (
-    <div className="flex flex-col gap-8">
-      {sortedRanks.map((rankName) => {
-        const rankData = playersByRank[rankName];
-        const rank = rankData.rank;
-        if (!rank) return null;
-        
-        const rankColor = rank.color || "#6b7280";
-        const borderColorToUse = rank.borderColor || rankColor;
-        const glowOpacity = Math.min(100, Math.max(0, rank.glowIntensity || 50)) / 100;
-        let globalPosition = 0;
-        
-        // Calculate starting position for this rank
-        for (const r of sortedRanks) {
-          if (r === rankName) break;
-          globalPosition += playersByRank[r].players.length;
-        }
+    <>
+      <div className="flex flex-col gap-8">
+        {sortedRanks.map((rankName) => {
+          const rankData = playersByRank[rankName];
+          const rank = rankData.rank;
+          if (!rank) return null;
+          
+          const rankColor = rank.color || "#6b7280";
+          const borderColorToUse = rank.borderColor || rankColor;
+          const glowOpacity = Math.min(100, Math.max(0, rank.glowIntensity || 50)) / 100;
+          let globalPosition = 0;
+          
+          // Calculate starting position for this rank
+          for (const r of sortedRanks) {
+            if (r === rankName) break;
+            globalPosition += playersByRank[r].players.length;
+          }
 
-        return (
-          <div
-            key={rankName}
-            ref={(el) => {
-              rankRefs.current[rankName] = el;
-            }}
-            data-rank={rankName}
-            className="scroll-mt-4"
-          >
-            {/* Rank Header */}
-            <div className="mb-6 pt-4 justify-center items-center flex">
-              <div className="relative">
-                {rank.backgroundGlow && (
-                  <div 
-                    className="absolute inset-0 blur-xl"
+          return (
+            <div
+              key={rankName}
+              ref={(el) => {
+                rankRefs.current[rankName] = el;
+              }}
+              data-rank={rankName}
+              className="scroll-mt-4"
+            >
+              {/* Rank Header */}
+              <div className="mb-6 pt-4 justify-center items-center flex">
+                <div className="relative">
+                  {rank.backgroundGlow && (
+                    <div 
+                      className="absolute inset-0 blur-xl"
+                      style={{ 
+                        backgroundColor: rankColor,
+                        opacity: glowOpacity * 0.5
+                      }}
+                    />
+                  )}
+                  <h2
+                    className={`text-4xl justify-center ${Casko.className} relative`}
                     style={{ 
-                      backgroundColor: rankColor,
-                      opacity: glowOpacity * 0.5
+                      color: rankColor,
+                      textShadow: rank.textShadow ? `0 0 20px ${rankColor}${Math.round(glowOpacity * 128).toString(16).padStart(2, '0')}` : 'none'
                     }}
-                  />
-                )}
-                <h2
-                  className={`text-4xl justify-center ${Casko.className} relative`}
-                  style={{ 
-                    color: rankColor,
-                    textShadow: rank.textShadow ? `0 0 20px ${rankColor}${Math.round(glowOpacity * 128).toString(16).padStart(2, '0')}` : 'none'
-                  }}
-                >
-                  {rank.symbolsAround} {rankName.toUpperCase()} {rank.symbolsAround}
-                </h2>
+                  >
+                    {rank.symbolsAround} {rankName.toUpperCase()} {rank.symbolsAround}
+                  </h2>
+                </div>
               </div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-              {rankData.players.map((entry, index) => {
-                const position = globalPosition + index + 1;
-                const isTopThree = position <= 3;
-                const cardStyleEffects = getCardStyleEffects(rank.cardStyle, rankColor);
-                const animationClass = getAnimationClass(rank.animationType);
-                const patternBg = getBackgroundPattern(rank.backgroundPattern, rankColor);
-                const fontSizeClass = getFontSizeClass(rank.fontSize);
-                const fontWeightClass = getFontWeightClass(rank.fontWeight);
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {rankData.players.map((entry, index) => {
+                  const position = globalPosition + index + 1;
+                  const isTopThree = position <= 3;
+                  const cardStyleEffects = getCardStyleEffects(rank.cardStyle, rankColor);
+                  const animationClass = getAnimationClass(rank.animationType);
+                  const patternBg = getBackgroundPattern(rank.backgroundPattern, rankColor);
+                  const fontSizeClass = getFontSizeClass(rank.fontSize);
+                  const fontWeightClass = getFontWeightClass(rank.fontWeight);
 
-                // INVERTED COLOR STYLE
-                if (rank.invertedColor) {
+                  // INVERTED COLOR STYLE
+                  if (rank.invertedColor) {
+                    return (
+                      <div
+                        key={entry.player_id}
+                        onClick={() => handlePlayerClick(entry.player_id, entry.player.name)}
+                        className={`relative p-4 rounded-lg transition-all duration-200 hover:scale-[1.02] overflow-hidden cursor-pointer ${animationClass}`}
+                        style={{
+                          background: cardStyleEffects.background || `linear-gradient(135deg, ${rankColor}dd, ${rankColor}aa)`,
+                          border: `${rank.borderWidth || 2}px solid ${borderColorToUse}`,
+                          boxShadow: rank.backgroundGlow 
+                            ? `0 0 ${20 * glowOpacity}px ${rankColor}${Math.round(glowOpacity * 96).toString(16).padStart(2, '0')}`
+                            : 'none',
+                          backgroundImage: patternBg,
+                          backgroundSize: rank.backgroundPattern === "dots" ? "20px 20px" : rank.backgroundPattern === "grid" ? "20px 20px" : "auto",
+                          filter: cardStyleEffects.filter,
+                          animation: cardStyleEffects.animation,
+                        }}
+                      >
+                        {/* Shine overlay for shine animation */}
+                        {rank.animationType === "shine" && (
+                          <div 
+                            className="absolute inset-0 opacity-30 animate-shine-move"
+                            style={{
+                              background: `linear-gradient(45deg, transparent 30%, white 50%, transparent 70%)`,
+                            }}
+                          />
+                        )}
+                        
+                        {/* Position */}
+                        <div className="absolute top-2 right-2">
+                          <span 
+                            className="text-xs font-mono font-bold"
+                            style={{ color: `${rankColor}20` }}
+                          >
+                            #{position}
+                          </span>
+                        </div>
+
+                        <div className="flex items-center gap-4 relative z-10">
+                          {/* Points - inverted: dark text */}
+                          <div className="flex-shrink-0 text-left">
+                            <p 
+                              className="font-bold text-2xl font-mono leading-none"
+                              style={{ 
+                                color: '#000000',
+                                textShadow: rank.textShadow ? `0 0 10px ${rankColor}` : 'none'
+                              }}
+                            >
+                              {entry.total_points}
+                            </p>
+                            <p className="text-xs uppercase tracking-wider mt-1 text-black/60">
+                              pts
+                            </p>
+                          </div>
+
+                          {/* Player Name - inverted: dark text */}
+                          <div className="flex-1 min-w-0 pr-6">
+                            <p 
+                              className={`${fontSizeClass} ${fontWeightClass} leading-tight`}
+                              style={{ 
+                                color: '#000000',
+                                textShadow: rank.textShadow ? `0 0 10px ${rankColor}40` : 'none'
+                              }}
+                            >
+                              {entry.player.name}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  // NORMAL STYLE
                   return (
                     <div
                       key={entry.player_id}
-                      className={`relative p-4 rounded-lg transition-all duration-200 hover:scale-[1.02] overflow-hidden ${animationClass}`}
+                      onClick={() => handlePlayerClick(entry.player_id, entry.player.name)}
+                      className={`relative p-4 rounded-lg transition-all duration-200 hover:scale-[1.02] cursor-pointer ${animationClass} ${
+                        isTopThree
+                          ? "bg-gradient-to-r from-white/10 to-white/5"
+                          : "bg-white/5 hover:bg-white/10"
+                      }`}
                       style={{
-                        background: cardStyleEffects.background || `linear-gradient(135deg, ${rankColor}dd, ${rankColor}aa)`,
-                        border: `${rank.borderWidth || 2}px solid ${borderColorToUse}`,
-                        boxShadow: rank.backgroundGlow 
+                        border: `${rank.borderWidth || 1}px solid ${isTopThree ? `${borderColorToUse}40` : 'rgba(255,255,255,0.1)'}`,
+                        boxShadow: rank.backgroundGlow && isTopThree
                           ? `0 0 ${20 * glowOpacity}px ${rankColor}${Math.round(glowOpacity * 96).toString(16).padStart(2, '0')}`
                           : 'none',
                         backgroundImage: patternBg,
                         backgroundSize: rank.backgroundPattern === "dots" ? "20px 20px" : rank.backgroundPattern === "grid" ? "20px 20px" : "auto",
-                        filter: cardStyleEffects.filter,
-                        animation: cardStyleEffects.animation,
+                        ...cardStyleEffects,
                       }}
                     >
-                      {/* Shine overlay for shine animation */}
+                      {/* Shine overlay */}
                       {rank.animationType === "shine" && (
                         <div 
-                          className="absolute inset-0 opacity-30 animate-shine-move"
+                          className="absolute inset-0 opacity-20 animate-shine-move"
                           style={{
                             background: `linear-gradient(45deg, transparent 30%, white 50%, transparent 70%)`,
                           }}
                         />
                       )}
-                      
+
                       {/* Position */}
                       <div className="absolute top-2 right-2">
-                        <span 
-                          className="text-xs font-mono font-bold"
-                          style={{ color: `${rankColor}20` }}
-                        >
+                        <span className="text-xs text-white/30 font-mono">
                           #{position}
                         </span>
                       </div>
 
                       <div className="flex items-center gap-4 relative z-10">
-                        {/* Points - inverted: dark text */}
+                        {/* Points */}
                         <div className="flex-shrink-0 text-left">
                           <p 
-                            className="font-bold text-2xl font-mono leading-none"
-                            style={{ 
-                              color: '#000000',
-                              textShadow: rank.textShadow ? `0 0 10px ${rankColor}` : 'none'
+                            className="font-bold text-2xl font-mono text-green-400 leading-none"
+                            style={{
+                              textShadow: rank.textShadow ? `0 0 10px #4ade8080` : 'none'
                             }}
                           >
                             {entry.total_points}
                           </p>
-                          <p className="text-xs uppercase tracking-wider mt-1 text-black/60">
+                          <p className="text-xs text-white/40 uppercase tracking-wider mt-1">
                             pts
                           </p>
                         </div>
 
-                        {/* Player Name - inverted: dark text */}
+                        {/* Player Name */}
                         <div className="flex-1 min-w-0 pr-6">
                           <p 
-                            className={`${fontSizeClass} ${fontWeightClass} leading-tight`}
-                            style={{ 
-                              color: '#000000',
+                            className={`text-white leading-tight ${fontSizeClass} ${fontWeightClass}`}
+                            style={{
                               textShadow: rank.textShadow ? `0 0 10px ${rankColor}40` : 'none'
                             }}
                           >
@@ -311,120 +393,65 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
                           </p>
                         </div>
                       </div>
+
+                      {/* Top 3 glow effect */}
+                      {isTopThree && (
+                        <div
+                          className="absolute inset-0 rounded-lg opacity-10 pointer-events-none"
+                          style={{
+                            background: `radial-gradient(circle at top right, ${rankColor}80, transparent)`,
+                          }}
+                        />
+                      )}
                     </div>
                   );
-                }
-
-                // NORMAL STYLE
-                return (
-                  <div
-                    key={entry.player_id}
-                    className={`relative p-4 rounded-lg transition-all duration-200 hover:scale-[1.02] ${animationClass} ${
-                      isTopThree
-                        ? "bg-gradient-to-r from-white/10 to-white/5"
-                        : "bg-white/5 hover:bg-white/10"
-                    }`}
-                    style={{
-                      border: `${rank.borderWidth || 1}px solid ${isTopThree ? `${borderColorToUse}40` : 'rgba(255,255,255,0.1)'}`,
-                      boxShadow: rank.backgroundGlow && isTopThree
-                        ? `0 0 ${20 * glowOpacity}px ${rankColor}${Math.round(glowOpacity * 96).toString(16).padStart(2, '0')}`
-                        : 'none',
-                      backgroundImage: patternBg,
-                      backgroundSize: rank.backgroundPattern === "dots" ? "20px 20px" : rank.backgroundPattern === "grid" ? "20px 20px" : "auto",
-                      ...cardStyleEffects,
-                    }}
-                  >
-                    {/* Shine overlay */}
-                    {rank.animationType === "shine" && (
-                      <div 
-                        className="absolute inset-0 opacity-20 animate-shine-move"
-                        style={{
-                          background: `linear-gradient(45deg, transparent 30%, white 50%, transparent 70%)`,
-                        }}
-                      />
-                    )}
-
-                    {/* Position */}
-                    <div className="absolute top-2 right-2">
-                      <span className="text-xs text-white/30 font-mono">
-                        #{position}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center gap-4 relative z-10">
-                      {/* Points */}
-                      <div className="flex-shrink-0 text-left">
-                        <p 
-                          className="font-bold text-2xl font-mono text-green-400 leading-none"
-                          style={{
-                            textShadow: rank.textShadow ? `0 0 10px #4ade8080` : 'none'
-                          }}
-                        >
-                          {entry.total_points}
-                        </p>
-                        <p className="text-xs text-white/40 uppercase tracking-wider mt-1">
-                          pts
-                        </p>
-                      </div>
-
-                      {/* Player Name */}
-                      <div className="flex-1 min-w-0 pr-6">
-                        <p 
-                          className={`text-white leading-tight ${fontSizeClass} ${fontWeightClass}`}
-                          style={{
-                            textShadow: rank.textShadow ? `0 0 10px ${rankColor}40` : 'none'
-                          }}
-                        >
-                          {entry.player.name}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Top 3 glow effect */}
-                    {isTopThree && (
-                      <div
-                        className="absolute inset-0 rounded-lg opacity-10 pointer-events-none"
-                        style={{
-                          background: `radial-gradient(circle at top right, ${rankColor}80, transparent)`,
-                        }}
-                      />
-                    )}
-                  </div>
-                );
-              })}
+                })}
+              </div>
             </div>
-          </div>
-        );
-      })}
-      
-      <style jsx>{`
-        @keyframes shine-move {
-          0% {
-            transform: translateX(-100%) translateY(-100%) rotate(45deg);
+          );
+        })}
+        
+        <style jsx>{`
+          @keyframes shine-move {
+            0% {
+              transform: translateX(-100%) translateY(-100%) rotate(45deg);
+            }
+            100% {
+              transform: translateX(100%) translateY(100%) rotate(45deg);
+            }
           }
-          100% {
-            transform: translateX(100%) translateY(100%) rotate(45deg);
+          
+          .animate-shine-move {
+            animation: shine-move 3s infinite;
           }
-        }
-        
-        .animate-shine-move {
-          animation: shine-move 3s infinite;
-        }
-        
-        @keyframes shimmer {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
-        }
-        
-        .animate-shimmer {
-          animation: shimmer 2s ease-in-out infinite;
-        }
-        
-        @keyframes holographic {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
-        }
-      `}</style>
-    </div>
+          
+          @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+          }
+          
+          .animate-shimmer {
+            animation: shimmer 2s ease-in-out infinite;
+          }
+          
+          @keyframes holographic {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+          }
+        `}</style>
+      </div>
+
+      {/* Player Detail Modal */}
+      {selectedPlayer && (
+        <PlayerDetailModal
+          isOpen={!!selectedPlayer}
+          onClose={() => setSelectedPlayer(null)}
+          playerId={selectedPlayer.playerId}
+          playerName={selectedPlayer.playerName}
+          mappackId={mappackId}
+          loggedInMappack={loggedInMappack}
+        />
+      )}
+    </>
   );
 }
