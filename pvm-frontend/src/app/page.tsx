@@ -76,7 +76,7 @@ export default function Home() {
                 <div className="text-4xl">⭐</div>
                 <h3 className="text-xl font-bold text-white">Tiered Maps</h3>
                 <p className="text-sm text-zinc-400">
-                  Progress through difficulty tiers from beginner to extreme
+                  Progress through the track tiers from beginner to extreme
                 </p>
               </CardBody>
             </Card>
