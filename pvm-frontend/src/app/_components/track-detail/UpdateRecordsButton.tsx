@@ -65,7 +65,7 @@ export function UpdateRecordsButton({
           ? `${formatSecondsToMMSS(secondsLeft)}`
           : isLoading 
             ? 'Updating...' 
-            : 'Update My Record'
+            : 'Update'
         }
       </Button>
 

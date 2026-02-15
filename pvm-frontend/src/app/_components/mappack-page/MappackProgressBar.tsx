@@ -21,7 +21,7 @@ return (
     <div className="relative h-8 rounded-full bg-neutral-700/50 overflow-hidden">
       {/* Filled portion */}
       <motion.div
-        className="absolute inset-y-0 left-0 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"
+        className="absolute inset-y-0 left-0 bg-gradient-to-r from-green-900 via-green-500 to-emerald-500 rounded-full"
         initial={{ width: 0 }}
         animate={{ width: `${completionPercentage}%` }}
         transition={{ 

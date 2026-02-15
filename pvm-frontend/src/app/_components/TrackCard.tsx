@@ -7,6 +7,7 @@ import { millisecondsToTimeString } from "@/utils/time.utils";
 import { MappackTrack, TimeGoal } from "@/types/mappack.types";
 import { TrackCardGoals } from "./track-card/TrackCardGoals";
 import { TrackCardTier } from "./track-card/TrackCardTier";
+import { calculateMaxTrackPoints, calculateTrackPoints } from "@/utils/player.utils";
 
 interface TrackCardProps {
   mappackTrack: MappackTrack;
@@ -34,10 +35,19 @@ export default function TrackCard({
         multiplier: definition?.multiplier || 0,
       };
     })
-    .sort((a, b) => b.multiplier - a.multiplier);
+    .sort((a, b) => a.multiplier - b.multiplier);
 
   const achievedCount = enrichedTimeGoals.filter((tg) => tg.is_achieved).length;
   const totalCount = enrichedTimeGoals.length;
+
+  const currentPoints = calculateTrackPoints(mappackTrack, timeGoalDefinitions);
+  const maxPoints = calculateMaxTrackPoints(mappackTrack, timeGoalDefinitions);
+  const getPointsColor = (current: number, max: number): string => {
+    if (current === 0) return "text-white/30";
+    if (current === max) return "text-green-400";
+    return "text-yellow-400";
+  };
+  const pointsColor = getPointsColor(currentPoints, maxPoints);
 
   return (
     <Card
@@ -51,35 +61,41 @@ export default function TrackCard({
           <FormattedText text={track.name} />
         </h4>
         <p className="text-white/30 text-sm">{track.author}</p>
-        
+
         {/* Tier Badge */}
-        
       </CardHeader>
-      
+
       <Image
         removeWrapper
         alt="Card background"
         className="z-0 w-full h-full object-cover"
         src={track.thumbnailUrl}
       />
-      
+
       <CardFooter
         className={`
           absolute bg-black/40 backdrop-blur-sm -bottom-1 left-0 right-0 border-t border-white/10 z-10
           transition-transform duration-300 ease-in-out pb-2 pt-2
-          ${alwaysShowDetails 
-            ? 'translate-y-0' 
-            : 'translate-y-full group-hover:translate-y-0'
+          ${
+            alwaysShowDetails
+              ? "translate-y-0"
+              : "translate-y-full group-hover:translate-y-0"
           }
         `}
       >
         <div className="w-full flex flex-col gap-2 px-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] text-white/40 uppercase tracking-wider">
-              {!personal_best 
-                ? "Map not played yet" 
-                : `PB: ${millisecondsToTimeString(personal_best)}`
-              }
+              {!personal_best
+                ? "Map not played yet"
+                : `PB: ${millisecondsToTimeString(personal_best)}`}
+            </span>
+            <span className="text-[10px] text-white/40 uppercase tracking-wider">
+              <span>Points: </span>
+              <span
+                className={`text-[10px] uppercase tracking-wider font-semibold ${pointsColor}`}>
+                {`${currentPoints}/${maxPoints}`}
+              </span>
             </span>
           </div>
 

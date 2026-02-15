@@ -96,6 +96,7 @@ export interface Track {
   timegoals: Array<{
     name: string;
     time: number;
+    multiplier: number;
   }>;
   dominantColor: string;
   personalBest?: number;

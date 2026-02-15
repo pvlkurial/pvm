@@ -9,6 +9,7 @@ import { TrackTimeGoals } from"@/app/_components/track-detail/TrackTimeGoals";
 import { TrackLeaderboard } from "@/app/_components/track-detail/TrackLeaderboard";
 import { UpdateRecordsButton } from "@/app/_components/track-detail/UpdateRecordsButton";
 import RequireRole from "@/app/_components/RequireRole";
+import { BackButton } from "@/app/_components/BackButton";
 
 export default function TrackPage({
   params,
@@ -41,6 +42,11 @@ export default function TrackPage({
 
   return (
     <div className="max-w-[90rem] mx-auto px-4 py-8">
+
+      <div className="absolute left-15 lg:top-24 z-30 top-30">
+        <BackButton href={`/mappacks/${mappack}`} />
+      </div>
+
       {/* Hero Section */}
       <div className="grid lg:grid-cols-[500px_1fr] gap-6 mb-8">
         <TrackHero

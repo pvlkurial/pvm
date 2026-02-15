@@ -32,7 +32,7 @@ export function TrackCardGoals({
     <div className="flex flex-col gap-1">
       <div className="flex items-center justify-between">
         <span className="text-[10px] text-white/40 uppercase tracking-wider">
-          Goals {achievedCount}/{totalCount}
+          Timegoals {achievedCount}/{totalCount}
         </span>
         <div className="flex-1 h-1 mx-2 bg-white/10 rounded-full overflow-hidden">
           <div

@@ -15,9 +15,14 @@ interface TimeGoal {
 interface RecordsTableProps {
   records: Record[];
   timeGoals?: TimeGoal[];
+  loggedInPlayerId?: string;
 }
 
-export default function RecordsTable({ records, timeGoals = [] }: RecordsTableProps) {
+export default function RecordsTable({ 
+  records, 
+  timeGoals = [],
+  loggedInPlayerId 
+}: RecordsTableProps) {
   const { page, pages, setPage, paginatedRecords, totalRecords } = 
     useRecordsPagination(records, 10);
 
@@ -28,10 +33,84 @@ export default function RecordsTable({ records, timeGoals = [] }: RecordsTablePr
     return "text-white/60";
   };
 
+  const loggedInRecord = loggedInPlayerId 
+    ? paginatedRecords.find(r => r.player.ID === loggedInPlayerId)
+    : null;
+
+  const otherRecords = loggedInPlayerId
+    ? paginatedRecords.filter(r => r.player.ID !== loggedInPlayerId)
+    : paginatedRecords;
+
+  const renderRecord = (record: Record, index: number, isLoggedInPlayer: boolean = false) => {
+    const achievedGoal = getBestAchievedTimeGoal(record.score, timeGoals);
+    const displayPosition = (page - 1) * 10 + index + 1;
+    
+    return (
+      <div key={`${record.mapRecordId}-${isLoggedInPlayer ? 'logged-in' : 'normal'}`}>
+        <div className={`
+          grid grid-cols-[40px_1fr_90px] md:grid-cols-[50px_1fr_140px_140px_100px] 
+          gap-2 md:gap-6 px-2 py-3 md:py-4 
+          hover:bg-white/[0.02] transition-colors
+          ${isLoggedInPlayer ? 'bg-white/5 border-l-2 border-blue-900' : ''}
+        `}>
+          <div className="flex items-center justify-center">
+            <span className={`text-base md:text-lg font-mono ${getPositionStyle(displayPosition)}`}>
+              {displayPosition}
+            </span>
+          </div>
+
+          <div className="flex flex-col md:flex-row md:items-center min-w-0 gap-1 md:gap-0">
+            <div className="flex items-center min-w-0">
+              <span className="text-sm md:text-base text-white truncate">
+                {record.player.name}
+                {isLoggedInPlayer && (
+                  <span className="ml-2 text-xs text-blue-400">(You)</span>
+                )}
+              </span>
+            </div>
+            <div className="md:hidden flex items-center gap-2">
+              <span className="text-xs text-white/40">
+                {formatRelativeTime(record.updatedAt)}
+              </span>
+              {achievedGoal && (
+                <span className="px-2 py-0.5 rounded-full bg-white/10 text-white/90 text-xs">
+                  {achievedGoal}
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-end md:justify-center">
+            <span className="text-sm md:text-base font-mono text-white/90">
+              {millisecondsToTimeString(record.score)}
+            </span>
+          </div>
+
+          <div className="hidden md:flex items-center justify-center">
+            {achievedGoal ? (
+              <span className="px-3 py-1 rounded-full bg-white/10 text-white/90 text-sm font-medium">
+                {achievedGoal}
+              </span>
+            ) : (
+              <span className="text-white/20 text-sm">—</span>
+            )}
+          </div>
+
+          <div className="hidden md:flex items-center justify-end">
+            <span className="text-sm text-white/30">
+              {formatRelativeTime(record.updatedAt)}
+            </span>
+          </div>
+        </div>
+        
+        <div className="h-px bg-white/5" />
+      </div>
+    );
+  };
+
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="grid grid-cols-[50px_1fr_140px_140px_100px] gap-6 px-2 text-xs uppercase tracking-wider text-white/30 font-semibold">
+    <div className="space-y-4 md:space-y-6">
+      <div className="hidden md:grid grid-cols-[50px_1fr_140px_140px_100px] gap-6 px-2 text-xs uppercase tracking-wider text-white/30 font-semibold">
         <span className="text-center">#</span>
         <span>Player</span>
         <span className="text-center">Time</span>
@@ -39,76 +118,39 @@ export default function RecordsTable({ records, timeGoals = [] }: RecordsTablePr
         <span className="text-right">Last Updated</span>
       </div>
 
-      {/* Records List */}
+      <div className="md:hidden grid grid-cols-[40px_1fr_90px] gap-2 px-2 text-xs uppercase tracking-wider text-white/30 font-semibold">
+        <span className="text-center">#</span>
+        <span>Player</span>
+        <span className="text-right">Time</span>
+      </div>
+
       <div className="space-y-0">
         {paginatedRecords.length === 0 ? (
-          <div className="text-center py-16">
-            <p className="text-white/40 text-lg">No records yet</p>
+          <div className="text-center py-12 md:py-16">
+            <p className="text-white/40 text-base md:text-lg">No records yet</p>
             <p className="text-white/30 text-sm mt-2">If records are supposed to be here contact an admin</p>
           </div>
         ) : (
-          paginatedRecords.map((record, index) => {
-            const achievedGoal = getBestAchievedTimeGoal(record.score, timeGoals);
-            // Calculate display position based on current page and index
-            const displayPosition = (page - 1) * 10 + index + 1;
+          <>
+            {loggedInRecord && renderRecord(
+              loggedInRecord, 
+              paginatedRecords.indexOf(loggedInRecord),
+              true
+            )}
             
-            return (
-              <div key={record.mapRecordId}>
-                <div className="grid grid-cols-[50px_1fr_140px_140px_100px] gap-6 px-2 py-4 hover:bg-white/[0.02] transition-colors">
-                  {/* Rank */}
-                  <div className="flex items-center justify-center">
-                    <span className={`text-lg font-mono ${getPositionStyle(displayPosition)}`}>
-                      {displayPosition}
-                    </span>
-                  </div>
-
-                  {/* Player Name */}
-                  <div className="flex items-center min-w-0">
-                    <span className="text-base text-white truncate">
-                      {record.player.name}
-                    </span>
-                  </div>
-
-                  {/* Time */}
-                  <div className="flex items-center justify-center">
-                    <span className="text-base font-mono text-white/90">
-                      {millisecondsToTimeString(record.score)}
-                    </span>
-                  </div>
-
-                  {/* Time Goal Achievement */}
-                  <div className="flex items-center justify-center">
-                    {achievedGoal ? (
-                      <span className="px-3 py-1 rounded-full bg-white/10 text-white/90 text-sm font-medium">
-                        {achievedGoal}
-                      </span>
-                    ) : (
-                      <span className="text-white/20 text-sm">—</span>
-                    )}
-                  </div>
-
-                  {/* Date */}
-                  <div className="flex items-center justify-end">
-                    <span className="text-sm text-white/30">
-                      {formatRelativeTime(record.updatedAt)}
-                    </span>
-                  </div>
-                </div>
-                
-                {/* Separator */}
-                {index < paginatedRecords.length - 1 && (
-                  <div className="h-px bg-white/5" />
-                )}
-              </div>
-            );
-          })
+            {otherRecords.map((record, index) => {
+              const actualIndex = loggedInRecord 
+                ? paginatedRecords.indexOf(record)
+                : index;
+              return renderRecord(record, actualIndex, false);
+            })}
+          </>
         )}
       </div>
 
-      {/* Footer: Stats & Pagination */}
       {totalRecords > 0 && (
-        <div className="flex items-center justify-between pt-6 border-t border-white/5">
-          <p className="text-sm text-white/30">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-4 md:pt-6 border-t border-white/5">
+          <p className="text-xs md:text-sm text-white/30">
             {totalRecords.toLocaleString()} {totalRecords === 1 ? 'record' : 'records'}
           </p>
           

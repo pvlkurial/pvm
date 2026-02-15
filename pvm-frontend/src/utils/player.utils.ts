@@ -27,6 +27,25 @@ export function calculateTrackPoints(
   return timeGoal.multiplier * track.tier.points;
 }
 
+export function calculateMaxTrackPoints(
+  track: MappackTrack,
+  timeGoals: TimeGoal[]
+): number {
+  if (!track.tier) return 0;
+  const trackTimeGoals = track.timeGoalMappackTrack || [];
+  if (trackTimeGoals.length === 0) return 0;
+  let maxMultiplier = 0;
+  
+  for (const tgmt of trackTimeGoals) {
+    const timeGoal = timeGoals.find((tg) => tg.id === tgmt.time_goal_id);
+    if (timeGoal && timeGoal.multiplier > maxMultiplier) {
+      maxMultiplier = timeGoal.multiplier;
+    }
+  }
+
+  return maxMultiplier * track.tier.points;
+}
+
 export function getBestAchievedGoal(
   track: MappackTrack,
   timeGoals: TimeGoal[]

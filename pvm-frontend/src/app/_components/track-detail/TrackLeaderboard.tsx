@@ -36,7 +36,7 @@ export function TrackLeaderboard({ records, timeGoals, trackId }: TrackLeaderboa
         />
       </RequireRole>
         </div>
-        <RecordsTable records={records} timeGoals={timeGoals} />
+        <RecordsTable records={records} timeGoals={timeGoals} loggedInPlayerId={user?.id}/>
       </CardBody>
     </Card>
   );

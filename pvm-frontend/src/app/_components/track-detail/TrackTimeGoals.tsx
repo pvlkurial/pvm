@@ -1,4 +1,3 @@
-// components/track-detail/TrackTimeGoals.tsx
 import { Card, CardBody } from "@heroui/react";
 import { FaTrophy, FaClock } from "react-icons/fa";
 import { millisecondsToTimeString } from "@/utils/time.utils";
@@ -7,6 +6,7 @@ import { TimeGoalCard } from "./TimeGoalCard";
 interface TimeGoal {
   name: string;
   time: number;
+  multiplier?: number;
 }
 
 interface TrackTimeGoalsProps {
@@ -16,6 +16,12 @@ interface TrackTimeGoalsProps {
 
 export function TrackTimeGoals({ timeGoals, personalBest }: TrackTimeGoalsProps) {
   const hasPB = personalBest !== undefined && personalBest > 0;
+  const sortedTimeGoals = [...timeGoals].sort((a, b) => {
+    const multA = a.multiplier ?? 0;
+    const multB = b.multiplier ?? 0;
+    return multA - multB;
+  });
+
 
   return (
     <Card className="bg-neutral-90 border border-blue-500/30 relative overflow-hidden">
@@ -43,9 +49,9 @@ export function TrackTimeGoals({ timeGoals, personalBest }: TrackTimeGoalsProps)
           )}
         </div>
 
-        {timeGoals.length > 0 ? (
+        {sortedTimeGoals.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-            {timeGoals.map((goal, index) => (
+            {sortedTimeGoals.map((goal, index) => (
               <TimeGoalCard
                 key={index}
                 name={goal.name}

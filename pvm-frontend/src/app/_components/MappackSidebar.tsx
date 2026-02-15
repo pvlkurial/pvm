@@ -29,6 +29,12 @@ export function MappackSidebar({
   onEditClose,
   onEditSave,
 }: MappackSidebarProps) {
+    const sortedTimeGoals = mappack.timeGoals.sort((a, b) => {
+    const multA = a.multiplier ?? 0;
+    const multB = b.multiplier ?? 0;
+    return multA - multB;
+  });
+
   return (
     <div className="bg-white-900 lg:sticky lg:top-4 lg:self-start lg:max-h-[calc(100vh-2rem)] lg:overflow-y-auto scrollbar-hide scrollbar-thumb-gray-600 scrollbar-track-transparent">
       <div className="flex flex-col gap-4 p-4">
@@ -49,9 +55,9 @@ export function MappackSidebar({
         <div className="flex justify-center items-center">
           <p className="text-lg font-ruigslay">Timegoals</p>
         </div>
-        {mappack.timeGoals.map((timeGoal) => (
-          <div key={timeGoal.name} className="flex justify-center items-center">
-            <p className="text-bold">{timeGoal.name}</p>
+        {sortedTimeGoals.map((timeGoal) => (
+          <div key={timeGoal.name} className="flex justify-center items-center font-bold text-white/80 tracking-wider">
+            <p className="text-bold uppercase text-sm">{timeGoal.name} {timeGoal.multiplier}x</p>
           </div>
         ))}
 

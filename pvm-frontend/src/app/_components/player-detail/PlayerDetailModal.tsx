@@ -15,6 +15,7 @@ import { calculateCompletionStats } from "@/utils/player.utils";
 
 import { TrackRow } from "./TrackRow";
 import { ModalPlayerStats } from "./ModalPlayerStats";
+import { MappackProgressBar } from "../mappack-page/MappackProgressBar";
 
 interface PlayerDetailModalProps {
   isOpen: boolean;
@@ -98,25 +99,10 @@ export default function PlayerDetailModal({
           />
 
           {/* Progress Bar */}
-          <div className="mb-6">
-            <div className="relative h-8 rounded-full bg-neutral-700/50 overflow-hidden">
-              <motion.div
-                className="absolute inset-y-0 left-0 bg-gradient-to-r from-green-500 to-emerald-500 rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: `${percentage}%` }}
-                transition={{
-                  duration: 1.2,
-                  ease: [0.4, 0, 0.2, 1],
-                  delay: 0.2,
-                }}
-              />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-sm font-bold text-white/30 drop-shadow-lg">
-                  COMPLETED {current}/{total}
-                </span>
-              </div>
-            </div>
-          </div>
+          <MappackProgressBar 
+            completionCurrent={current}
+            completionTotal={total}
+          />
 
           {/* Tracks by Tier */}
           <div className="flex flex-col gap-6">
