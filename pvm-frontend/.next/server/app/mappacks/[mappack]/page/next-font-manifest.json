@@ -2,7 +2,6 @@
   "pages": {},
   "app": {
     "[project]/src/app/mappacks/[mappack]/page": [
-      "static/media/23cbae602fd94ead-s.p.408f9724.woff2",
       "static/media/Ruigslay-s.p.c9f5ea8b.otf",
       "static/media/casko-s.p.71b8d2a7.otf"
     ]

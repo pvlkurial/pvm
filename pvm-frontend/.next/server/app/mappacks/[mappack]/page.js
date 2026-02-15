@@ -1,6 +1,6 @@
 const CHUNK_PUBLIC_PATH = "server/app/mappacks/[mappack]/page.js";
 const runtime = require("../../../chunks/ssr/[turbopack]_runtime.js");
-runtime.loadChunk("server/chunks/ssr/node_modules_8f848e63._.js");
+runtime.loadChunk("server/chunks/ssr/node_modules_next_27cbb02e._.js");
 runtime.loadChunk("server/chunks/ssr/[root-of-the-server]__d8593af1._.js");
 runtime.loadChunk("server/chunks/ssr/src_app_a4430781._.js");
 runtime.loadChunk("server/chunks/ssr/src_app_layout_tsx_bf1b2859._.js");
