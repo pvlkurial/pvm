@@ -1,23 +1,6 @@
 {
-  "app": {
-    "[project]/src/app/mappacks/[mappack]/[track]/page": [
-      "static/media/Ruigslay-s.p.c9f5ea8b.otf",
-      "static/media/casko-s.p.71b8d2a7.otf"
-    ],
-    "[project]/src/app/mappacks/[mappack]/page": [
-      "static/media/Ruigslay-s.p.c9f5ea8b.otf",
-      "static/media/casko-s.p.71b8d2a7.otf"
-    ],
-    "[project]/src/app/mappacks/page": [
-      "static/media/Ruigslay-s.p.c9f5ea8b.otf",
-      "static/media/casko-s.p.71b8d2a7.otf"
-    ],
-    "[project]/src/app/page": [
-      "static/media/Ruigslay-s.p.c9f5ea8b.otf",
-      "static/media/casko-s.p.71b8d2a7.otf"
-    ]
-  },
-  "appUsingSizeAdjust": true,
+  "app": {},
+  "appUsingSizeAdjust": false,
   "pages": {},
   "pagesUsingSizeAdjust": false
 }
