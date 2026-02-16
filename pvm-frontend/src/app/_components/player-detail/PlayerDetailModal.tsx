@@ -21,6 +21,7 @@ import { MappackContent } from "../MappackContent";
 import { useTrackFilter } from "@/hooks/useTrackFilter";
 import { useTierScroll } from "@/hooks/useTierScroll";
 import { TierSection } from "../TierSection";
+import { IoGrid, IoList } from "react-icons/io5";
 
 interface PlayerDetailModalProps {
   isOpen: boolean;
@@ -45,7 +46,9 @@ export default function PlayerDetailModal({
   const [isListView, setIsListView] = useState(true);
   const [filteredTracks, setFilteredTracks] = useState<MappackTrack[]>([]);
   
-  const tracksByTier = groupTracksByTier(playerMappack!.MappackTrack);
+  const playerMappackTracks = playerMappack?.MappackTrack ?? [];
+
+  const tracksByTier = groupTracksByTier(playerMappackTracks);
   const sortedTiers = sortTiersByPoints(tracksByTier, "asc");
   
   const { activeTier, tierRefs, scrollToTier } = useTierScroll(tracksByTier);
@@ -106,80 +109,94 @@ export default function PlayerDetailModal({
           />
 
           {/* Progress Bar */}
-          <MappackProgressBar 
+          <MappackProgressBar
             completionCurrent={current}
             completionTotal={total}
           />
 
           {/* Tracks by Tier */}
-          <Switch
-            isSelected={isListView}
-            onValueChange={setIsListView}
-            size="sm"
-            classNames={{
-            wrapper: "group-data-[selected=true]:bg-white bg-neutral-600",
-          }}>List View
-          </Switch>
-          {
-            isListView
-              ? (
-                <div className="flex flex-col gap-6">
-            {sortedTiers.map((tierName) => {
-              const tierData = tracksByTier[tierName];
-              if (!tierData.tier) return null;
-
-              return (
-                <div key={tierName} className="flex flex-col gap-3">
-                  {/* Tier Header */}
-                  <div className="flex items-center gap-3 pb-2 border-b border-white/10">
-                    <div
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: tierData.tier.color }}
-                      />
-                    <h3 className="text-lg font-bold text-white uppercase">
-                      {tierName}
-                    </h3>
-                    <span className="text-sm text-white/50">
-                      {tierData.tier.points} pts
-                    </span>
-                  </div>
-
-                  {/* Tracks List */}
-                  <div className="flex flex-col gap-2">
-                    {tierData.tracks.map((track) => (
-                      <TrackRow
-                      key={track.track_id}
-                      track={track}
-                      playerMappack={playerMappack}
-                      loggedInMappack={loggedInMappack}
-                      />
-                    ))}
-                  </div>
-                </div>
-              );
-            })}
+          <div className="flex justify-end">
+            <button
+              onClick={() => setIsListView(!isListView)}
+              className={`
+                  w-10 h-10 
+                  flex items-center justify-center 
+                  bg-white/5 hover:bg-white/10 
+                  border border-white/10 hover:border-white/20
+                  rounded-lg 
+                  transition-all duration-200 
+                  hover:scale-105 
+                  active:scale-95
+                  cursor-pointer
+                  group
+                  
+                `}
+              aria-label="Go back"
+            >
+              {isListView ? (
+                <IoList className="w-5 h-5 text-white/60 group-hover:text-white transition-colors" />
+              ) : (
+                <IoGrid className="w-5 h-5 text-white/60 group-hover:text-white transition-colors" />
+              )}
+            </button>
           </div>
-          )
-          : (<>
-            {sortedTiers.map((tierName) => {
-                          const tierData = tracksByTier[tierName];
-                          return (
-                            <TierSection
-                              key={tierName}
-                              tierName={tierName}
-                              tierData={tierData}
-                              timeGoals={playerMappack?.timeGoals ?? []}
-                              mappackId={mappackId}
-                              alwaysShowDetails={true}
-                              onRef={(el) => {
-                                tierRefs.current[tierName] = el;
-                              }}
-                            />
-                          );
-                        })}
-                        </>
-          )
-          }
+          {isListView ? (
+            <div className="flex flex-col gap-6">
+              {sortedTiers.map((tierName) => {
+                const tierData = tracksByTier[tierName];
+                if (!tierData.tier) return null;
+
+                return (
+                  <div key={tierName} className="flex flex-col gap-3">
+                    {/* Tier Header */}
+                    <div className="flex items-center gap-3 pb-2 border-b border-white/10">
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: tierData.tier.color }}
+                      />
+                      <h3 className="text-lg font-bold text-white uppercase">
+                        {tierName}
+                      </h3>
+                      <span className="text-sm text-white/50">
+                        {tierData.tier.points} pts
+                      </span>
+                    </div>
+
+                    {/* Tracks List */}
+                    <div className="flex flex-col gap-2">
+                      {tierData.tracks.map((track) => (
+                        <TrackRow
+                          key={track.track_id}
+                          track={track}
+                          playerMappack={playerMappack}
+                          loggedInMappack={loggedInMappack}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <>
+              {sortedTiers.map((tierName) => {
+                const tierData = tracksByTier[tierName];
+                return (
+                  <TierSection
+                    key={tierName}
+                    tierName={tierName}
+                    tierData={tierData}
+                    timeGoals={playerMappack?.timeGoals ?? []}
+                    mappackId={mappackId}
+                    alwaysShowDetails={true}
+                    onRef={(el) => {
+                      tierRefs.current[tierName] = el;
+                    }}
+                  />
+                );
+              })}
+            </>
+          )}
         </ModalBody>
       </ModalContent>
     </Modal>
