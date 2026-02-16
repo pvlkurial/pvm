@@ -15,7 +15,7 @@ type AchievementRepository interface {
 	GetPlayerAchievementsByTrack(playerID, mappackID, trackID string) ([]models.PlayerTimeGoalAchievement, error)
 
 	UpsertLeaderboardEntry(entry *models.MappackLeaderboardEntry) error
-	GetLeaderboard(mappackID string, limit int) ([]models.MappackLeaderboardEntry, error)
+	GetLeaderboard(mappackID string, limit, offset int) ([]models.MappackLeaderboardEntry, error)
 	GetLeaderboardEntry(playerID, mappackID string) (*models.MappackLeaderboardEntry, error)
 	GetPlayerRank(playerID, mappackID string) (int, error)
 	CalculatePlayerPoints(playerID, mappackID string) (totalPoints, achievementsCount, bestAchievementsCount int, err error)
@@ -85,13 +85,14 @@ func (r *achievementRepository) UpsertLeaderboardEntry(entry *models.MappackLead
 	return r.db.Save(entry).Error
 }
 
-func (r *achievementRepository) GetLeaderboard(mappackID string, limit int) ([]models.MappackLeaderboardEntry, error) {
+func (r *achievementRepository) GetLeaderboard(mappackID string, limit, offset int) ([]models.MappackLeaderboardEntry, error) {
 	var leaderboard []models.MappackLeaderboardEntry
 	err := r.db.
 		Preload("Player").
 		Where("mappack_id = ?", mappackID).
 		Order("total_points DESC, best_achievements_count DESC, last_updated ASC").
 		Limit(limit).
+		Offset(offset).
 		Find(&leaderboard).Error
 	return leaderboard, err
 }

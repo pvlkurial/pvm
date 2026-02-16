@@ -115,11 +115,14 @@ func (s *AchievementService) GetPlayerAchievementsByTrack(playerID, mappackID, t
 	return s.achievementRepo.GetPlayerAchievementsByTrack(playerID, mappackID, trackID)
 }
 
-func (s *AchievementService) GetMappackLeaderboard(mappackID string, limit int) ([]models.MappackLeaderboardEntry, error) {
+func (s *AchievementService) GetMappackLeaderboard(mappackID string, limit, offset int) ([]models.MappackLeaderboardEntry, error) {
 	if limit <= 0 || limit > 1000 {
 		limit = 100
 	}
-	return s.achievementRepo.GetLeaderboard(mappackID, limit)
+	if offset < 0 {
+		offset = 0
+	}
+	return s.achievementRepo.GetLeaderboard(mappackID, limit, offset)
 }
 
 func (s *AchievementService) GetPlayerLeaderboardEntry(playerID, mappackID string) (*models.MappackLeaderboardEntry, error) {
