@@ -1,7 +1,7 @@
 import { Input, Tab, Tabs, Spinner } from "@heroui/react";
 import { useState } from "react";
 import { TmxTrack } from "@/types/tmx.types";
-import { tmxService } from "@/services/tmx.service"
+import { tmxService } from "@/services/tmx.service";
 import { IoSearch } from "react-icons/io5";
 
 interface TrackIdInputProps {
@@ -67,27 +67,6 @@ export function TrackIdInput({
           tabContent: "group-data-[selected=true]:text-white",
         }}
       >
-        <Tab key="uuid" title="Manual Input">
-          <div className="flex flex-col gap-4 pt-4">
-            <Input
-              label="Track UUID"
-              placeholder="a282e3f9-5585-4edf-9db1-c370ff1190d9"
-              variant="bordered"
-              value={trackUuid}
-              onValueChange={onUuidChange}
-              classNames={inputClassNames}
-            />
-            <Input
-              label="TMX ID"
-              placeholder="123456"
-              variant="bordered"
-              value={tmxId}
-              onValueChange={onTmxIdChange}
-              classNames={inputClassNames}
-            />
-          </div>
-        </Tab>
-
         <Tab key="search" title="TMX Search">
           <div className="flex flex-col gap-4 pt-4">
             {/* Search Input */}
@@ -121,7 +100,6 @@ export function TrackIdInput({
                 ) : (
                   <>
                     <IoSearch className="w-5 h-5" />
-                    
                   </>
                 )}
               </button>
@@ -142,7 +120,7 @@ export function TrackIdInput({
                           ? "bg-blue-500/20 border-blue-500"
                           : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
                       }
-                    `}
+                      `}
                   >
                     <div className="flex items-center gap-4">
                       {/* Thumbnail */}
@@ -155,7 +133,9 @@ export function TrackIdInput({
                         />
                       ) : (
                         <div className="w-24 h-16 bg-white/5 rounded flex items-center justify-center">
-                          <span className="text-white/30 text-xs">No image</span>
+                          <span className="text-white/30 text-xs">
+                            No image
+                          </span>
                         </div>
                       )}
 
@@ -176,6 +156,26 @@ export function TrackIdInput({
                 ))}
               </div>
             )}
+          </div>
+        </Tab>
+        <Tab key="uuid" title="Manual Input">
+          <div className="flex flex-col gap-4 pt-4">
+            <Input
+              label="Track UUID"
+              placeholder="a282e3f9-5585-4edf-9db1-c370ff1190d9"
+              variant="bordered"
+              value={trackUuid}
+              onValueChange={onUuidChange}
+              classNames={inputClassNames}
+            />
+            <Input
+              label="TMX ID"
+              placeholder="123456"
+              variant="bordered"
+              value={tmxId}
+              onValueChange={onTmxIdChange}
+              classNames={inputClassNames}
+            />
           </div>
         </Tab>
       </Tabs>

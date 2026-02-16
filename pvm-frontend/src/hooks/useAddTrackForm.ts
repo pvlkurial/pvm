@@ -6,7 +6,7 @@ export function useAddTrackForm() {
   const [trackUuid, setTrackUuid] = useState("");
   const [tmxId, setTmxId] = useState("");
   const [timeGoalValues, setTimeGoalValues] = useState<Record<number, string>>({});
-  const [selectedTab, setSelectedTab] = useState("uuid");
+  const [selectedTab, setSelectedTab] = useState("search");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleTimeGoalChange = (timeGoalId: number, value: string) => {
@@ -17,7 +17,7 @@ export function useAddTrackForm() {
   };
 
   const getTrackId = (): string => {
-    return trackUuid; // Always return trackUuid - it's the track identifier
+    return trackUuid;
   };
 
   const getTimeGoalsWithValues = (timeGoals: TimeGoal[]) => {
