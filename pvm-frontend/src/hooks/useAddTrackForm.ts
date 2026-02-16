@@ -17,7 +17,7 @@ export function useAddTrackForm() {
   };
 
   const getTrackId = (): string => {
-    return selectedTab === "uuid" ? trackUuid : tmxId;
+    return trackUuid; // Always return trackUuid - it's the track identifier
   };
 
   const getTimeGoalsWithValues = (timeGoals: TimeGoal[]) => {
@@ -37,9 +37,11 @@ export function useAddTrackForm() {
   };
 
   const validateForm = (): { isValid: boolean; error?: string } => {
-    const trackId = getTrackId();
-    if (!trackId) {
-      return { isValid: false, error: "Track ID is required" };
+    if (!trackUuid.trim()) {
+      return { isValid: false, error: "Track UUID is required" };
+    }
+    if (!tmxId.trim()) {
+      return { isValid: false, error: "TMX ID is required" };
     }
     return { isValid: true };
   };

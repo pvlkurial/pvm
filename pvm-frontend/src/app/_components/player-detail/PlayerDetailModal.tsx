@@ -131,7 +131,7 @@ export default function PlayerDetailModal({
                   group
                   
                 `}
-              aria-label="Go back"
+              aria-label="Switch View"
             >
               {isListView ? (
                 <IoList className="w-5 h-5 text-white/60 group-hover:text-white transition-colors" />
