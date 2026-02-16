@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { Spinner } from "@heroui/react";
+import { Spinner, Button } from "@heroui/react";
 import { Casko } from "@/fonts";
 import { MappackRank, Mappack } from "@/types/mappack.types";
 import PlayerDetailModal from "./player-detail/PlayerDetailModal";
@@ -26,6 +26,8 @@ interface LeaderboardTabProps {
   loggedInMappack?: Mappack;
 }
 
+const ITEMS_PER_PAGE = 5;
+
 const getPlayerRank = (points: number, ranks: MappackRank[]): MappackRank | null => {
   const sortedRanks = [...ranks].sort((a, b) => b.pointsNeeded - a.pointsNeeded);
   
@@ -38,7 +40,6 @@ const getPlayerRank = (points: number, ranks: MappackRank[]): MappackRank | null
   return sortedRanks[sortedRanks.length - 1] || null;
 };
 
-// Get animation CSS class based on type
 const getAnimationClass = (animationType: string): string => {
   switch (animationType) {
     case "shine": return "animate-shine";
@@ -48,7 +49,6 @@ const getAnimationClass = (animationType: string): string => {
   }
 };
 
-// Get background pattern SVG
 const getBackgroundPattern = (pattern: string, color: string): string => {
   switch (pattern) {
     case "dots":
@@ -62,7 +62,6 @@ const getBackgroundPattern = (pattern: string, color: string): string => {
   }
 };
 
-// Get card style effects
 const getCardStyleEffects = (cardStyle: string, color: string) => {
   switch (cardStyle) {
     case "metallic":
@@ -106,6 +105,9 @@ const getFontWeightClass = (fontWeight: string): string => {
 export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappack }: LeaderboardTabProps) {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [offset, setOffset] = useState(0);
   const [activeRank, setActiveRank] = useState<string>("");
   const [selectedPlayer, setSelectedPlayer] = useState<{
     playerId: string;
@@ -114,18 +116,44 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
   const rankRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 
+  const fetchLeaderboard = async (currentOffset: number, append: boolean = false) => {
+    try {
+      if (append) {
+        setLoadingMore(true);
+      } else {
+        setLoading(true);
+      }
+
+      const response = await axios.get(
+        `${API_BASE}/mappacks/${mappackId}/leaderboard?limit=${ITEMS_PER_PAGE}&offset=${currentOffset}`
+      );
+
+      const newData = response.data;
+
+      if (append) {
+        setLeaderboard((prev) => [...prev, ...newData]);
+      } else {
+        setLeaderboard(newData);
+      }
+
+      // If we got less than ITEMS_PER_PAGE, there's no more data
+      setHasMore(newData.length === ITEMS_PER_PAGE);
+      setOffset(currentOffset + newData.length);
+    } catch (err) {
+      console.log("Error fetching leaderboard:", err);
+    } finally {
+      setLoading(false);
+      setLoadingMore(false);
+    }
+  };
+
   useEffect(() => {
-    axios
-      .get(`${API_BASE}/mappacks/${mappackId}/leaderboard?limit=100`)
-      .then((response) => {
-        setLeaderboard(response.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.log("Error fetching leaderboard:", err);
-        setLoading(false);
-      });
+    fetchLeaderboard(0, false);
   }, [mappackId]);
+
+  const handleLoadMore = () => {
+    fetchLeaderboard(offset, true);
+  };
 
   // Group players by rank
   const playersByRank = leaderboard.reduce((acc, entry) => {
@@ -274,7 +302,6 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
                           animation: cardStyleEffects.animation,
                         }}
                       >
-                        {/* Shine overlay for shine animation */}
                         {rank.animationType === "shine" && (
                           <div 
                             className="absolute inset-0 opacity-30 animate-shine-move"
@@ -284,7 +311,6 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
                           />
                         )}
                         
-                        {/* Position */}
                         <div className="absolute top-2 right-2">
                           <span 
                             className="text-xs font-mono font-bold"
@@ -295,7 +321,6 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
                         </div>
 
                         <div className="flex items-center gap-4 relative z-10">
-                          {/* Points - inverted: dark text */}
                           <div className="flex-shrink-0 text-left">
                             <p 
                               className="font-bold text-2xl font-mono leading-none"
@@ -311,7 +336,6 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
                             </p>
                           </div>
 
-                          {/* Player Name - inverted: dark text */}
                           <div className="flex-1 min-w-0 pr-6">
                             <p 
                               className={`${fontSizeClass} ${fontWeightClass} leading-tight`}
@@ -348,7 +372,6 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
                         ...cardStyleEffects,
                       }}
                     >
-                      {/* Shine overlay */}
                       {rank.animationType === "shine" && (
                         <div 
                           className="absolute inset-0 opacity-20 animate-shine-move"
@@ -358,7 +381,6 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
                         />
                       )}
 
-                      {/* Position */}
                       <div className="absolute top-2 right-2">
                         <span className="text-xs text-white/30 font-mono">
                           #{position}
@@ -366,7 +388,6 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
                       </div>
 
                       <div className="flex items-center gap-4 relative z-10">
-                        {/* Points */}
                         <div className="flex-shrink-0 text-left">
                           <p 
                             className="font-bold text-2xl font-mono text-green-400 leading-none"
@@ -381,7 +402,6 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
                           </p>
                         </div>
 
-                        {/* Player Name */}
                         <div className="flex-1 min-w-0 pr-6">
                           <p 
                             className={`text-white leading-tight ${fontSizeClass} ${fontWeightClass}`}
@@ -394,7 +414,6 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
                         </div>
                       </div>
 
-                      {/* Top 3 glow effect */}
                       {isTopThree && (
                         <div
                           className="absolute inset-0 rounded-lg opacity-10 pointer-events-none"
@@ -410,6 +429,20 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
             </div>
           );
         })}
+
+        {/* Load More Button */}
+        {hasMore && (
+          <div className="flex justify-center py-8">
+            <Button
+              onClick={handleLoadMore}
+              isLoading={loadingMore}
+              className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white px-8 py-6 text-lg"
+              size="lg"
+            >
+              {loadingMore ? "Loading..." : "Load More"}
+            </Button>
+          </div>
+        )}
         
         <style jsx>{`
           @keyframes shine-move {

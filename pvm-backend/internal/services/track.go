@@ -17,7 +17,7 @@ type TrackService interface {
 	GetById(id string) (models.Track, error)
 	GetAll() ([]models.Track, error)
 	GetByMappackId(id string) ([]models.Track, error)
-	AddTrackToMappack(trackId string, mappackId string) error
+	AddTrackToMappack(trackId string, mappackId string, tmxId string) error
 	RemoveTrackFromMappack(trackId string, mappackId string) error
 	CreateTimeGoalsForTrack(timegoals *[]models.TimeGoalMappackTrack) error
 	GetTimeGoalsForTrack(trackId string, mappackId string) ([]models.TimeGoalMappackTrack, error)
@@ -51,7 +51,7 @@ func (t *trackService) GetByMappackId(id string) ([]models.Track, error) {
 	return t.trackRepository.GetByMappackId(id)
 }
 
-func (t *trackService) AddTrackToMappack(trackId string, mappackId string) error {
+func (t *trackService) AddTrackToMappack(trackId string, mappackId string, tmxId string) error {
 	_, err := t.trackRepository.GetById(trackId)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -64,6 +64,7 @@ func (t *trackService) AddTrackToMappack(trackId string, mappackId string) error
 				color = "#000000"
 			}
 			track.DominantColor = color
+			track.TmxID = tmxId
 			err = t.trackRepository.Create(track)
 			if err != nil {
 				return fmt.Errorf("create track: %w", err)

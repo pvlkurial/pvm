@@ -6,7 +6,7 @@ export function useAddTrackForm() {
   const [trackUuid, setTrackUuid] = useState("");
   const [tmxId, setTmxId] = useState("");
   const [timeGoalValues, setTimeGoalValues] = useState<Record<number, string>>({});
-  const [selectedTab, setSelectedTab] = useState("uuid");
+  const [selectedTab, setSelectedTab] = useState("search");
   const [isLoading, setIsLoading] = useState(false);
 
   const handleTimeGoalChange = (timeGoalId: number, value: string) => {
@@ -17,7 +17,7 @@ export function useAddTrackForm() {
   };
 
   const getTrackId = (): string => {
-    return selectedTab === "uuid" ? trackUuid : tmxId;
+    return trackUuid;
   };
 
   const getTimeGoalsWithValues = (timeGoals: TimeGoal[]) => {
@@ -37,9 +37,11 @@ export function useAddTrackForm() {
   };
 
   const validateForm = (): { isValid: boolean; error?: string } => {
-    const trackId = getTrackId();
-    if (!trackId) {
-      return { isValid: false, error: "Track ID is required" };
+    if (!trackUuid.trim()) {
+      return { isValid: false, error: "Track UUID is required" };
+    }
+    if (!tmxId.trim()) {
+      return { isValid: false, error: "TMX ID is required" };
     }
     return { isValid: true };
   };

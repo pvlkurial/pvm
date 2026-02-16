@@ -66,8 +66,17 @@ func (t *TrackController) GetByMappackId(c *gin.Context) {
 func (t *TrackController) AddTrackToMappack(c *gin.Context) {
 	trackId := c.Param("track_id")
 	mappackId := c.Param("mappack_id")
+	type Payload struct {
+		TmxId string `json:"tmxId"`
+	}
 
-	err := t.trackService.AddTrackToMappack(trackId, mappackId)
+	var payload Payload
+	if err := c.ShouldBindJSON(&payload); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	err := t.trackService.AddTrackToMappack(trackId, mappackId, payload.TmxId)
 
 	if err != nil {
 		fmt.Printf("Error occured while Adding a track to mappack: %s", err)

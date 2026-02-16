@@ -226,6 +226,7 @@ func (t *recordService) GetTrackWithRecords(mappackId string, trackId string, pl
 		DominantColor:            trackInDb.DominantColor,
 		Tier:                     tier,
 		PersonalBest:             personalBest,
+		TmxID:                    trackInDb.TmxID,
 	}
 	return track, nil
 }

@@ -28,4 +28,5 @@ type Track struct {
 	UpdatedAt                time.Time
 	MappackTrack             []*MappackTrack
 	DominantColor            string `json:"dominantColor" gorm:"column:dominant_color"`
+	TmxID                    string `json:"tmxID" gorm:"column:tmx_id"`
 }

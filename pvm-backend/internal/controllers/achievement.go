@@ -25,12 +25,19 @@ func (c *AchievementController) GetMappackLeaderboard(ctx *gin.Context) {
 
 	limit := 100
 	if limitParam := ctx.Query("limit"); limitParam != "" {
-		if l, err := strconv.Atoi(limitParam); err == nil {
+		if l, err := strconv.Atoi(limitParam); err == nil && l > 0 && l <= 1000 {
 			limit = l
 		}
 	}
 
-	leaderboard, err := c.achievementService.GetMappackLeaderboard(mappackID, limit)
+	offset := 0
+	if offsetParam := ctx.Query("offset"); offsetParam != "" {
+		if o, err := strconv.Atoi(offsetParam); err == nil && o >= 0 {
+			offset = o
+		}
+	}
+
+	leaderboard, err := c.achievementService.GetMappackLeaderboard(mappackID, limit, offset)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
 		return

@@ -6,6 +6,7 @@ const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
 interface AddTrackToMappackParams {
   mappackId: string;
   trackId: string;
+  tmxId: string;
 }
 
 interface TimeGoalValue {
@@ -14,8 +15,10 @@ interface TimeGoalValue {
 }
 
 export const trackService = {
-  addToMappack: async ({ mappackId, trackId }: AddTrackToMappackParams): Promise<void> => {
-    await axios.post(`${API_BASE}/mappacks/${mappackId}/tracks/${trackId}`);
+  addToMappack: async ({ mappackId, trackId, tmxId }: AddTrackToMappackParams): Promise<void> => {
+    await axios.post(`${API_BASE}/mappacks/${mappackId}/tracks/${trackId}`,
+      { tmxId }
+    );
   },
 
   addTimeGoals: async (

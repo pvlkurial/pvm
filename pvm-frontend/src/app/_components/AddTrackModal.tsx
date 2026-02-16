@@ -12,7 +12,7 @@ import { useAddTrackForm } from "@/hooks/useAddTrackForm";
 import { trackService } from "@/services/track.service";
 import { TrackIdInput } from "./add-track/TrackIdInput";
 import { TimeGoalsInput } from "./add-track/TimeGoalsInput";
-import { MODAL_INPUT_CLASSNAMES, MODAL_CLASSNAMES } from "@/constants/modal-styles";
+import { MODAL_INPUT_CLASSNAMES } from "@/constants/modal-styles";
 
 interface AddTrackModalProps {
   timegoals: TimeGoal[];
@@ -56,6 +56,7 @@ export default function AddTrackModal({
       await trackService.addToMappack({
         mappackId,
         trackId,
+        tmxId,
       });
 
       const timeGoalsWithValues = getTimeGoalsWithValues(timegoals);
@@ -77,8 +78,7 @@ export default function AddTrackModal({
   return (
     <div>
       <Button
-        color="default"
-        variant="bordered"
+        className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white"
         onPress={onOpen}
       >
         Add New Track
@@ -87,16 +87,22 @@ export default function AddTrackModal({
         isOpen={isOpen}
         placement="top-center"
         onOpenChange={onOpenChange}
-        size="2xl"
-        classNames={MODAL_CLASSNAMES}
+        size="4xl"
+        scrollBehavior="inside"
+        classNames={{
+          base: "bg-neutral-900",
+          header: "border-b border-white/10",
+          body: "py-6",
+          footer: "border-t border-white/10",
+        }}
       >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1 text-2xl font-ruigslay">
-                Add Track to Mappack
+              <ModalHeader className="flex flex-col gap-1">
+                <h2 className="text-2xl font-bold text-white">Add Track to Mappack</h2>
               </ModalHeader>
-              <ModalBody>
+              <ModalBody className="gap-6">
                 <TrackIdInput
                   selectedTab={selectedTab}
                   trackUuid={trackUuid}
@@ -114,17 +120,16 @@ export default function AddTrackModal({
                   inputClassNames={MODAL_INPUT_CLASSNAMES}
                 />
               </ModalBody>
-              <ModalFooter>
+              <ModalFooter className="gap-2">
                 <Button
-                  color="default"
-                  variant="bordered"
+                  className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white"
                   onPress={onClose}
                   isDisabled={isLoading}
                 >
                   Cancel
                 </Button>
                 <Button
-                  color="default"
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-semibold"
                   onPress={handleAddTrack}
                   isLoading={isLoading}
                 >

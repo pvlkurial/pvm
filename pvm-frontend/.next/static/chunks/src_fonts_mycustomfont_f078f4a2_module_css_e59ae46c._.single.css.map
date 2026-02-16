@@ -1,6 +1,0 @@
-{
-  "version": 3,
-  "sources": [],
-  "sections": [
-    {"offset": {"line": 1, "column": 0}, "map": {"version":3,"sources":["turbopack:///[project]/src/fonts/mycustomfont_f078f4a2.module.css"],"sourcesContent":["@font-face {\n    font-family: 'myCustomFont';\n    src: url('@vercel/turbopack-next/internal/font/local/font?{%22path%22:%22./Ruigslay.otf%22,%22preload%22:true,%22has_size_adjust%22:true}') format('opentype');\n    font-display: swap;\n    font-weight: 900;font-style: normal;\n}\n\n@font-face {\n    font-family: 'myCustomFont Fallback';\n    src: local(\"Arial\");\n    ascent-override: 61.30%;\ndescent-override: 13.03%;\nline-gap-override: 0.00%;\nsize-adjust: 124.32%;\n\n}\n\n.className {\n    font-family: 'myCustomFont', 'myCustomFont Fallback';\n    \n}\n.variable {\n    --font-my-custom: 'myCustomFont', 'myCustomFont Fallback';\n}\n\n"],"names":[],"mappings":"AAAA;;;;;;;;AAOA;;;;;;;;;AAUA;;;;AAIA"}}]
-}

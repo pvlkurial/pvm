@@ -1,8 +1,7 @@
-// components/RecordsTable.tsx
 "use client";
 import { Pagination } from "@heroui/react";
 import { Record } from "@/types/mappack.types";
-import { useRecordsPagination } from "@/hooks/useRecordsPagination";
+import { useMemo, useState } from "react";
 import { millisecondsToTimeString } from "@/utils/time.utils";
 import { formatRelativeTime } from "@/utils/date.utils";
 import { getBestAchievedTimeGoal } from "@/utils/record.utils";
@@ -23,8 +22,27 @@ export default function RecordsTable({
   timeGoals = [],
   loggedInPlayerId 
 }: RecordsTableProps) {
-  const { page, pages, setPage, paginatedRecords, totalRecords } = 
-    useRecordsPagination(records, 10);
+  const [page, setPage] = useState(1);
+  const recordsPerPage = 10;
+
+  const loggedInRecord = useMemo(() => {
+    if (!loggedInPlayerId) return null;
+    return records.find(r => r.player.ID === loggedInPlayerId);
+  }, [records, loggedInPlayerId]);
+
+  const loggedInPosition = useMemo(() => {
+    if (!loggedInRecord) return null;
+    return records.indexOf(loggedInRecord) + 1;
+  }, [records, loggedInRecord]);
+
+  const paginatedRecords = useMemo(() => {
+    const start = (page - 1) * recordsPerPage;
+    const end = start + recordsPerPage;
+    return records.slice(start, end);
+  }, [records, page]);
+
+  const pages = Math.ceil(records.length / recordsPerPage);
+  const totalRecords = records.length;
 
   const getPositionStyle = (position: number) => {
     if (position === 1) return "text-yellow-400 font-bold";
@@ -33,29 +51,22 @@ export default function RecordsTable({
     return "text-white/60";
   };
 
-  const loggedInRecord = loggedInPlayerId 
-    ? paginatedRecords.find(r => r.player.ID === loggedInPlayerId)
-    : null;
-
-  const otherRecords = loggedInPlayerId
-    ? paginatedRecords.filter(r => r.player.ID !== loggedInPlayerId)
-    : paginatedRecords;
-
-  const renderRecord = (record: Record, index: number, isLoggedInPlayer: boolean = false) => {
+  const renderRecord = (record: Record, position: number, isPinnedRecord: boolean = false) => {
     const achievedGoal = getBestAchievedTimeGoal(record.score, timeGoals);
-    const displayPosition = (page - 1) * 10 + index + 1;
+    const isLoggedInPlayer = loggedInPlayerId === record.player.ID;
     
     return (
-      <div key={`${record.mapRecordId}-${isLoggedInPlayer ? 'logged-in' : 'normal'}`}>
+      <div key={`${record.mapRecordId}-${isPinnedRecord ? 'pinned' : 'normal'}`}>
         <div className={`
           grid grid-cols-[40px_1fr_90px] md:grid-cols-[50px_1fr_140px_140px_100px] 
           gap-2 md:gap-6 px-2 py-3 md:py-4 
           hover:bg-white/[0.02] transition-colors
-          ${isLoggedInPlayer ? 'bg-white/5 border-l-2 border-blue-900' : ''}
+          ${isLoggedInPlayer && isPinnedRecord ? 'bg-blue-500/10 border-l-2 border-blue-500' : ''}
+          ${isLoggedInPlayer && !isPinnedRecord ? 'bg-blue-500/5 border-l-2 border-blue-500/50' : ''}
         `}>
           <div className="flex items-center justify-center">
-            <span className={`text-base md:text-lg font-mono ${getPositionStyle(displayPosition)}`}>
-              {displayPosition}
+            <span className={`text-base md:text-lg font-mono ${getPositionStyle(position)}`}>
+              {position}
             </span>
           </div>
 
@@ -63,8 +74,8 @@ export default function RecordsTable({
             <div className="flex items-center min-w-0">
               <span className="text-sm md:text-base text-white truncate">
                 {record.player.name}
-                {isLoggedInPlayer && (
-                  <span className="ml-2 text-xs text-blue-400">(You)</span>
+                {isLoggedInPlayer && isPinnedRecord && (
+                  <span className="ml-2 text-xs text-blue-400 font-semibold">(You)</span>
                 )}
               </span>
             </div>
@@ -125,24 +136,29 @@ export default function RecordsTable({
       </div>
 
       <div className="space-y-0">
-        {paginatedRecords.length === 0 ? (
+        {totalRecords === 0 ? (
           <div className="text-center py-12 md:py-16">
             <p className="text-white/40 text-base md:text-lg">No records yet</p>
             <p className="text-white/30 text-sm mt-2">If records are supposed to be here contact an admin</p>
           </div>
         ) : (
           <>
-            {loggedInRecord && renderRecord(
+            {/* Always show logged-in player's record first (pinned) */}
+            {loggedInRecord && loggedInPosition && renderRecord(
               loggedInRecord, 
-              paginatedRecords.indexOf(loggedInRecord),
+              loggedInPosition,
               true
             )}
             
-            {otherRecords.map((record, index) => {
-              const actualIndex = loggedInRecord 
-                ? paginatedRecords.indexOf(record)
-                : index;
-              return renderRecord(record, actualIndex, false);
+            {/* Show separator between pinned and paginated records */}
+            {loggedInRecord && (
+              <div className="h-[2px] bg-white/10 my-2" />
+            )}
+            
+            {/* Show paginated records (including logged-in player in their actual position) */}
+            {paginatedRecords.map((record, index) => {
+              const actualPosition = (page - 1) * recordsPerPage + index + 1;
+              return renderRecord(record, actualPosition, false);
             })}
           </>
         )}

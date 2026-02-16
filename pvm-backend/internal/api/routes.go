@@ -47,6 +47,7 @@ func (r *Routes) InitRoutes() {
 		authorized.GET("/auth/me", controllers.AuthController.Me)
 		authorized.POST("/tracks/:track_id/records/:player_id/fetch", controllers.RecordController.FetchPlayersRecordsForTrack)
 	}
+	r.GET("/tmx/search", controllers.TmxController.SearchTracks)
 
 	adminAccess := r.Group("/")
 	adminAccess.Use(middleware.AdminOnly())
