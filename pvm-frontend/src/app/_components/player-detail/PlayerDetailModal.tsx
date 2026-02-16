@@ -6,9 +6,10 @@ import {
   ModalHeader,
   ModalBody,
   Spinner,
+  Switch,
 } from "@heroui/react";
 import { motion } from "framer-motion";
-import { Mappack} from "@/types/mappack.types";
+import { Mappack, MappackTrack} from "@/types/mappack.types";
 import { mappackService } from "@/services/mappack.service";
 import { groupTracksByTier, sortTiersByPoints } from "@/utils/mappack.utils";
 import { calculateCompletionStats } from "@/utils/player.utils";
@@ -16,6 +17,10 @@ import { calculateCompletionStats } from "@/utils/player.utils";
 import { TrackRow } from "./TrackRow";
 import { ModalPlayerStats } from "./ModalPlayerStats";
 import { MappackProgressBar } from "../mappack-page/MappackProgressBar";
+import { MappackContent } from "../MappackContent";
+import { useTrackFilter } from "@/hooks/useTrackFilter";
+import { useTierScroll } from "@/hooks/useTierScroll";
+import { TierSection } from "../TierSection";
 
 interface PlayerDetailModalProps {
   isOpen: boolean;
@@ -34,8 +39,16 @@ export default function PlayerDetailModal({
   mappackId,
   loggedInMappack,
 }: PlayerDetailModalProps) {
+  
   const [playerMappack, setPlayerMappack] = useState<Mappack | null>(null);
   const [loading, setLoading] = useState(true);
+  const [isListView, setIsListView] = useState(true);
+  const [filteredTracks, setFilteredTracks] = useState<MappackTrack[]>([]);
+  
+  const tracksByTier = groupTracksByTier(playerMappack!.MappackTrack);
+  const sortedTiers = sortTiersByPoints(tracksByTier, "asc");
+  
+  const { activeTier, tierRefs, scrollToTier } = useTierScroll(tracksByTier);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -45,6 +58,7 @@ export default function PlayerDetailModal({
         setLoading(true);
         const data = await mappackService.getMappack(mappackId, playerId);
         setPlayerMappack(data);
+        setFilteredTracks(data.MappackTrack)
       } catch (error) {
         console.error("Error fetching player data:", error);
       } finally {
@@ -57,22 +71,15 @@ export default function PlayerDetailModal({
 
   if (!playerMappack || loading) {
     return (
-      <Modal isOpen={isOpen} onClose={onClose} size="5xl" scrollBehavior="inside">
-        <ModalContent>
-          <ModalBody className="flex items-center justify-center h-96">
-            <Spinner size="lg" />
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+
+        <Spinner size="lg" />
+
     );
   }
 
   const { current, total, percentage } = calculateCompletionStats(
     playerMappack.MappackTrack
   );
-
-  const tracksByTier = groupTracksByTier(playerMappack.MappackTrack);
-  const sortedTiers = sortTiersByPoints(tracksByTier, "asc");
 
   return (
     <Modal
@@ -105,7 +112,18 @@ export default function PlayerDetailModal({
           />
 
           {/* Tracks by Tier */}
-          <div className="flex flex-col gap-6">
+          <Switch
+            isSelected={isListView}
+            onValueChange={setIsListView}
+            size="sm"
+            classNames={{
+            wrapper: "group-data-[selected=true]:bg-white bg-neutral-600",
+          }}>List View
+          </Switch>
+          {
+            isListView
+              ? (
+                <div className="flex flex-col gap-6">
             {sortedTiers.map((tierName) => {
               const tierData = tracksByTier[tierName];
               if (!tierData.tier) return null;
@@ -117,7 +135,7 @@ export default function PlayerDetailModal({
                     <div
                       className="w-3 h-3 rounded-full"
                       style={{ backgroundColor: tierData.tier.color }}
-                    />
+                      />
                     <h3 className="text-lg font-bold text-white uppercase">
                       {tierName}
                     </h3>
@@ -130,10 +148,10 @@ export default function PlayerDetailModal({
                   <div className="flex flex-col gap-2">
                     {tierData.tracks.map((track) => (
                       <TrackRow
-                        key={track.track_id}
-                        track={track}
-                        playerMappack={playerMappack}
-                        loggedInMappack={loggedInMappack}
+                      key={track.track_id}
+                      track={track}
+                      playerMappack={playerMappack}
+                      loggedInMappack={loggedInMappack}
                       />
                     ))}
                   </div>
@@ -141,6 +159,27 @@ export default function PlayerDetailModal({
               );
             })}
           </div>
+          )
+          : (<>
+            {sortedTiers.map((tierName) => {
+                          const tierData = tracksByTier[tierName];
+                          return (
+                            <TierSection
+                              key={tierName}
+                              tierName={tierName}
+                              tierData={tierData}
+                              timeGoals={playerMappack?.timeGoals ?? []}
+                              mappackId={mappackId}
+                              alwaysShowDetails={true}
+                              onRef={(el) => {
+                                tierRefs.current[tierName] = el;
+                              }}
+                            />
+                          );
+                        })}
+                        </>
+          )
+          }
         </ModalBody>
       </ModalContent>
     </Modal>
