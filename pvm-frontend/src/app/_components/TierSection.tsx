@@ -26,7 +26,7 @@ export function TierSection({
       data-tier={tierName}
       className="scroll-mt-4"
     >
-      <hr className="border-1 border-white/10 my-2 w-full" />
+      <hr className="divider" />
       <div className="mb-4 pt-4 justify-center items-center flex">
         <h2 className="text-3xl uppercase tracking-wider text-white/70 font-semibold justify-center uppercase" style={{ color: tierColor }}>
           {tierName.toUpperCase()} TIER

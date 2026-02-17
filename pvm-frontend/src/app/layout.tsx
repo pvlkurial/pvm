@@ -21,19 +21,18 @@ export default function RootLayout({
     <span>
     <html lang="en" className={`${myCustomFont.variable} ${HeatherGreen.variable} ${Casko.variable}`}
     style={{ backgroundColor: '#000' }}>
-      <body className="antialiased min-h-screen w-full bg-gradient-to-b from-zinc-900 via-zinc-900 to-black
-      flex flex-col">
+      <body>
       <AuthProvider>
       <Navbar position="static" isBlurred isBordered>
         <NavbarBrand>
-        <Link className="font-ruigslay font-bold scale-140 hover:animate-pulse" href="/">
+        <Link className="text-heading scale-140 hover:animate-pulse" href="/">
         <span className="sm:hidden">PvM</span>
         <span className="hidden md:inline">Player vs Map</span>
         </Link>
       </NavbarBrand>
         <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
-          <Link color="foreground" href="/mappacks" className="hover:bg-neutral-600 p-3 rounded-lg transition duration-200 ease-in-out">
+          <Link color="foreground" href="/mappacks" className="nav-link">
             Mappacks
           </Link>
         </NavbarItem>
@@ -44,7 +43,7 @@ export default function RootLayout({
         </NavbarItem>
       </NavbarContent>
       </Navbar>
-      <hr className="h-px bg-white-300"/>
+      <hr className="divider"/>
           <div className="w-full smooth-scroll flex-1">
             {children}
           </div>

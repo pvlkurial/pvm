@@ -25,24 +25,28 @@ export default function RecordsTable({
   const [page, setPage] = useState(1);
   const recordsPerPage = 10;
 
+  const sortedRecords = useMemo(() => {
+    return [...records].sort((a, b) => a.score - b.score);
+  }, [records]);
+
   const loggedInRecord = useMemo(() => {
     if (!loggedInPlayerId) return null;
-    return records.find(r => r.player.ID === loggedInPlayerId);
-  }, [records, loggedInPlayerId]);
+    return sortedRecords.find(r => r.player.ID === loggedInPlayerId);
+  }, [sortedRecords, loggedInPlayerId]);
 
   const loggedInPosition = useMemo(() => {
     if (!loggedInRecord) return null;
-    return records.indexOf(loggedInRecord) + 1;
-  }, [records, loggedInRecord]);
+    return sortedRecords.indexOf(loggedInRecord) + 1;
+  }, [sortedRecords, loggedInRecord]);
 
   const paginatedRecords = useMemo(() => {
     const start = (page - 1) * recordsPerPage;
     const end = start + recordsPerPage;
-    return records.slice(start, end);
-  }, [records, page]);
+    return sortedRecords.slice(start, end);
+  }, [sortedRecords, page]);
 
-  const pages = Math.ceil(records.length / recordsPerPage);
-  const totalRecords = records.length;
+  const pages = Math.ceil(sortedRecords.length / recordsPerPage);
+  const totalRecords = sortedRecords.length;
 
   const getPositionStyle = (position: number) => {
     if (position === 1) return "text-yellow-400 font-bold";

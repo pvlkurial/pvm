@@ -35,14 +35,13 @@ export default function TrackFilter({
       classNames={FILTER_POPOVER_CLASSNAMES}
     >
       <PopoverTrigger>
-        <Button
-          size="sm"
-          variant="flat"
+        <button
           className={getFilterButtonClassName(isFilterActive)}
-          startContent={<FaFilter/>}
-        />
+        >
+          <FaFilter></FaFilter>
+        </button>
       </PopoverTrigger>
-      <PopoverContent>
+      <PopoverContent className="bg-zinc-900">
         <FilterPopoverContent
           timeGoals={timeGoals}
           tracks={tracks}
