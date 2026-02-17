@@ -26,7 +26,7 @@ interface LeaderboardTabProps {
   loggedInMappack?: Mappack;
 }
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 100;
 
 const getPlayerRank = (points: number, ranks: MappackRank[]): MappackRank | null => {
   const sortedRanks = [...ranks].sort((a, b) => b.pointsNeeded - a.pointsNeeded);
