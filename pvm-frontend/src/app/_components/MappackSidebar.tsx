@@ -50,14 +50,14 @@ export function MappackSidebar({
           <p className="font-bold text-sm">{mappack.description}</p>
         </div>
 
-        <hr />
+        <hr className="divider"/>
 
         <div className="flex justify-center items-center">
           <p className="text-lg font-ruigslay">Timegoals</p>
         </div>
         {sortedTimeGoals.map((timeGoal) => (
           <div key={timeGoal.name} className="flex justify-center items-center font-bold text-white/80 tracking-wider">
-            <p className="text-bold uppercase text-[12px]">{timeGoal.name} {timeGoal.multiplier}x</p>
+            <p className="text-bold uppercase text-sm">{timeGoal.name} {timeGoal.multiplier}x</p>
           </div>
         ))}
 

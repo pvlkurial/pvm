@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { Button } from "@heroui/react";
 import { FaSortAmountDown, FaSortAmountUp } from "react-icons/fa";
+import { BiSortDown, BiSortUp } from "react-icons/bi";
 
 type SortOrder = "asc" | "desc";
 
@@ -19,20 +20,17 @@ export function TierSortButton({ onSortOrderChange }: TierSortButtonProps) {
   };
 
   return (
-    <Button
-      size="sm"
-      variant="flat"
-      onPress={handleSort}
-      className="bg-zinc-800/50 hover:bg-zinc-700/50 text-white"
-      startContent={
+    <button
+
+      onClick={handleSort}
+      className="btn-ghost">
+      {
         sortOrder === "asc" ? (
-          <FaSortAmountUp className="text-orange-500" />
+          <BiSortUp className="text-white/80 w-5 h-5" />
         ) : (
-          <FaSortAmountDown className="text-orange-500" />
+          <BiSortDown className="text-white/80 w-5 h-5" />
         )
       }
-    >
-      {sortOrder === "asc" ? "Easy → Hard" : "Hard → Easy"}
-    </Button>
+    </button>
   );
 }
