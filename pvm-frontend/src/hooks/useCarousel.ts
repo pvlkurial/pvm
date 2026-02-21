@@ -28,8 +28,7 @@ export function useCarousel<T extends CarouselItem>(items: T[]) {
   const total = items.length;
   const needsCarousel = total > visible;
 
-  const effectiveCardWidth =
-    !needsCarousel && total > 0 ? (cardWidth * visible) / total : cardWidth;
+  const effectiveCardWidth = cardWidth;
 
   // ── Measure ──────────────────────────────────────────────────────────────
   useEffect(() => {
