@@ -17,7 +17,10 @@ func (m *MappackSeeder) seedMappacks() error {
 		{Name: "Fullspeed"},
 		{Name: "Dirt"},
 		{Name: "RPG"},
-		{Name: "Trial"},
+		{Name: "Mixed"},
+		{Name: "Ice"},
+		{Name: "Pathfinding"},
+		{Name: "LOL"},
 	}
 
 	m.DB.Save(mapStyles)
