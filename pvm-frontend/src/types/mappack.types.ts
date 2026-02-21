@@ -65,6 +65,7 @@ export interface Mappack {
   timeGoals: TimeGoal[];
   mappackTiers: MappackTier[];
   mappackRanks: MappackRank[];
+  mapStyleName: string;
 }
 
 export interface Track {
