@@ -20,6 +20,12 @@ export default function MapppacksPage() {
   const isAdmin = user?.role === "admin";
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
+  // Disable page scroll only while on this page
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = ""; };
+  }, []);
+
   useEffect(() => {
     axios
       .get(`${API_BASE}/mappacks`)
