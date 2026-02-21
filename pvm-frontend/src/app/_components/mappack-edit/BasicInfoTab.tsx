@@ -1,5 +1,6 @@
-import { Input, Switch } from "@heroui/react";
+import { Autocomplete, AutocompleteItem, Input, Switch } from "@heroui/react";
 import { Mappack } from "@/types/mappack.types";
+import { mapStyles } from "@/app/_components/CreateMappackModal";
 
 interface BasicInfoTabProps {
   editData: Mappack;
@@ -35,6 +36,30 @@ export function BasicInfoTab({ editData, onUpdate, inputClassNames }: BasicInfoT
         onValueChange={(value) => onUpdate({ thumbnailURL: value })}
         classNames={inputClassNames}
       />
+      <Autocomplete
+        defaultItems={mapStyles}
+        label="Map Style"
+        placeholder="Search a style"
+        variant="bordered"
+        defaultSelectedKey={
+          mapStyles.find(s => s.label === editData.mapStyleName)?.key
+        }
+        onSelectionChange={(key) => {
+          const match = mapStyles.find(s => s.key === key);
+          onUpdate({ mapStyleName: match?.label ?? "" });
+        }}
+        classNames={{
+          base: "text-white",
+          selectorButton: "text-white",
+          listboxWrapper: "bg-neutral-800",
+          popoverContent: "bg-neutral-800",
+        }}
+        inputProps={{ classNames: inputClassNames }}
+      >
+        {(style) => (
+          <AutocompleteItem key={style.key}>{style.label}</AutocompleteItem>
+        )}
+      </Autocomplete>
       <Switch
         isSelected={editData.isActive}
         onValueChange={(checked) => onUpdate({ isActive: checked })}
