@@ -38,6 +38,7 @@ export default function MapStyleIcon({ styleKey, className = "" }: Props) {
         alt={label}
         width={68}
         height={68}
+        unoptimized
         className="mp-style-svg"
       />
       <span className="mp-style-label">{label}</span>
