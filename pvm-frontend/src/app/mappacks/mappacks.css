@@ -1,0 +1,312 @@
+@layer components {
+
+  /* ── Page ──────────────────────────────────────────────────────────────── */
+
+  html, body {
+    overflow: hidden;
+  }
+
+  .mp-viewport {
+    position: relative;
+    width: 100%;
+    /* navbar ~65px + hr 1px + footer ~73px */
+    height: calc(100vh - 140px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    user-select: none;
+  }
+
+  /* ── Track ─────────────────────────────────────────────────────────────── */
+
+  .mp-track {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    cursor: grab;
+  }
+  .mp-track:active {
+    cursor: grabbing;
+  }
+  .mp-track-transitioning {
+    transition: transform 0.45s cubic-bezier(0.77, 0, 0.175, 1);
+  }
+
+  /* ── Card wrappers ─────────────────────────────────────────────────────── */
+
+  .mp-card,
+  .mp-add-wrap {
+    position: relative;
+    flex-shrink: 0;
+    height: 100%;
+  }
+  .mp-card {
+    z-index: 2;
+    text-decoration: none;
+    color: inherit;
+  }
+  .mp-card:hover {
+    z-index: 10;
+  }
+  .mp-add-wrap {
+    z-index: 2;
+  }
+
+  /* ── Skewed parallelogram shell ────────────────────────────────────────── */
+
+  .mp-inner,
+  .mp-add-inner {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: -20px;
+    transform: skewX(-10deg);
+    overflow: hidden;
+    border-right: 1px solid rgb(255 255 255 / 0.07);
+    transition: box-shadow 0.3s ease;
+  }
+  .mp-inner {
+    background: #080b10;
+  }
+  .mp-card:hover .mp-inner {
+    box-shadow: 8px 0 40px rgb(0 0 0 / 0.7);
+  }
+
+  /* ── Image ─────────────────────────────────────────────────────────────── */
+
+  .mp-img {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    filter: brightness(0.6);
+    pointer-events: none;
+    transition: filter 0.35s ease, transform 0.35s ease;
+  }
+  .mp-card:hover .mp-img {
+    filter: brightness(0.82);
+    transform: scale(1.04);
+  }
+
+  /* ── Gradient ──────────────────────────────────────────────────────────── */
+
+  .mp-grad {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to top,
+      rgb(0 0 0 / 0.95) 0%,
+      rgb(0 0 0 / 0.3) 40%,
+      transparent 68%
+    );
+    pointer-events: none;
+  }
+
+  /* ── Accent line ───────────────────────────────────────────────────────── */
+
+  .mp-accent {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: rgb(255 255 255 / 0.22);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .mp-card:hover .mp-accent {
+    opacity: 1;
+  }
+
+  /* ── Text (counter-skewed) ─────────────────────────────────────────────── */
+
+  .mp-text {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 28px 36px;
+    z-index: 2;
+    transform: skewX(10deg);
+    pointer-events: none;
+  }
+  .mp-name {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: #fff;
+    line-height: 1.1;
+    margin: 0;
+  }
+  .mp-count {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: rgb(255 255 255 / 0.35);
+    margin: 6px 0 0;
+  }
+
+  /* ── Style icon (counter-skewed, top-right) ────────────────────────────── */
+
+  .mp-style-icon {
+    position: absolute;
+    top: 20px;
+    right: 52px;
+    z-index: 3;
+    transform: skewX(10deg);
+    pointer-events: all;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+  .mp-style-svg {
+    width: 68px;
+    height: 68px;
+    opacity: 0.18;
+    display: block;
+    transition: opacity 0.3s;
+  }
+  .mp-card:hover .mp-style-svg {
+    opacity: 0.4;
+  }
+  .mp-style-icon:hover .mp-style-svg {
+    opacity: 0.6;
+  }
+  .mp-style-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: transparent;
+    white-space: nowrap;
+    transition: color 0.25s;
+  }
+  .mp-style-icon:hover .mp-style-label {
+    color: rgb(255 255 255 / 0.55);
+  }
+
+  /* ── Add card ──────────────────────────────────────────────────────────── */
+
+  .mp-add-inner {
+    background: transparent;
+    border: 1px dashed rgb(255 255 255 / 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: border-color 0.25s, background 0.25s;
+  }
+  .mp-add-wrap:hover .mp-add-inner {
+    border-color: rgb(255 255 255 / 0.28);
+    background: rgb(255 255 255 / 0.03);
+  }
+  .mp-add-content {
+    transform: skewX(10deg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    pointer-events: none;
+    user-select: none;
+    color: rgb(255 255 255 / 0.25);
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: color 0.25s;
+  }
+  .mp-add-wrap:hover .mp-add-content {
+    color: rgb(255 255 255 / 0.5);
+  }
+  .mp-add-icon {
+    font-size: 32px;
+    line-height: 1;
+    font-weight: 200;
+  }
+  .mp-add-modal-trigger {
+    position: absolute;
+    inset: 0;
+    transform: skewX(-10deg);
+    opacity: 0;
+    cursor: pointer;
+    z-index: 20;
+  }
+  .mp-add-modal-trigger button,
+  .mp-add-modal-trigger [role="button"] {
+    width: 100%;
+    height: 100%;
+    background: transparent !important;
+    border: none !important;
+    cursor: pointer;
+  }
+
+  /* ── Arrows ────────────────────────────────────────────────────────────── */
+
+  .mp-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 50;
+    background: rgb(0 0 0 / 0.5);
+    border: 1px solid rgb(255 255 255 / 0.1);
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
+    opacity: 0.5;
+    transition: opacity 0.2s, background 0.2s;
+    backdrop-filter: blur(4px);
+  }
+  .mp-arrow:hover {
+    opacity: 1;
+    background: rgb(0 0 0 / 0.75);
+  }
+  .mp-arrow svg {
+    width: 16px;
+    height: 16px;
+  }
+  @media (max-width: 639px) {
+    .mp-arrow { display: none; }
+  }
+
+  /* ── Dots ──────────────────────────────────────────────────────────────── */
+
+  .mp-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 14px 0;
+    flex-shrink: 0;
+  }
+  .mp-dot {
+    height: 6px;
+    width: 32px;
+    background: rgb(255 255 255 / 0.15);
+    border: none;
+    cursor: pointer;
+    transform: skewX(-12deg);
+    padding: 0;
+    transition: width 0.3s ease, background 0.3s ease;
+  }
+  .mp-dot.is-active {
+    width: 64px;
+    background: rgb(255 255 255 / 0.6);
+  }
+
+  /* ── Empty / loading ───────────────────────────────────────────────────── */
+
+  .mp-empty {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgb(255 255 255 / 0.2);
+    font-size: 13px;
+    letter-spacing: 0.15em;
+  }
+}

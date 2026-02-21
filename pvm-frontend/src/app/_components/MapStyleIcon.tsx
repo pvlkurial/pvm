@@ -32,7 +32,7 @@ export default function MapStyleIcon({ styleKey, className = "" }: Props) {
   const label = STYLE_LABELS[key] ?? styleKey;
 
   return (
-    <span className={`map-style-icon ${className}`}>
+    <span className={className}>
       <Image
         src={`/map-styles/${key}.svg`}
         alt={label}

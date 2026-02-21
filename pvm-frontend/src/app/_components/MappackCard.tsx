@@ -1,31 +1,45 @@
-import { Card, CardHeader, Image } from "@heroui/react";
-import { useRouter } from "next/navigation";
-import {Mappack} from "@/types/mappack.types";
+import React from "react";
+import Link from "next/link";
+import { Mappack } from "@/types/mappack.types";
+import MapStyleIcon from "./MapStyleIcon";
 
-interface MappackCardProps {
+interface Props {
   mappack: Mappack;
+  width: number;
+  isClone?: boolean;
+  isDragging: React.MutableRefObject<boolean>;
 }
 
-export default function MappackCard({ mappack }: MappackCardProps) {
-  const router = useRouter();
+export default function MappackCard({ mappack, width, isClone, isDragging }: Props) {
   return (
-    <div>
-      <Card
-        className="h-50h"
-        isPressable
-        onPress={() => router.push("/mappacks/" + mappack.id)}
-      >
-        <CardHeader className="absolute z-10 top-1 flex-col items-start!">
-          <h4 className="text-white font-medium text-large">{mappack.name}</h4>
-          <p className="text-white text-sm">{mappack.id}</p>
-        </CardHeader>
-        <Image
-          removeWrapper
-          alt="Card background"
-          className="z-0 w-full h-full object-cover scale-175"
-          src={mappack.thumbnailURL}
+    <Link
+      href={`/mappacks/${mappack.id}`}
+      className="mp-card"
+      style={{ width }}
+      tabIndex={isClone ? -1 : 0}
+      draggable={false}
+      onClick={(e) => { if (isDragging.current) e.preventDefault(); }}
+    >
+      <div className="mp-inner">
+        <div
+          className="mp-img"
+          style={{ backgroundImage: `url(${mappack.thumbnailURL})` }}
         />
-      </Card>
-    </div>
+        <div className="mp-grad" />
+        <div className="mp-accent" />
+        {(mappack as Mappack & { mapStyleName?: string }).mapStyleName && (
+          <MapStyleIcon
+            styleKey={(mappack as Mappack & { mapStyleName?: string }).mapStyleName!}
+            className="mp-style-icon"
+          />
+        )}
+        <div className="mp-text">
+          <p className="mp-name">{mappack.name}</p>
+          {mappack.MappackTrack?.length > 0 && (
+            <p className="mp-count">{mappack.MappackTrack.length} tracks</p>
+          )}
+        </div>
+      </div>
+    </Link>
   );
 }
