@@ -6,6 +6,7 @@ import { TierSection } from "./TierSection";
 import { Mappack, MappackTrack, MappackTier } from "@/types/mappack.types";
 import { MappackProgressBar } from "./mappack-page/MappackProgressBar";
 import { TierSortButton } from "./TierSortButton";
+import InfoButton from "./InfoButton";
 
 interface MappackContentProps {
   mappack: Mappack;
@@ -58,6 +59,7 @@ export function MappackContent({
           onFilterChange={onFilterChange}
         />
         <TierSortButton onSortOrderChange={onSortOrderChange} />
+        <InfoButton></InfoButton>
         <Switch
           isSelected={alwaysShowTrackDetails}
           onValueChange={setAlwaysShowTrackDetails}

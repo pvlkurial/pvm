@@ -1,6 +1,6 @@
 // app/mappack/[mappack]/page.tsx
 "use client";
-import { use, useState, useEffect } from "react";
+import React, { use, useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { Mappack, MappackTrack } from "@/types/mappack.types";
 import { mappackService } from "@/services/mappack.service";
@@ -9,6 +9,8 @@ import { useTierScroll } from "@/hooks/useTierScroll";
 import { MappackSidebar } from "@/app/_components/MappackSidebar";
 import { MappackContent } from "@/app/_components/MappackContent";
 import { PlayerStats } from "@/app/_components/PlayerStats";
+import { useScrollPosition } from "@/hooks/useScrollPosition";
+import { usePathname } from "next/navigation";
 
 export default function MappackPage({
   params,
@@ -23,7 +25,7 @@ export default function MappackPage({
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [tierSortOrder, setTierSortOrder] = useState<"asc" | "desc">("asc");
-
+  
   useEffect(() => {
     const fetchMappack = async () => {
       try {
@@ -39,12 +41,13 @@ export default function MappackPage({
     };
     fetchMappack();
   }, [mappackId, user?.id]);
-
+  
   const tracksByTier = groupTracksByTier(filteredTracks);
   const sortedTiers = sortTiersByPoints(tracksByTier, tierSortOrder);
-
-  const { activeTier, tierRefs, scrollToTier } = useTierScroll(tracksByTier);
-
+  const pathName = usePathname();
+  const { isRestored } = useScrollPosition(pathName, !loading);
+  const { activeTier, tierRefs, scrollToTier } = useTierScroll(tracksByTier, isRestored);
+  
   const handleEditSave = async () => {
     try {
       const data = await mappackService.getMappack(mappackId, user?.id);
@@ -54,7 +57,7 @@ export default function MappackPage({
       console.error("Error reloading mappack:", error);
     }
   };
-
+  
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
