@@ -1,13 +1,16 @@
-import { useEffect, useRef, useState, RefObject } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MappackTrack, MappackTier } from '@/types/mappack.types';
 
 export function useTierScroll(
-  tracksByTier: Record<string, { tier: MappackTier | null; tracks: MappackTrack[] }>
+  tracksByTier: Record<string, { tier: MappackTier | null; tracks: MappackTrack[] }>,
+  enabled: boolean = true
 ) {
   const [activeTier, setActiveTier] = useState<string>("");
   const tierRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   useEffect(() => {
+    if (!enabled) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -24,7 +27,7 @@ export function useTierScroll(
     });
 
     return () => observer.disconnect();
-  }, [tracksByTier]);
+  }, [tracksByTier, enabled]);
 
   const scrollToTier = (tier: string) => {
     tierRefs.current[tier]?.scrollIntoView({

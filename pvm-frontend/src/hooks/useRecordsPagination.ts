@@ -1,4 +1,3 @@
-// hooks/useRecordsPagination.ts
 import { useState, useMemo } from 'react';
 import { Record } from '@/types/mappack.types';
 
