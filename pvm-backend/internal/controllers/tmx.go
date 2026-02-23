@@ -3,7 +3,7 @@ package controllers
 
 import (
 	"encoding/json"
-	"example/pvm-backend/internal/models/dtos"
+	"example/pvm-backend/internal/models/dtos/responses"
 	"fmt"
 	"io"
 	"log"
@@ -14,11 +14,6 @@ import (
 )
 
 type TmxController struct{}
-
-type TmxSearchResponse struct {
-	More    bool            `json:"More"`
-	Results []dtos.TmxTrack `json:"Results"`
-}
 
 func (t *TmxController) SearchTracks(c *gin.Context) {
 	query := c.Query("name")
@@ -57,7 +52,7 @@ func (t *TmxController) SearchTracks(c *gin.Context) {
 
 	log.Printf("TMX API raw response: %s", string(body))
 
-	var searchResponse TmxSearchResponse
+	var searchResponse responses.TmxSearchResponse
 	if err := json.Unmarshal(body, &searchResponse); err != nil {
 		log.Printf("Failed to parse TMX response: %v", err)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse TMX response"})
@@ -66,19 +61,11 @@ func (t *TmxController) SearchTracks(c *gin.Context) {
 
 	log.Printf("Found %d tracks", len(searchResponse.Results))
 
-	type ResponseTrack struct {
-		TrackID      int    `json:"TrackID"`
-		MapUUID      string `json:"MapUUID"`
-		Name         string `json:"Name"`
-		AuthorName   string `json:"AuthorName"`
-		ThumbnailURL string `json:"ThumbnailURL"`
-	}
-
-	results := make([]ResponseTrack, len(searchResponse.Results))
+	results := make([]responses.ResponseTrack, len(searchResponse.Results))
 	for i, track := range searchResponse.Results {
 		thumbnailURL := fmt.Sprintf("https://trackmania.exchange/mapthumb/%d", track.MapId)
 
-		results[i] = ResponseTrack{
+		results[i] = responses.ResponseTrack{
 			TrackID:      track.MapId,
 			MapUUID:      track.OnlineMapId,
 			Name:         track.Name,
