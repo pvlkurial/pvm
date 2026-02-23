@@ -17,14 +17,14 @@ export default function LoginButton() {
         }}
       >
         <DropdownTrigger>
-          <Button variant="bordered" className="border-gray-700">
+          <button className="hover:border-gray-700 hover:bg-neutral-700 py-2 rounded px-4 cursor-pointer rounded-lg  duration-200">
             {user.name}
             {user.role === "admin" && (
               <span className="ml-2 text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">
                 Admin
               </span>
             )}
-          </Button>
+          </button>
         </DropdownTrigger>
         <DropdownMenu
           aria-label="User actions"

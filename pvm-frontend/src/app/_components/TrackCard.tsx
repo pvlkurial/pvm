@@ -57,7 +57,7 @@ export default function TrackCard({
       onPress={() => router.push(`${mappackId}/${track.id}`)}
     >
       <CardHeader className="absolute z-10 top-0 w-full flex flex-col items-center justify-between bg-transparent group-hover:bg-black/30 group-hover:backdrop-blur-sm transition-all duration-300">
-        <h4 className="text-white text-xl">
+        <h4 className="text-white text-xl text-shadow-lg/30">
           <FormattedText text={track.name} />
         </h4>
         <p className="text-white/30 text-sm">{track.author}</p>

@@ -10,6 +10,7 @@ import { HeatherGreen } from '@/fonts'
 import Footer from "./_components/Footer";
 import LoginButton from "./_components/LoginButton";
 import { AuthProvider } from "@/contexts/AuthContext";
+import ImportantInfoButton from "./_components/ImportantInfoButton";
 
 export default function RootLayout({
   children,
@@ -40,6 +41,9 @@ export default function RootLayout({
       <NavbarContent justify="end">
         <NavbarItem>
           <LoginButton/>
+        </NavbarItem>
+        <NavbarItem>
+          <ImportantInfoButton/>
         </NavbarItem>
       </NavbarContent>
       </Navbar>
