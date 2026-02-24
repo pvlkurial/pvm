@@ -2,10 +2,8 @@
 package controllers
 
 import (
-	"encoding/json"
-	"example/pvm-backend/internal/models/dtos/responses"
+	"example/pvm-backend/internal/clients"
 	"fmt"
-	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -13,7 +11,13 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type TmxController struct{}
+type TmxController struct {
+	client clients.TmxApiClient
+}
+
+func NewTmxController(client clients.TmxApiClient) *TmxController {
+	return &TmxController{client}
+}
 
 func (t *TmxController) SearchTracks(c *gin.Context) {
 	query := c.Query("name")
@@ -33,46 +37,10 @@ func (t *TmxController) SearchTracks(c *gin.Context) {
 
 	log.Printf("Calling TMX API: %s", tmxURL)
 
-	resp, err := http.Get(tmxURL)
+	results, err := t.client.GetTracksByName(tmxURL)
 	if err != nil {
-		log.Printf("TMX API request failed: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to search TMX"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Track fetching failed"})
 		return
 	}
-	defer resp.Body.Close()
-
-	log.Printf("TMX API status code: %d", resp.StatusCode)
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		log.Printf("Failed to read TMX response: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to read TMX response"})
-		return
-	}
-
-	log.Printf("TMX API raw response: %s", string(body))
-
-	var searchResponse responses.TmxSearchResponse
-	if err := json.Unmarshal(body, &searchResponse); err != nil {
-		log.Printf("Failed to parse TMX response: %v", err)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to parse TMX response"})
-		return
-	}
-
-	log.Printf("Found %d tracks", len(searchResponse.Results))
-
-	results := make([]responses.ResponseTrack, len(searchResponse.Results))
-	for i, track := range searchResponse.Results {
-		thumbnailURL := fmt.Sprintf("https://trackmania.exchange/mapthumb/%d", track.MapId)
-
-		results[i] = responses.ResponseTrack{
-			TrackID:      track.MapId,
-			MapUUID:      track.OnlineMapId,
-			Name:         track.Name,
-			AuthorName:   track.Uploader.Name,
-			ThumbnailURL: thumbnailURL,
-		}
-	}
-
 	c.JSON(http.StatusOK, gin.H{"results": results})
 }
