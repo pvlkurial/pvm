@@ -11,7 +11,7 @@ export default function ImportantInfoButton() {
           <FaExclamationTriangle size={14} />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="bg-black border border-yellow-500/30 text-white p-4 max-w-xs text-center">
+      <PopoverContent className="bg-zinc-900 border border-yellow-500/30 text-white p-4 max-w-xs text-center">
         <h2 className="text-heading text-sm text-yellow-400 mb-2">Important</h2>
         <div className="text-white/70 text-sm space-y-1">
           <p>Soon we'll be moving to</p>

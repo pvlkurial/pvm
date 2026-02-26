@@ -11,7 +11,7 @@ export default function InfoButton() {
           <FaInfo size={12} />
         </button>
       </PopoverTrigger>
-      <PopoverContent className="bg-black border border-white/20 text-white p-4 max-w-xs">
+      <PopoverContent className="bg-zinc-900 border border-white/20 text-white p-4 max-w-xs">
         <h2 className="text-heading text-sm mb-2">Information</h2>
         <div className="text-white/70 text-sm space-y-1 text-center">
           <p>Records are updated every 8 hours and</p>
