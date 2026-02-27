@@ -1,30 +1,89 @@
 "use client";
-import { Button, Card, CardBody } from "@heroui/react";
+import { Button } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
+import Image from "next/image";
+
+const AVAILABLE_STYLES = [
+  { key: "tech", file: "tech.svg",  label: "Tech" },
+  { key: "rpg",  file: "rpg.svg",   label: "RPG" },
+];
+
+const COMING_SOON_STYLES = [
+  { key: "fullspeed", file: "fullspeed.svg", label: "Fullspeed" },
+  { key: "dirt",      file: "dirt.svg",      label: "Dirt" },
+];
 
 export default function Home() {
   const router = useRouter();
   const { isAuthenticated, login } = useAuth();
 
   return (
-    <div className="min-h-screen">
-      <div className="container mx-auto px-4 py-16">
-        <div className="flex flex-col items-center text-center space-y-8 max-w-4xl mx-auto">
-          <div className="space-y-4">
-            <h1 className="text-6xl md:text-7xl font-bold text-white font-ruigslay">
-              PLAYER VS MAP
-            </h1>
-            <p className="text-xl md:text-2xl text-zinc-400 max-w-2xl mx-auto">
-              Push your limits on prestigious Trackmania maps
-            </p>
-          </div>
+    <div className="min-h-screen flex flex-col">
 
-          <div className="flex flex-wrap justify-center gap-4 pt-4">
+      {/* ── HERO ── */}
+      <section className="relative max-w-5xl mx-auto w-full px-6 pt-28 pb-20 overflow-hidden min-h-[520px]">
+
+        {/* Parallelogram video panel */}
+        <div
+          className="absolute top-0 right-0 h-full w-[55%] pointer-events-none"
+          style={{ clipPath: "polygon(18% 0%, 100% 0%, 100% 100%, 0% 100%)" }}
+          aria-hidden
+        >
+          <video
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover"
+            src="/hero-clip.mp4"
+          />
+          {/* Left-edge fade for text readability */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background: "linear-gradient(to right, rgba(10,10,10,0.7) 0%, transparent 45%)",
+            }}
+          />
+        </div>
+
+        {/* Hero text */}
+        <div className="relative z-10">
+          <p className="text-neutral-500 text-xs tracking-[0.25em] uppercase mb-5">
+            Trackmania · PVM Tracking Platform
+          </p>
+
+          {/* Title: "Player" solid, "vs Map" outlined over video */}
+          <h1
+            className="font-ruigslay leading-none mb-10"
+            style={{ fontSize: "clamp(60px, 11vw, 120px)" }}
+          >
+            {/* Solid — sits on the dark left side */}
+            <span className="text-white block">Player</span>
+
+            {/* Outlined — bleeds into the video area, feels embedded in it */}
+            <span
+              className="block"
+              style={{
+                WebkitTextStroke: "2px rgba(255,255,255,0.85)",
+                color: "transparent",
+                /* Subtle inner glow so it pops off any video content */
+                textShadow: "0 0 40px rgba(255,255,255,0.15)",
+              }}
+            >
+              vs Map
+            </span>
+          </h1>
+
+          <p className="text-neutral-400 text-base max-w-sm mb-10 leading-relaxed">
+            Set records, earn points, and work your way through every tier.
+          </p>
+
+          <div className="flex gap-3 flex-wrap items-center">
             {!isAuthenticated ? (
               <Button
                 size="lg"
-                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8"
+                className="bg-white text-black font-semibold px-8"
                 onPress={login}
               >
                 Login with Trackmania
@@ -32,7 +91,7 @@ export default function Home() {
             ) : (
               <Button
                 size="lg"
-                className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-8"
+                className="bg-white text-black font-semibold px-8"
                 onPress={() => router.push("/mappacks")}
               >
                 View Mappacks
@@ -41,146 +100,144 @@ export default function Home() {
             <Button
               size="lg"
               variant="bordered"
-              className="border-zinc-700 text-white hover:bg-zinc-800 px-8"
+              className="border-neutral-700 text-neutral-400 hover:text-white px-8"
               as="a"
               href="https://openplanet.dev/plugin/pvm"
               target="_blank"
             >
-              Get Openplanet Plugin
+              Openplanet Plugin ↗
             </Button>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 pt-16 w-full">
-            <Card className="bg-zinc-800 border border-zinc-700">
-              <CardBody className="p-6 text-center space-y-3">
-                <div className="text-4xl">🎯</div>
-                <h3 className="text-xl font-bold text-white">Time Goals</h3>
-                <p className="text-sm text-zinc-400">
-                  Set personal records and achieve multiple time goals on every track
-                </p>
-              </CardBody>
-            </Card>
+          {/* ── Available PVMs ── */}
+          <div className="mt-12 flex flex-wrap items-end gap-5">
+            {AVAILABLE_STYLES.map((s) => (
+              <div key={s.key} className="flex flex-col items-center gap-1.5">
+                <Image
+                  src={`/map-styles/${s.file}`}
+                  alt={s.label}
+                  width={32}
+                  height={32}
+                  className="opacity-70"
+                />
+                <span className="text-neutral-500 text-[10px] tracking-widest uppercase">
+                  {s.label}
+                </span>
+              </div>
+            ))}
 
-            <Card className="bg-zinc-800 border border-zinc-700">
-              <CardBody className="p-6 text-center space-y-3">
-                <div className="text-4xl">🏆</div>
-                <h3 className="text-xl font-bold text-white">Leaderboards</h3>
-                <p className="text-sm text-zinc-400">
-                  Compete globally and climb the ranks with point-based progression
-                </p>
-              </CardBody>
-            </Card>
+            <div className="w-px h-8 bg-neutral-800 self-center" />
 
-            <Card className="bg-zinc-800 border border-zinc-700">
-              <CardBody className="p-6 text-center space-y-3">
-                <div className="text-4xl">⭐</div>
-                <h3 className="text-xl font-bold text-white">Tiered Maps</h3>
-                <p className="text-sm text-zinc-400">
-                  Progress through the track tiers from beginner to extreme
-                </p>
-              </CardBody>
-            </Card>
+            {COMING_SOON_STYLES.map((s) => (
+              <div key={s.key} className="flex flex-col items-center gap-1.5 group relative">
+                <Image
+                  src={`/map-styles/${s.file}`}
+                  alt={s.label}
+                  width={32}
+                  height={32}
+                  className="opacity-15"
+                />
+                <span className="text-neutral-700 text-[10px] tracking-widest uppercase">
+                  {s.label}
+                </span>
+                <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] text-neutral-600 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                  soon
+                </span>
+              </div>
+            ))}
           </div>
-
-          <div className="pt-16 space-y-6 w-full">
-            <h2 className="text-3xl font-bold text-white font-ruigslay">HOW IT WORKS</h2>
-            
-            <div className="grid md:grid-cols-2 gap-6">
-              <Card className="bg-zinc-800/50 border border-zinc-700">
-                <CardBody className="p-6 space-y-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
-                      1
-                    </div>
-                    <h4 className="text-lg font-semibold text-white">Install the Plugin (Optional)</h4>
-                  </div>
-                  <p className="text-sm text-zinc-400 pl-11">
-                    Download the PvM plugin by Nax from Openplanet to access all maps directly in-game
-                    (Not tied to this site, just good for some PVMs)
-                  </p>
-                </CardBody>
-              </Card>
-
-              <Card className="bg-zinc-800/50 border border-zinc-700">
-                <CardBody className="p-6 space-y-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
-                      2
-                    </div>
-                    <h4 className="text-lg font-semibold text-white">Login & Track Progress</h4>
-                  </div>
-                  <p className="text-sm text-zinc-400 pl-11">
-                    Sign in with your Trackmania account to track achievements
-                  </p>
-                </CardBody>
-              </Card>
-
-              <Card className="bg-zinc-800/50 border border-zinc-700">
-                <CardBody className="p-6 space-y-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
-                      3
-                    </div>
-                    <h4 className="text-lg font-semibold text-white">Beat Time Goals</h4>
-                  </div>
-                  <p className="text-sm text-zinc-400 pl-11">
-                    Each map has multiple time goals - beat them all to maximize your points
-                  </p>
-                </CardBody>
-              </Card>
-
-              <Card className="bg-zinc-800/50 border border-zinc-700">
-                <CardBody className="p-6 space-y-3">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white font-bold">
-                      4
-                    </div>
-                    <h4 className="text-lg font-semibold text-white">Climb the Ranks</h4>
-                  </div>
-                  <p className="text-sm text-zinc-400 pl-11">
-                    Earn points for achievements and compete on the mappack leaderboard
-                  </p>
-                </CardBody>
-              </Card>
-            </div>
-          </div>
-
-          <div className="pt-16 w-full">
-            <Card className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/30">
-              <CardBody className="p-8 text-center space-y-4">
-                <h3 className="text-2xl font-bold text-white">Ready to Challenge Yourself?</h3>
-                <p className="text-zinc-400">
-                  Join the community and start your journey through hand-picked Trackmania maps
-                </p>
-                <div className="flex flex-wrap justify-center gap-4 pt-4">
-                  {!isAuthenticated ? (
-                    <Button
-                      size="lg"
-                      className="bg-blue-500 hover:bg-blue-600 text-white font-semibold"
-                      onPress={login}
-                    >
-                      Get Started
-                    </Button>
-                  ) : (
-                    <Button
-                      size="lg"
-                      className="bg-blue-500 hover:bg-blue-600 text-white font-semibold"
-                      onPress={() => router.push("/mappacks")}
-                    >
-                      Pick a PVM
-                    </Button>
-                  )}
-
-                </div>
-              </CardBody>
-            </Card>
-          </div>
-
-          <footer className="pt-16 text-center text-sm text-zinc-600">
-            <p>PvM is a community-driven project for Trackmania players</p>
-          </footer>
         </div>
+      </section>
+
+      <div className="border-t border-neutral-800 max-w-5xl mx-auto w-full px-6" />
+
+      {/* ── HOW IT WORKS ── */}
+      <section className="max-w-5xl mx-auto w-full px-6 py-14">
+        <div className="grid grid-cols-[auto_1fr] items-center gap-3 mb-8">
+          <p className="font-ruigslay text-white text-2xl">How It Works</p>
+          <div className="h-[3px] bg-neutral-800" />
+        </div>
+
+        <div className="grid sm:grid-cols-2 gap-3">
+          {[
+            {
+              n: "01",
+              title: "Install the Plugin",
+              body: "Grab the PvM plugin by Nax from Openplanet. Optional, but lets you access all maps directly in-game.",
+            },
+            {
+              n: "02",
+              title: "Login & Track Progress",
+              body: "Sign in with your Trackmania account. Your PBs and achievements sync automatically.",
+            },
+            {
+              n: "03",
+              title: "Beat Time Goals",
+              body: "Every track has multiple time thresholds. Hit them all to max out your points.",
+            },
+            {
+              n: "04",
+              title: "Climb the Ranks",
+              body: "Accumulate points across the mappack. Earn your rank and see where you stand globally.",
+            },
+          ].map((step) => (
+            <div
+              key={step.n}
+              className="bg-neutral-900 rounded-xl p-6 flex gap-5 items-start hover:bg-neutral-800 transition-colors"
+            >
+              <span className="font-ruigslay text-neutral-700 text-5xl leading-none select-none shrink-0">
+                {step.n}
+              </span>
+              <div className="pt-1">
+                <p className="font-ruigslay text-white text-xl mb-1.5">{step.title}</p>
+                <p className="text-neutral-500 text-sm leading-relaxed">{step.body}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <div className="border-t border-neutral-800 max-w-5xl mx-auto w-full px-6" />
+
+      {/* ── BOTTOM CTA ── */}
+      <section className="max-w-5xl mx-auto w-full px-6 py-16">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8">
+          <div>
+            <h2
+              className="font-ruigslay text-white mb-3"
+              style={{ fontSize: "clamp(38px, 6vw, 68px)", lineHeight: 1 }}
+            >
+              Ready to run it?
+            </h2>
+          </div>
+
+          {!isAuthenticated ? (
+            <Button
+              size="lg"
+              className="bg-white text-black font-semibold px-8 shrink-0"
+              onPress={login}
+            >
+              Get Started
+            </Button>
+          ) : (
+            <Button
+              size="lg"
+              className="bg-white text-black font-semibold px-8 shrink-0"
+              onPress={() => router.push("/mappacks")}
+            >
+              Pick a PVM
+            </Button>
+          )}
+        </div>
+      </section>
+
+      {/* ── FOOTER ── */}
+      <div className="border-t border-neutral-800 max-w-5xl mx-auto w-full px-6 py-6">
+        <p className="text-neutral-700 text-xs tracking-widest uppercase">
+          Not affiliated with Nadeo
+        </p>
       </div>
+
     </div>
   );
 }
