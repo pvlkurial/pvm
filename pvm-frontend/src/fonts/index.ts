@@ -3,7 +3,7 @@ import localFont from 'next/font/local'
 export const myCustomFont = localFont({
   src: [
     {
-      path: './Ruigslay.otf',
+      path: './RuigslayFixed.otf',
       weight: '900',
       style: 'normal',
     },

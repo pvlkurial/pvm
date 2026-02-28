@@ -11,6 +11,7 @@ import Footer from "./_components/Footer";
 import LoginButton from "./_components/LoginButton";
 import { AuthProvider } from "@/contexts/AuthContext";
 import ImportantInfoButton from "./_components/ImportantInfoButton";
+import PatreonButton from "./_components/PatreonButton";
 
 export default function RootLayout({
   children,
@@ -44,6 +45,9 @@ export default function RootLayout({
         </NavbarItem>
         <NavbarItem>
           <ImportantInfoButton/>
+        </NavbarItem>
+        <NavbarItem>
+          <PatreonButton/>
         </NavbarItem>
       </NavbarContent>
       </Navbar>

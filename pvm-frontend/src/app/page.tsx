@@ -4,6 +4,10 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import Image from "next/image";
 import { HeroPanel } from "./_components/HeroPanel";
+import { SiPatreon } from "react-icons/si";
+import { CgPatreon } from "react-icons/cg";
+import { FaPatreon } from "react-icons/fa";
+import { ContributorsSection } from "./_components/Contributorssection";
 
 const AVAILABLE_STYLES = [
   { key: "tech", file: "tech.svg",  label: "Tech" },
@@ -175,6 +179,7 @@ export default function Home() {
       </section>
 
       <div className="border-t border-neutral-800 max-w-5xl mx-auto w-full px-6" />
+          <ContributorsSection />
 
       {/* ── BOTTOM CTA ── */}
       <section className="max-w-5xl mx-auto w-full px-6 py-16">
@@ -207,7 +212,7 @@ export default function Home() {
           )}
         </div>
       </section>
-
+          
       {/* ── FOOTER ── */}
       
         <p className="text-neutral-700 text-xs tracking-widest uppercase text-label ml-6 mb-6">
