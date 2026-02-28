@@ -93,6 +93,7 @@ func (r *Routes) InitRoutes() {
 
 	r.GET("/players", controllers.PlayerController.GetAll)
 
+	r.GET("/mappacks/:mappack_id/players/search", controllers.PlayerController.SearchPlayersInMappack)
 	r.GET("/mappacks/:mappack_id/timegoals", controllers.MappackController.GetAllMappackTimeGoals)
 	//r.DELETE("/mappacks/:mappack_id/timegoals/:timegoal_id", controllers.MappackController.RemoveTimeGoalFromMappack)
 

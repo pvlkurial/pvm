@@ -2,6 +2,7 @@ package services
 
 import (
 	"example/pvm-backend/internal/models"
+	"example/pvm-backend/internal/models/dtos"
 	"example/pvm-backend/internal/repositories"
 )
 
@@ -13,6 +14,7 @@ type PlayerService interface {
 	GetPlayerInfoInMappackTrack(playerId string, mappackId string, trackId string) (models.PlayerMappackTrack, error)
 	GetPlayerInfoInMappackTrackAll(playerId string, mappackId string, trackId string) ([]models.PlayerMappackTrack, error)
 	UpdatePlayersDisplayNames(players *[]models.Player) error
+	SearchPlayersInMappack(mappackID, query string, limit int) ([]dtos.PlayerSearchResult, error)
 }
 
 type playerService struct {
@@ -48,4 +50,8 @@ func (t *playerService) GetPlayerInfoInMappackTrackAll(playerId string, mappackI
 
 func (t *playerService) UpdatePlayersDisplayNames(players *[]models.Player) error {
 	return t.playerRepository.UpdatePlayersDisplayNames(players)
+}
+
+func (s *playerService) SearchPlayersInMappack(mappackID, query string, limit int) ([]dtos.PlayerSearchResult, error) {
+	return s.playerRepository.SearchPlayersInMappack(mappackID, query, limit)
 }

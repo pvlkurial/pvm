@@ -1,4 +1,3 @@
-// components/player-stats/RankDisplay.tsx
 import { MappackRank } from "@/types/mappack.types";
 import { motion } from "framer-motion";
 
@@ -10,70 +9,75 @@ interface RankDisplayProps {
 
 export function RankDisplay({ rank, nextRank, currentPoints }: RankDisplayProps) {
   const pointsToNext = nextRank ? nextRank.pointsNeeded - currentPoints : 0;
-  const progressToNext = nextRank 
+  const progressToNext = nextRank
     ? ((currentPoints - rank.pointsNeeded) / (nextRank.pointsNeeded - rank.pointsNeeded)) * 100
     : 100;
 
   return (
     <div className="space-y-3">
-      {/* Current Rank Card */}
+
+      {/* Current rank card */}
       <motion.div
-        className="relative p-4 rounded-lg overflow-hidden"
+        className="relative rounded-xl overflow-hidden px-4 py-4"
         style={{
-          backgroundColor: `${rank.color}20`,
-          borderColor: `${rank.color}80`,
-          borderWidth: '2px',
+          background: `linear-gradient(135deg, ${rank.color}18 0%, transparent 60%)`,
+          boxShadow: `inset 0 0 0 1px ${rank.color}35`,
         }}
-        initial={{ scale: 0.95, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        transition={{ duration: 0.5 }}
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4 }}
       >
-        {/* Rank styling effects */}
         {rank.backgroundGlow && (
-          <div 
-            className="absolute inset-0 blur-xl opacity-30"
+          <div
+            className="absolute inset-0 blur-2xl opacity-20 pointer-events-none"
             style={{ backgroundColor: rank.color }}
           />
         )}
-        
-        <div className="relative z-10 flex items-center justify-between">
-          <div>
-            <p className="text-xs text-white/50 uppercase tracking-wider mb-1">
-              Current Rank
-            </p>
-            <h3 
-              className="text-2xl font-bold"
-              style={{ 
-                color: rank.color,
-                fontFamily: 'inherit',
-              }}
-            >
-              {rank.name}
-            </h3>
-          </div>
+
+        {/* Left color bar */}
+        <div
+          className="absolute left-0 top-0 bottom-0 w-[3px]"
+          style={{ backgroundColor: rank.color }}
+        />
+
+        <div className="relative z-10">
+          <p className="text-neutral-600 text-[10px] tracking-widest uppercase mb-1.5">
+            Current Rank
+          </p>
+          <p
+            className="font-ruigslay leading-none"
+            style={{ fontSize: "clamp(24px, 3vw, 34px)", color: rank.color }}
+          >
+            {rank.name}
+          </p>
         </div>
       </motion.div>
 
-      {/* Progress to Next Rank */}
+      {/* Progress to next rank */}
       {nextRank && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-xs">
-            <span className="text-white/50">Next: {nextRank.name}</span>
-            <span className="text-white/70 font-semibold">
-              {pointsToNext} pts needed
+        <div className="space-y-1.5">
+          <div className="flex items-center justify-between">
+            <span className="text-neutral-500 text-[10px] tracking-widest uppercase">
+              Next: {nextRank.name}
+            </span>
+            <span className="text-white/40 text-[10px]">
+              {pointsToNext.toLocaleString()} pts
             </span>
           </div>
-          <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
+          <div className="h-1 rounded-full bg-white/[0.06] overflow-hidden">
             <motion.div
               className="h-full rounded-full"
-              style={{ backgroundColor: nextRank.color }}
+              style={{
+                background: `linear-gradient(to right, ${nextRank.color}50, ${nextRank.color})`,
+              }}
               initial={{ width: 0 }}
               animate={{ width: `${Math.min(progressToNext, 100)}%` }}
-              transition={{ duration: 1, ease: "easeOut", delay: 0.6 }}
+              transition={{ duration: 1, ease: "easeOut", delay: 0.3 }}
             />
           </div>
         </div>
       )}
+
     </div>
   );
 }

@@ -5,6 +5,7 @@ import (
 	"example/pvm-backend/internal/services"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -71,4 +72,29 @@ func (t *PlayerController) GetPlayerInfoInMappackTrackAll(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, result)
 	}
+}
+
+func (c *PlayerController) SearchPlayersInMappack(ctx *gin.Context) {
+	mappackID := ctx.Param("mappack_id")
+	query := ctx.Query("q")
+
+	if query == "" {
+		ctx.JSON(http.StatusOK, []interface{}{})
+		return
+	}
+
+	limit := 5
+	if limitStr := ctx.Query("limit"); limitStr != "" {
+		if l, err := strconv.Atoi(limitStr); err == nil && l > 0 && l <= 20 {
+			limit = l
+		}
+	}
+
+	players, err := c.playerService.SearchPlayersInMappack(mappackID, query, limit)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, players)
 }

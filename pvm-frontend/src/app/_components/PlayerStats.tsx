@@ -58,7 +58,7 @@ export function PlayerStats({
         <div className="space-y-2">
           <div className="flex items-center justify-center gap-2">
             <h3 className="text-3xl font-ruigslay font-bold text-white ">
-              Stats
+              My Stats
             </h3>
           </div>
             <Divider className="bg-white/50" />
@@ -66,15 +66,15 @@ export function PlayerStats({
           <div className="flex items-center justify-between">
             <span className="text-lg font-semibold text-white">
 
-              <p className="text-2xl font-bold text-white">
-                {entry.total_points.toLocaleString()} POINTS
+              <p className="text-5xl font-bold text-white font-ruigslay">
+                {entry.total_points.toLocaleString()} PTS
               </p>
           <div className="flex items-center gap-3">
             <div>
             </div>
           </div>
             </span>
-            <span className="px-3 py-1 text-sm text-white/70">
+            <span className="px-3 py-1 text-sm text-label">
               RANK #{rank}
             </span>
           </div>
