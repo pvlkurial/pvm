@@ -73,7 +73,7 @@ export function ModalPlayerStats({
         </div>
 
         {playerRank && (
-          <div className="w-[200px] shrink-0">
+          <div className="shrink-0">
             <RankDisplay
               rank={playerRank}
               nextRank={nextRank}
