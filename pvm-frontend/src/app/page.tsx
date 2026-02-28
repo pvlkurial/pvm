@@ -3,6 +3,7 @@ import { Button } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import Image from "next/image";
+import { HeroPanel } from "./_components/HeroPanel";
 
 const AVAILABLE_STYLES = [
   { key: "tech", file: "tech.svg",  label: "Tech" },
@@ -25,27 +26,7 @@ export default function Home() {
       <section className="relative max-w-5xl mx-auto w-full px-6 pt-28 pb-20 overflow-hidden min-h-[520px]">
 
         {/* Parallelogram video panel */}
-        <div
-          className="absolute top-0 right-0 h-full w-[55%] pointer-events-none"
-          style={{ clipPath: "polygon(18% 0%, 100% 0%, 100% 100%, 0% 100%)" }}
-          aria-hidden
-        >
-          <video
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="w-full h-full object-cover"
-            src="/hero-clip.mp4"
-          />
-          {/* Left-edge fade for text readability */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background: "linear-gradient(to right, rgba(10,10,10,0.7) 0%, transparent 45%)",
-            }}
-          />
-        </div>
+        <HeroPanel />
 
         {/* Hero text */}
         <div className="relative z-10">
@@ -53,21 +34,17 @@ export default function Home() {
             Trackmania · PVM Tracking Platform
           </p>
 
-          {/* Title: "Player" solid, "vs Map" outlined over video */}
           <h1
             className="font-ruigslay leading-none mb-10"
             style={{ fontSize: "clamp(60px, 11vw, 120px)" }}
           >
-            {/* Solid — sits on the dark left side */}
             <span className="text-white block">Player</span>
 
-            {/* Outlined — bleeds into the video area, feels embedded in it */}
             <span
               className="block"
               style={{
                 WebkitTextStroke: "2px rgba(255,255,255,0.85)",
                 color: "transparent",
-                /* Subtle inner glow so it pops off any video content */
                 textShadow: "0 0 40px rgba(255,255,255,0.15)",
               }}
             >
@@ -232,11 +209,10 @@ export default function Home() {
       </section>
 
       {/* ── FOOTER ── */}
-      <div className="border-t border-neutral-800 max-w-5xl mx-auto w-full px-6 py-6">
-        <p className="text-neutral-700 text-xs tracking-widest uppercase">
+      
+        <p className="text-neutral-700 text-xs tracking-widest uppercase text-label ml-6 mb-6">
           Not affiliated with Nadeo
         </p>
-      </div>
 
     </div>
   );

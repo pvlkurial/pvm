@@ -31,13 +31,22 @@ export function MappackContent({
   tierRefs,
   playerId,
 }: MappackContentProps) {
-  const [alwaysShowTrackDetails, setAlwaysShowTrackDetails] = useState(true);
+  const [alwaysShowTrackDetails, setAlwaysShowTrackDetails] = useState(() => {
+    if (typeof window === "undefined") return true;
+    const stored = localStorage.getItem("alwaysShowTrackDetails");
+    return stored !== null ? stored === "true" : true;
+  });
   const [selectedTab, setSelectedTab] = useState("maps");
 
   const handleTabChange = (key: string) => {
     setSelectedTab(key);
     onTabChange(key);
   };
+
+  const handleToggleTrackDetails = (value: boolean) => {
+  setAlwaysShowTrackDetails(value);
+  localStorage.setItem("alwaysShowTrackDetails", String(value));
+};
 
   const completionCurrent = playerId 
     ? mappack.MappackTrack.reduce((total, track) => {
@@ -62,13 +71,13 @@ export function MappackContent({
         <InfoButton></InfoButton>
         <Switch
           isSelected={alwaysShowTrackDetails}
-          onValueChange={setAlwaysShowTrackDetails}
+          onValueChange={handleToggleTrackDetails}
           size="sm"
           classNames={{
             wrapper: "group-data-[selected=true]:bg-white bg-neutral-600",
           }}
         >
-          <span className="text-sm text-white">Always Show Track Details</span>
+          <span className="text-label">Details</span>
         </Switch>
       </div>
       <Tabs

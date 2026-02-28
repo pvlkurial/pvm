@@ -9,7 +9,7 @@ const (
 	NadeoLiveServices              = "NadeoLiveServices"
 	RecordsPerRequest              = 100
 	TimesOfRecordsFetchPerTrack    = 10
-	FetchIntervalInHours           = 8
+	FetchIntervalInHours           = 12
 	FetchIntervalDelayInSeconds    = 10
 	NadeoOAuthTokenURL             = "https://api.trackmania.com/api/access_token"
 	NadeoAPIBaseURL                = "https://api.trackmania.com/api"
