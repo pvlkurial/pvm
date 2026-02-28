@@ -15,15 +15,15 @@ type Controllers struct {
 	TmxController         TmxController
 }
 
-func NewControllers(services services.Services, client *clients.NadeoAPIClient) *Controllers {
+func NewControllers(services services.Services, client *clients.NadeoAPIClient, tmxClient clients.TmxApiClient) *Controllers {
 	mappackController := NewMappackController(services.MappackService, &services.AchievementService)
 	playerController := NewPlayerController(services.PlayerService)
 	recordController := NewRecordController(services.RecordService, services.TracksService, client)
 	trackController := NewTrackController(services.TracksService)
 	achievementController := NewAchievementController(&services.AchievementService)
 	authController := NewAuthController(&services.AuthService)
-	tmxController := TmxController{}
+	tmxController := NewTmxController(tmxClient)
 
 	return &Controllers{MappackController: *mappackController, PlayerController: *playerController,
-		RecordController: *recordController, TrackController: *trackController, AchievementController: *achievementController, AuthController: *authController, TmxController: tmxController}
+		RecordController: *recordController, TrackController: *trackController, AchievementController: *achievementController, AuthController: *authController, TmxController: *tmxController}
 }

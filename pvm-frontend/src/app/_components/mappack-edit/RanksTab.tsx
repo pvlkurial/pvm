@@ -15,22 +15,24 @@ export function RanksTab({ ranks, onAdd, onUpdate, onRemove, inputClassNames }: 
     <div className="space-y-4">
       <div className="grid grid-cols-[auto_1fr] items-center gap-2">
         <p className="text-xl font-ruigslay">Player Ranks</p>
-        <div className="flex-1 h-[5px] bg-neutral-300"></div>
+        <div className="flex-1 h-[5px] bg-neutral-300" />
       </div>
-      <p className="text-sm text-gray-400 mb-4">
+      <p className="text-sm text-gray-400">
         Ranks are awarded to players based on their total points. Customize the appearance of each rank.
       </p>
 
-      {ranks.map((rank, index) => (
-        <RankEditor
-          key={rank.id || `new-${index}`}
-          rank={rank}
-          index={index}
-          onUpdate={onUpdate}
-          onRemove={onRemove}
-          inputClassNames={inputClassNames}
-        />
-      ))}
+      <div className="space-y-2">
+        {ranks.map((rank, index) => (
+          <RankEditor
+            key={rank.id || `new-${index}`}
+            rank={rank}
+            index={index}
+            onUpdate={onUpdate}
+            onRemove={onRemove}
+            inputClassNames={inputClassNames}
+          />
+        ))}
+      </div>
 
       <Button color="default" onPress={onAdd}>
         Add Rank

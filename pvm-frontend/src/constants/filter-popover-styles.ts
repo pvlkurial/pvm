@@ -7,7 +7,7 @@ export const getFilterButtonClassName = (isActive: boolean) => `
   btn-ghost flex items-center justify-center
   ${
     isActive
-      ? "bg-orange-500/20 text-orange-400 border border-orange-500/50 btn-ghost"
+      ? "bg-blue-300/20 text-blue-400 border border-blue-300/50 btn-ghost"
       : "btn-ghost"
   }
 `;

@@ -1,6 +1,5 @@
 @layer components {
 
-  /* ── Page ──────────────────────────────────────────────────────────────── */
 
   .mp-viewport {
     position: relative;
@@ -13,7 +12,6 @@
     user-select: none;
   }
 
-  /* ── Track ─────────────────────────────────────────────────────────────── */
 
   .mp-track {
     display: flex;
@@ -32,7 +30,6 @@
     transition: transform 0.45s cubic-bezier(0.77, 0, 0.175, 1);
   }
 
-  /* ── Card wrappers ─────────────────────────────────────────────────────── */
 
   .mp-card,
   .mp-add-wrap {
@@ -52,7 +49,6 @@
     z-index: 2;
   }
 
-  /* ── Skewed parallelogram shell ────────────────────────────────────────── */
 
   .mp-inner,
   .mp-add-inner {
@@ -73,7 +69,6 @@
     box-shadow: 8px 0 40px rgb(0 0 0 / 0.7);
   }
 
-  /* ── Image ─────────────────────────────────────────────────────────────── */
 
   .mp-img {
     position: absolute;
@@ -89,7 +84,6 @@
     transform: scale(1.04);
   }
 
-  /* ── Gradient ──────────────────────────────────────────────────────────── */
 
   .mp-grad {
     position: absolute;
@@ -103,7 +97,6 @@
     pointer-events: none;
   }
 
-  /* ── Accent line ───────────────────────────────────────────────────────── */
 
   .mp-accent {
     position: absolute;
@@ -119,7 +112,6 @@
     opacity: 1;
   }
 
-  /* ── Text (counter-skewed) ─────────────────────────────────────────────── */
 
   .mp-text {
     position: absolute;
@@ -147,7 +139,6 @@
     margin: 6px 0 0;
   }
 
-  /* ── Style icon (counter-skewed, top-right) ────────────────────────────── */
 
   .mp-style-icon {
     position: absolute;
@@ -187,7 +178,6 @@
     color: rgb(255 255 255 / 0.55);
   }
 
-  /* ── Add card ──────────────────────────────────────────────────────────── */
 
   .mp-add-inner {
     background: transparent;
@@ -224,7 +214,6 @@
     line-height: 1;
     font-weight: 200;
   }
-  /* ── Arrows ────────────────────────────────────────────────────────────── */
 
   .mp-arrow {
     position: absolute;
@@ -257,7 +246,6 @@
     .mp-arrow { display: none; }
   }
 
-  /* ── Dots ──────────────────────────────────────────────────────────────── */
 
   .mp-dots {
     display: flex;
@@ -281,7 +269,6 @@
     background: rgb(255 255 255 / 0.6);
   }
 
-  /* ── Empty / loading ───────────────────────────────────────────────────── */
 
   .mp-empty {
     flex: 1;

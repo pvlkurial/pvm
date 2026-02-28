@@ -21,9 +21,10 @@ type Routes struct {
 func (r *Routes) InitRoutes() {
 	nadeoClient := clients.NewNadeoAPIClient()
 	trackmaniaClient := clients.NewTrackmaniaAPIClient()
+	tmxClient := clients.TmxApiClient{}
 	repositories := repositories.NewRepositories(r.DB)
 	services := services.NewServices(*repositories, nadeoClient, *trackmaniaClient, r.DB)
-	controllers := controllers.NewControllers(*services, nadeoClient)
+	controllers := controllers.NewControllers(*services, nadeoClient, tmxClient)
 
 	workers := workers.NewWorkers(*services, *nadeoClient)
 	workers.NadeoWorker.Start()
@@ -92,6 +93,7 @@ func (r *Routes) InitRoutes() {
 
 	r.GET("/players", controllers.PlayerController.GetAll)
 
+	r.GET("/mappacks/:mappack_id/players/search", controllers.PlayerController.SearchPlayersInMappack)
 	r.GET("/mappacks/:mappack_id/timegoals", controllers.MappackController.GetAllMappackTimeGoals)
 	//r.DELETE("/mappacks/:mappack_id/timegoals/:timegoal_id", controllers.MappackController.RemoveTimeGoalFromMappack)
 

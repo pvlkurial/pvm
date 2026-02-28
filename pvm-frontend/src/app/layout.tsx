@@ -33,7 +33,7 @@ export default function RootLayout({
       </NavbarBrand>
         <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
-          <Link color="foreground" href="/mappacks" className="nav-link">
+          <Link color="foreground" href="/mappacks" className="nav-link text-label">
             Mappacks
           </Link>
         </NavbarItem>

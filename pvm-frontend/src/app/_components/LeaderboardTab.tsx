@@ -5,6 +5,7 @@ import { Spinner, Button } from "@heroui/react";
 import { Casko } from "@/fonts";
 import { MappackRank, Mappack } from "@/types/mappack.types";
 import PlayerDetailModal from "./player-detail/PlayerDetailModal";
+import PlayerSearch from "./PlayerSearch";
 
 interface LeaderboardEntry {
   player_id: string;
@@ -30,13 +31,9 @@ const ITEMS_PER_PAGE = 100;
 
 const getPlayerRank = (points: number, ranks: MappackRank[]): MappackRank | null => {
   const sortedRanks = [...ranks].sort((a, b) => b.pointsNeeded - a.pointsNeeded);
-  
   for (const rank of sortedRanks) {
-    if (points >= rank.pointsNeeded) {
-      return rank;
-    }
+    if (points >= rank.pointsNeeded) return rank;
   }
-  
   return sortedRanks[sortedRanks.length - 1] || null;
 };
 
@@ -108,35 +105,20 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [offset, setOffset] = useState(0);
-  const [activeRank, setActiveRank] = useState<string>("");
   const [selectedPlayer, setSelectedPlayer] = useState<{
     playerId: string;
     playerName: string;
   } | null>(null);
-  const rankRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
   const fetchLeaderboard = async (currentOffset: number, append: boolean = false) => {
     try {
-      if (append) {
-        setLoadingMore(true);
-      } else {
-        setLoading(true);
-      }
-
+      append ? setLoadingMore(true) : setLoading(true);
       const response = await axios.get(
         `${API_BASE}/mappacks/${mappackId}/leaderboard?limit=${ITEMS_PER_PAGE}&offset=${currentOffset}`
       );
-
       const newData = response.data;
-
-      if (append) {
-        setLeaderboard((prev) => [...prev, ...newData]);
-      } else {
-        setLeaderboard(newData);
-      }
-
-      // If we got less than ITEMS_PER_PAGE, there's no more data
+      append ? setLeaderboard((prev) => [...prev, ...newData]) : setLeaderboard(newData);
       setHasMore(newData.length === ITEMS_PER_PAGE);
       setOffset(currentOffset + newData.length);
     } catch (err) {
@@ -151,50 +133,19 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
     fetchLeaderboard(0, false);
   }, [mappackId]);
 
-  const handleLoadMore = () => {
-    fetchLeaderboard(offset, true);
-  };
-
-  // Group players by rank
   const playersByRank = leaderboard.reduce((acc, entry) => {
     const rank = getPlayerRank(entry.total_points, mappackRanks);
     const rankName = rank?.name || "Unranked";
-    
-    if (!acc[rankName]) {
-      acc[rankName] = {
-        rank: rank,
-        players: [],
-      };
-    }
+    if (!acc[rankName]) acc[rankName] = { rank, players: [] };
     acc[rankName].players.push(entry);
     return acc;
   }, {} as Record<string, { rank: MappackRank | null; players: LeaderboardEntry[] }>);
 
-  // Sort ranks by points needed (descending)
   const sortedRanks = Object.keys(playersByRank).sort((a, b) => {
     const pointsA = playersByRank[a].rank?.pointsNeeded || 0;
     const pointsB = playersByRank[b].rank?.pointsNeeded || 0;
     return pointsB - pointsA;
   });
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActiveRank(entry.target.getAttribute("data-rank") || "");
-          }
-        });
-      },
-      { threshold: 0.5, rootMargin: "-20% 0px -20% 0px" }
-    );
-
-    Object.values(rankRefs.current).forEach((ref) => {
-      if (ref) observer.observe(ref);
-    });
-
-    return () => observer.disconnect();
-  }, [playersByRank]);
 
   const handlePlayerClick = (playerId: string, playerName: string) => {
     setSelectedPlayer({ playerId, playerName });
@@ -202,77 +153,80 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center h-96">
-        <Spinner size="lg" />
+      <div className="flex justify-center items-center h-64">
+        <Spinner size="lg" color="white" />
       </div>
     );
   }
 
   if (leaderboard.length === 0) {
     return (
-      <div className="flex justify-center items-center h-96">
-        <div className="text-center">
-          <p className="text-white/50 text-lg">No players yet</p>
-          <p className="text-white/30 text-sm mt-2">
-            Complete tracks to appear on the leaderboard
-          </p>
-        </div>
+      <div className="flex justify-center items-center h-64">
+        <p className="font-ruigslay text-neutral-600 text-xl">No players yet</p>
       </div>
     );
   }
 
   return (
     <>
-      <div className="flex flex-col gap-8">
+      {/* Search — top right */}
+      <div className="flex justify-end mb-8">
+        <PlayerSearch
+          mappackId={mappackId}
+          onPlayerSelect={handlePlayerClick}
+          placeholder="Find a player..."
+          className="w-56"
+        />
+      </div>
+
+      <div className="flex flex-col gap-10">
         {sortedRanks.map((rankName) => {
           const rankData = playersByRank[rankName];
           const rank = rankData.rank;
           if (!rank) return null;
-          
+
           const rankColor = rank.color || "#6b7280";
           const borderColorToUse = rank.borderColor || rankColor;
           const glowOpacity = Math.min(100, Math.max(0, rank.glowIntensity || 50)) / 100;
+
           let globalPosition = 0;
-          
-          // Calculate starting position for this rank
           for (const r of sortedRanks) {
             if (r === rankName) break;
             globalPosition += playersByRank[r].players.length;
           }
 
           return (
-            <div
-              key={rankName}
-              ref={(el) => {
-                rankRefs.current[rankName] = el;
-              }}
-              data-rank={rankName}
-              className="scroll-mt-4"
-            >
-              {/* Rank Header */}
-              <div className="mb-6 pt-4 justify-center items-center flex">
-                <div className="relative">
-                  {rank.backgroundGlow && (
-                    <div 
-                      className="absolute inset-0 blur-xl"
-                      style={{ 
-                        backgroundColor: rankColor,
-                        opacity: glowOpacity * 0.5
-                      }}
-                    />
-                  )}
-                  <h2
-                    className={`text-4xl justify-center ${Casko.className} relative`}
-                    style={{ 
-                      color: rankColor,
-                      textShadow: rank.textShadow ? `0 0 20px ${rankColor}${Math.round(glowOpacity * 128).toString(16).padStart(2, '0')}` : 'none'
-                    }}
-                  >
-                    {rank.symbolsAround} {rankName.toUpperCase()} {rank.symbolsAround}
-                  </h2>
+            <div key={rankName}>
+              {/* Rank section header — prestigious */}
+              <div className="flex flex-col items-center mb-8 pt-2">
+                {rank.backgroundGlow && (
+                  <div
+                    className="absolute blur-3xl w-64 h-16 pointer-events-none"
+                    style={{ backgroundColor: rankColor, opacity: glowOpacity * 0.25 }}
+                  />
+                )}
+                <h2
+                  className={`relative text-center ${Casko.className}`}
+                  style={{
+                    fontSize: "clamp(36px, 6vw, 64px)",
+                    letterSpacing: "0.08em",
+                    color: rankColor,
+                    textShadow: rank.textShadow
+                      ? `0 0 40px ${rankColor}${Math.round(glowOpacity * 128).toString(16).padStart(2, "0")}, 0 0 80px ${rankColor}${Math.round(glowOpacity * 64).toString(16).padStart(2, "0")}`
+                      : `0 0 60px ${rankColor}20`,
+                  }}
+                >
+                  {rank.symbolsAround} {rankName.toUpperCase()} {rank.symbolsAround}
+                </h2>
+                {/* Decorative lines flanking the title */}
+                <div className="flex items-center gap-4 mt-3 w-full max-w-sm">
+                  <div className="flex-1 h-px" style={{ background: `linear-gradient(to right, transparent, ${rankColor}40)` }} />
+                  <div className="w-1 h-1 rounded-full" style={{ backgroundColor: `${rankColor}60` }} />
+                  <div className="flex-1 h-px" style={{ background: `linear-gradient(to left, transparent, ${rankColor}40)` }} />
                 </div>
               </div>
-              
+
+              {/* Player cards */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {rankData.players.map((entry, index) => {
                   const position = globalPosition + index + 1;
@@ -283,143 +237,95 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
                   const fontSizeClass = getFontSizeClass(rank.fontSize);
                   const fontWeightClass = getFontWeightClass(rank.fontWeight);
 
-                  // INVERTED COLOR STYLE
                   if (rank.invertedColor) {
                     return (
                       <div
                         key={entry.player_id}
                         onClick={() => handlePlayerClick(entry.player_id, entry.player.name)}
-                        className={`relative p-4 rounded-lg transition-all duration-200 hover:scale-[1.02] overflow-hidden cursor-pointer ${animationClass}`}
+                        className={`relative p-4 rounded-xl transition-all duration-200 hover:scale-[1.02] overflow-hidden cursor-pointer ${animationClass}`}
                         style={{
                           background: cardStyleEffects.background || `linear-gradient(135deg, ${rankColor}dd, ${rankColor}aa)`,
                           border: `${rank.borderWidth || 2}px solid ${borderColorToUse}`,
-                          boxShadow: rank.backgroundGlow 
-                            ? `0 0 ${20 * glowOpacity}px ${rankColor}${Math.round(glowOpacity * 96).toString(16).padStart(2, '0')}`
-                            : 'none',
+                          boxShadow: rank.backgroundGlow
+                            ? `0 0 ${20 * glowOpacity}px ${rankColor}${Math.round(glowOpacity * 96).toString(16).padStart(2, "0")}`
+                            : "none",
                           backgroundImage: patternBg,
-                          backgroundSize: rank.backgroundPattern === "dots" ? "20px 20px" : rank.backgroundPattern === "grid" ? "20px 20px" : "auto",
+                          backgroundSize: rank.backgroundPattern === "dots" || rank.backgroundPattern === "grid" ? "20px 20px" : "auto",
                           filter: cardStyleEffects.filter,
                           animation: cardStyleEffects.animation,
                         }}
                       >
                         {rank.animationType === "shine" && (
-                          <div 
-                            className="absolute inset-0 opacity-30 animate-shine-move"
-                            style={{
-                              background: `linear-gradient(45deg, transparent 30%, white 50%, transparent 70%)`,
-                            }}
+                          <div className="absolute inset-0 opacity-30 animate-shine-move"
+                            style={{ background: "linear-gradient(45deg, transparent 30%, white 50%, transparent 70%)" }}
                           />
                         )}
-                        
-                        <div className="absolute top-2 right-2">
-                          <span 
-                            className="text-xs font-mono font-bold"
-                            style={{ color: `${rankColor}20` }}
+                        <span className="absolute top-2.5 right-3 font-ruigslay text-sm" style={{ color: `${rankColor}25` }}>
+                          #{position}
+                        </span>
+                        <div className="flex items-baseline gap-3 relative z-10 pr-8">
+                          <p
+                            className="font-ruigslay leading-none text-black shrink-0"
+                            style={{
+                              fontSize: "clamp(28px, 4vw, 40px)",
+                              textShadow: rank.textShadow ? `0 0 10px ${rankColor}` : "none",
+                            }}
                           >
-                            #{position}
-                          </span>
-                        </div>
-
-                        <div className="flex items-center gap-4 relative z-10">
-                          <div className="flex-shrink-0 text-left">
-                            <p 
-                              className="font-bold text-2xl font-mono leading-none"
-                              style={{ 
-                                color: '#000000',
-                                textShadow: rank.textShadow ? `0 0 10px ${rankColor}` : 'none'
-                              }}
-                            >
-                              {entry.total_points}
-                            </p>
-                            <p className="text-xs uppercase tracking-wider mt-1 text-black/60">
-                              pts
-                            </p>
-                          </div>
-
-                          <div className="flex-1 min-w-0 pr-6">
-                            <p 
-                              className={`${fontSizeClass} ${fontWeightClass} leading-tight`}
-                              style={{ 
-                                color: '#000000',
-                                textShadow: rank.textShadow ? `0 0 10px ${rankColor}40` : 'none'
-                              }}
-                            >
-                              {entry.player.name}
-                            </p>
-                          </div>
+                            {entry.total_points}
+                          </p>
+                          <p className={`${fontSizeClass} ${fontWeightClass} leading-tight text-black truncate`}
+                            style={{ textShadow: rank.textShadow ? `0 0 10px ${rankColor}40` : "none" }}>
+                            {entry.player.name}
+                          </p>
                         </div>
                       </div>
                     );
                   }
 
-                  // NORMAL STYLE
                   return (
                     <div
                       key={entry.player_id}
                       onClick={() => handlePlayerClick(entry.player_id, entry.player.name)}
-                      className={`relative p-4 rounded-lg transition-all duration-200 hover:scale-[1.02] cursor-pointer ${animationClass} ${
-                        isTopThree
-                          ? "bg-gradient-to-r from-white/10 to-white/5"
-                          : "bg-white/5 hover:bg-white/10"
+                      className={`relative p-4 rounded-xl transition-all duration-200 hover:scale-[1.02] cursor-pointer overflow-hidden ${animationClass} ${
+                        isTopThree ? "bg-white/[0.07]" : "bg-white/[0.03] hover:bg-white/[0.06]"
                       }`}
                       style={{
-                        border: `${rank.borderWidth || 1}px solid ${isTopThree ? `${borderColorToUse}40` : 'rgba(255,255,255,0.1)'}`,
+                        border: `${rank.borderWidth || 1}px solid ${isTopThree ? `${borderColorToUse}35` : "rgba(255,255,255,0.06)"}`,
                         boxShadow: rank.backgroundGlow && isTopThree
-                          ? `0 0 ${20 * glowOpacity}px ${rankColor}${Math.round(glowOpacity * 96).toString(16).padStart(2, '0')}`
-                          : 'none',
+                          ? `0 0 ${20 * glowOpacity}px ${rankColor}${Math.round(glowOpacity * 96).toString(16).padStart(2, "0")}`
+                          : "none",
                         backgroundImage: patternBg,
-                        backgroundSize: rank.backgroundPattern === "dots" ? "20px 20px" : rank.backgroundPattern === "grid" ? "20px 20px" : "auto",
+                        backgroundSize: rank.backgroundPattern === "dots" || rank.backgroundPattern === "grid" ? "20px 20px" : "auto",
                         ...cardStyleEffects,
                       }}
                     >
                       {rank.animationType === "shine" && (
-                        <div 
-                          className="absolute inset-0 opacity-20 animate-shine-move"
-                          style={{
-                            background: `linear-gradient(45deg, transparent 30%, white 50%, transparent 70%)`,
-                          }}
+                        <div className="absolute inset-0 opacity-20 animate-shine-move"
+                          style={{ background: "linear-gradient(45deg, transparent 30%, white 50%, transparent 70%)" }}
                         />
                       )}
-
-                      <div className="absolute top-2 right-2">
-                        <span className="text-xs text-white/30 font-mono">
-                          #{position}
-                        </span>
-                      </div>
-
-                      <div className="flex items-center gap-4 relative z-10">
-                        <div className="flex-shrink-0 text-left">
-                          <p 
-                            className="font-bold text-2xl font-mono text-green-400 leading-none"
-                            style={{
-                              textShadow: rank.textShadow ? `0 0 10px #4ade8080` : 'none'
-                            }}
-                          >
-                            {entry.total_points}
-                          </p>
-                          <p className="text-xs text-white/40 uppercase tracking-wider mt-1">
-                            pts
-                          </p>
-                        </div>
-
-                        <div className="flex-1 min-w-0 pr-6">
-                          <p 
-                            className={`text-white leading-tight ${fontSizeClass} ${fontWeightClass}`}
-                            style={{
-                              textShadow: rank.textShadow ? `0 0 10px ${rankColor}40` : 'none'
-                            }}
-                          >
-                            {entry.player.name}
-                          </p>
-                        </div>
-                      </div>
-
-                      {isTopThree && (
-                        <div
-                          className="absolute inset-0 rounded-lg opacity-10 pointer-events-none"
+                      <span className="absolute top-2.5 right-3 font-ruigslay text-sm text-white/20">
+                        #{position}
+                      </span>
+                      <div className="flex items-baseline gap-3 relative z-10 pr-8">
+                        <p
+                          className="font-ruigslay leading-none shrink-0"
                           style={{
-                            background: `radial-gradient(circle at top right, ${rankColor}80, transparent)`,
+                            fontSize: "clamp(28px, 4vw, 40px)",
+                            color: rankColor,
+                            textShadow: rank.textShadow ? `0 0 10px ${rankColor}80` : "none",
                           }}
+                        >
+                          {entry.total_points}
+                        </p>
+                        <p className={`text-white leading-tight truncate ${fontSizeClass} ${fontWeightClass}`}
+                          style={{ textShadow: rank.textShadow ? `0 0 10px ${rankColor}40` : "none" }}>
+                          {entry.player.name}
+                        </p>
+                      </div>
+                      {isTopThree && (
+                        <div className="absolute inset-0 rounded-xl opacity-10 pointer-events-none"
+                          style={{ background: `radial-gradient(circle at top right, ${rankColor}80, transparent)` }}
                         />
                       )}
                     </div>
@@ -430,51 +336,38 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
           );
         })}
 
-        {/* Load More Button */}
+        {/* Load more */}
         {hasMore && (
-          <div className="flex justify-center py-8">
+          <div className="flex justify-center pt-4 pb-8">
             <Button
-              onClick={handleLoadMore}
+              onPress={() => fetchLeaderboard(offset, true)}
               isLoading={loadingMore}
-              className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white px-8 py-6 text-lg"
-              size="lg"
+              variant="bordered"
+              className="border-neutral-800 text-neutral-400 hover:text-white hover:border-neutral-600 px-10"
             >
               {loadingMore ? "Loading..." : "Load More"}
             </Button>
           </div>
         )}
-        
-        <style jsx>{`
-          @keyframes shine-move {
-            0% {
-              transform: translateX(-100%) translateY(-100%) rotate(45deg);
-            }
-            100% {
-              transform: translateX(100%) translateY(100%) rotate(45deg);
-            }
-          }
-          
-          .animate-shine-move {
-            animation: shine-move 3s infinite;
-          }
-          
-          @keyframes shimmer {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
-          }
-          
-          .animate-shimmer {
-            animation: shimmer 2s ease-in-out infinite;
-          }
-          
-          @keyframes holographic {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-          }
-        `}</style>
       </div>
 
-      {/* Player Detail Modal */}
+      <style jsx>{`
+        @keyframes shine-move {
+          0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+          100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+        .animate-shine-move { animation: shine-move 3s infinite; }
+        @keyframes shimmer {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+        .animate-shimmer { animation: shimmer 2s ease-in-out infinite; }
+        @keyframes holographic {
+          0%, 100% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+        }
+      `}</style>
+
       {selectedPlayer && (
         <PlayerDetailModal
           isOpen={!!selectedPlayer}

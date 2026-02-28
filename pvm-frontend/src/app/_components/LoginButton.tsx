@@ -17,7 +17,7 @@ export default function LoginButton() {
         }}
       >
         <DropdownTrigger>
-          <button className="hover:border-gray-700 hover:bg-neutral-700 py-2 rounded px-4 cursor-pointer rounded-lg  duration-200">
+          <button className="hover:border-gray-700 hover:bg-neutral-700 text-label py-2 rounded px-4 cursor-pointer rounded-lg duration-200">
             {user.name}
             {user.role === "admin" && (
               <span className="ml-2 text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">
