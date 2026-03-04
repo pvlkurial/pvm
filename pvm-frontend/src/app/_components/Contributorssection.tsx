@@ -15,6 +15,7 @@ const TIER_2: Contributor[] = [
 ];
 
 const TIER_3: Contributor[] = [
+  { name: "Zimzalabim" },
 ];
 
 const TIER_STYLES = [
