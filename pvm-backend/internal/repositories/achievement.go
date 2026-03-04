@@ -139,19 +139,24 @@ func (r *achievementRepository) CalculatePlayerPoints(playerID, mappackID string
 
 	err = r.db.Raw(`
     SELECT 
-        COALESCE(SUM(
-            CASE 
+        COALESCE(SUM(best.best_points), 0) as total_points,
+        SUM(best.achievement_count)         as achievements_count,
+        COUNT(*)                            as best_achievements_count
+    FROM (
+        SELECT 
+            pta.track_id,
+            MAX(CASE 
                 WHEN mt.points IS NOT NULL THEN tg.multiplier * mt.points
                 ELSE 0
-            END
-        ), 0) as total_points,
-        COUNT(*) as achievements_count,
-        COUNT(DISTINCT pta.track_id) as best_achievements_count
-    FROM player_time_goal_achievements pta
-    JOIN time_goals tg ON pta.time_goal_id = tg.id
-    JOIN mappack_tracks mpt ON pta.track_id = mpt.track_id AND pta.mappack_id = mpt.mappack_id
-    LEFT JOIN mappack_tiers mt ON mpt.tier_id = mt.id
-    WHERE pta.player_id = ? AND pta.mappack_id = ?
+            END) as best_points,
+            COUNT(*) as achievement_count
+        FROM player_time_goal_achievements pta
+        JOIN time_goals tg ON pta.time_goal_id = tg.id
+        JOIN mappack_tracks mpt ON pta.track_id = mpt.track_id AND pta.mappack_id = mpt.mappack_id
+        LEFT JOIN mappack_tiers mt ON mpt.tier_id = mt.id
+        WHERE pta.player_id = ? AND pta.mappack_id = ?
+        GROUP BY pta.track_id
+    ) as best
 `, playerID, mappackID).Scan(&result).Error
 
 	return result.TotalPoints, result.AchievementsCount, result.BestAchievementsCount, err
