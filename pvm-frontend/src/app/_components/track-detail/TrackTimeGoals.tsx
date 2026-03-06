@@ -1,5 +1,4 @@
-import { Card, CardBody } from "@heroui/react";
-import { FaTrophy, FaClock } from "react-icons/fa";
+// TrackTimeGoals.tsx
 import { millisecondsToTimeString } from "@/utils/time.utils";
 import { TimeGoalCard } from "./TimeGoalCard";
 
@@ -16,58 +15,48 @@ interface TrackTimeGoalsProps {
 
 export function TrackTimeGoals({ timeGoals, personalBest }: TrackTimeGoalsProps) {
   const hasPB = personalBest !== undefined && personalBest > 0;
-  const sortedTimeGoals = [...timeGoals].sort((a, b) => {
-    const multA = a.multiplier ?? 0;
-    const multB = b.multiplier ?? 0;
-    return multA - multB;
-  });
-
+  const sortedTimeGoals = [...timeGoals].sort(
+    (a, b) => (a.multiplier ?? 0) - (b.multiplier ?? 0)
+  );
 
   return (
-    <Card className="bg-neutral-90 border border-blue-500/30 relative overflow-hidden">
-      <div className="absolute inset-0 " />
-      <FaTrophy className="absolute right-8 top-1/2 -translate-y-1/2 w-40 h-40 text-white/10 opacity-30" />
-
-      <CardBody className="p-4 relative z-10">
-        {/* Header with inline PB */}
-        <div className="flex items-center gap-4 mb-3">
-          <div className="flex items-center gap-2">
-            <FaTrophy className="w-4 h-4 text-yellow-500/70" />
-            <h3 className="text-sm uppercase tracking-wider text-white/70 font-semibold ">Time Goals</h3>
-          </div>
-
+    <div>
+      {/* Header */}
+      <div className="grid grid-cols-[auto_1fr] items-center gap-3 mb-4">
+        <div className="flex items-center gap-3">
+          <p className="font-ruigslay text-white text-2xl">Time Goals</p>
           {hasPB && (
             <>
-              <div className="h-4 w-px bg-white/20" />
-              <div className="flex items-center gap-2">
-                <span className="text-sm uppercase tracking-wider text-white/70 font-semibold ">PB:</span>
-                <span className="text-sm uppercase tracking-wider text-white/70 font-semibold">
+              <span className="text-neutral-700 text-sm">·</span>
+              <span className="text-neutral-500 text-sm text-label">
+                PB{" "}
+                <span className="text-white text-label">
                   {millisecondsToTimeString(personalBest)}
                 </span>
-              </div>
+              </span>
             </>
           )}
         </div>
+        <div className="h-[3px] bg-neutral-800" />
+      </div>
 
-        {sortedTimeGoals.length > 0 ? (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-            {sortedTimeGoals.map((goal, index) => (
-              <TimeGoalCard
-                key={index}
-                name={goal.name}
-                time={goal.time}
-                personalBest={personalBest}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="text-center py-6">
-            <p className="text-white/50 text-base">No time goals set for this track</p>
-          </div>
-        )}
-
-
-      </CardBody>
-    </Card>
+      {sortedTimeGoals.length > 0 ? (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+          {sortedTimeGoals.map((goal, index) => (
+            <TimeGoalCard
+              key={index}
+              name={goal.name}
+              time={goal.time}
+              multiplier={goal.multiplier}
+              personalBest={personalBest}
+            />
+          ))}
+        </div>
+      ) : (
+        <p className="text-neutral-600 text-sm text-center py-6">
+          No time goals set for this track
+        </p>
+      )}
+    </div>
   );
 }

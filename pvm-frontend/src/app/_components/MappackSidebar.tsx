@@ -1,6 +1,6 @@
 import { Button } from "@heroui/react";
-import AddTrackModal from "@/app/_components/AddTrackModal";
-import { EditMappackModal } from "@/app/_components/EditMappackModal";
+import AddTrackModal from "@/app/_components/add-edit-buttons/AddTrackModal";
+import { EditMappackModal } from "@/app/_components/add-edit-buttons/EditMappackModal";
 import RequireRole from "@/app/_components/RequireRole";
 import { Mappack, MappackTier, MappackTrack } from "@/types/mappack.types";
 

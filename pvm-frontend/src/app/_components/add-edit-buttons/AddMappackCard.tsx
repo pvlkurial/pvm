@@ -1,6 +1,6 @@
 "use client"
 import React, { useRef } from "react";
-import CreateMappackModal from "./CreateMappackModal";
+import CreateMappackModal from "../CreateMappackModal";
 
 interface Props {
   width: number;

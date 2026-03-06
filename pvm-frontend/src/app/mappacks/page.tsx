@@ -5,7 +5,7 @@ import { Mappack } from "@/types/mappack.types";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCarousel, CarouselItem } from "@/hooks/useCarousel";
 import MappackCard from "@/app/_components/MappackCard";
-import AddMappackCard from "@/app/_components/AddMappackCard";
+import AddMappackCard from "@/app/_components/add-edit-buttons/AddMappackCard";
 import CarouselArrow from "@/app/_components/CarouselArrow";
 import CarouselDots from "@/app/_components/CarouselDots";
 import "./mappacks.css";

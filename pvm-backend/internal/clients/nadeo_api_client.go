@@ -8,6 +8,7 @@ import (
 	"example/pvm-backend/internal/models/dtos/responses"
 	"example/pvm-backend/internal/utils/constants"
 	"fmt"
+	"log/slog"
 	"net/http"
 	"os"
 	"strings"
@@ -33,11 +34,14 @@ func NewNadeoAPIClient() *NadeoAPIClient {
 		tokens: make(map[string]*tokenData),
 	}
 }
+
+// Call this to get a token for the given audience.
 func (c *NadeoAPIClient) GetToken(audience string) (string, error) {
 	data, exists := c.tokens[audience]
 
 	if exists && data.accessToken != "" &&
 		time.Now().Add(constants.TokenExpirationBufferInMinutes*time.Minute).Before(data.expiresAt) {
+		slog.Debug("using cached token", "audience", audience, "expires_at", data.expiresAt)
 		return data.accessToken, nil
 	}
 
@@ -45,29 +49,35 @@ func (c *NadeoAPIClient) GetToken(audience string) (string, error) {
 }
 
 func (c *NadeoAPIClient) RefreshOrFetchToken(audience string) (string, error) {
-
 	if data, exists := c.tokens[audience]; exists {
 		if data.accessToken != "" && time.Now().Add(constants.TokenExpirationBufferInMinutes*time.Minute).Before(data.expiresAt) {
 			return data.accessToken, nil
 		}
 	}
+
 	var tokenResp responses.TokenResponse
 	var err error
+
 	if data, exists := c.tokens[audience]; exists && data.refreshToken != "" {
+		slog.Debug("attempting token refresh", "audience", audience)
 		tokenResp, err = c.FetchTokenWithRefreshToken(data.refreshToken)
 		if err != nil {
+			slog.Warn("token refresh failed, falling back to full auth", "audience", audience, "error", err)
 			tokenResp, err = c.FetchNewToken(audience)
 		}
 	} else {
+		slog.Debug("fetching new token", "audience", audience)
 		tokenResp, err = c.FetchNewToken(audience)
 	}
 
 	if err != nil {
+		slog.Error("failed to obtain token", "audience", audience, "error", err)
 		return "", err
 	}
 
 	expiresAt, err := c.parseTokenExpiration(tokenResp.AccessToken)
 	if err != nil {
+		slog.Warn("could not parse token expiration, defaulting to 1h", "audience", audience, "error", err)
 		expiresAt = time.Now().Add(1 * time.Hour)
 	}
 
@@ -77,45 +87,48 @@ func (c *NadeoAPIClient) RefreshOrFetchToken(audience string) (string, error) {
 		expiresAt:    expiresAt,
 	}
 
+	slog.Info("token obtained", "audience", audience, "expires_at", expiresAt)
 	return tokenResp.AccessToken, nil
 }
 
-func (t *NadeoAPIClient) FetchNewToken(audience string) (responses.TokenResponse, error) {
-
+func (c *NadeoAPIClient) FetchNewToken(audience string) (responses.TokenResponse, error) {
 	body := map[string]string{
 		"audience": audience,
 	}
 	jsonBody, err := json.Marshal(body)
 	if err != nil {
-		fmt.Println(err)
+		slog.Error("failed to marshal token request body", "audience", audience, "error", err)
 		return responses.TokenResponse{}, err
 	}
 
 	req, err := http.NewRequest("POST", constants.NadeoTokenURL, bytes.NewBuffer(jsonBody))
 	if err != nil {
-		fmt.Println(err)
+		slog.Error("failed to create token request", "audience", audience, "error", err)
 		return responses.TokenResponse{}, err
 	}
 	req.SetBasicAuth(os.Getenv("NADEO_API_USERNAME"), os.Getenv("NADEO_API_PASSWORD"))
 	req.Header.Add("Content-Type", "application/json")
 	req.Header.Add("User-Agent", os.Getenv("USER_AGENT"))
 
-	res, err := t.client.Do(req)
+	res, err := c.client.Do(req)
 	if err != nil {
-		fmt.Println(err)
+		slog.Error("token request failed", "audience", audience, "error", err)
 		return responses.TokenResponse{}, err
 	}
 	defer res.Body.Close()
+
 	if res.StatusCode != http.StatusOK {
-		fmt.Printf("failed to fetch token: status %d\n", res.StatusCode)
+		slog.Error("token endpoint returned non-200", "audience", audience, "status", res.StatusCode)
+		return responses.TokenResponse{}, fmt.Errorf("token request failed with status %d", res.StatusCode)
+	}
+
+	var tokenResponse responses.TokenResponse
+	if err := json.NewDecoder(res.Body).Decode(&tokenResponse); err != nil {
+		slog.Error("failed to decode token response", "audience", audience, "error", err)
 		return responses.TokenResponse{}, err
 	}
-	tokenResponse := responses.TokenResponse{}
-	json.NewDecoder(res.Body).Decode(&tokenResponse)
-	return responses.TokenResponse{
-		AccessToken:  tokenResponse.AccessToken,
-		RefreshToken: tokenResponse.RefreshToken,
-	}, nil
+
+	return tokenResponse, nil
 }
 
 func (c *NadeoAPIClient) FetchTokenWithRefreshToken(refreshToken string) (responses.TokenResponse, error) {
@@ -148,141 +161,163 @@ func (c *NadeoAPIClient) FetchTokenWithRefreshToken(refreshToken string) (respon
 func (c *NadeoAPIClient) parseTokenExpiration(token string) (time.Time, error) {
 	parts := strings.Split(token, ".")
 	if len(parts) != 3 {
-		return time.Time{}, fmt.Errorf("invalid JWT format")
+		return time.Time{}, fmt.Errorf("invalid JWT format: expected 3 parts, got %d", len(parts))
 	}
 
 	payload, err := base64.RawURLEncoding.DecodeString(parts[1])
 	if err != nil {
-		return time.Time{}, err
+		return time.Time{}, fmt.Errorf("decode JWT payload: %w", err)
 	}
 
 	var claims struct {
 		Exp int64 `json:"exp"`
 	}
 	if err := json.Unmarshal(payload, &claims); err != nil {
-		return time.Time{}, err
+		return time.Time{}, fmt.Errorf("unmarshal JWT claims: %w", err)
 	}
 
 	return time.Unix(claims.Exp, 0), nil
 }
+
+
 func (c *NadeoAPIClient) DoAuthenticatedRequest(req *http.Request, audience string) (*http.Response, error) {
 	token, err := c.GetToken(audience)
 	if err != nil {
-		return nil, fmt.Errorf("get token: %w", err)
+		slog.Error("failed to get token for authenticated request",
+			"audience", audience,
+			"method", req.Method,
+			"url", req.URL.String(),
+			"error", err,
+		)
+		return nil, err
 	}
+
 	req.Header.Set("Authorization", "nadeo_v1 t="+token)
 	req.Header.Set("User-Agent", os.Getenv("USER_AGENT"))
 
 	return c.client.Do(req)
 }
 
-func (t *NadeoAPIClient) FetchTrackInfo(trackid string) *models.Track {
-	req, err := http.NewRequest("GET", "https://prod.trackmania.core.nadeo.online/maps/"+trackid, nil)
+func (c *NadeoAPIClient) FetchTrackInfo(trackID string) *models.Track {
+	req, err := http.NewRequest("GET", "https://prod.trackmania.core.nadeo.online/maps/"+trackID, nil)
 	if err != nil {
-		fmt.Println(err)
+		slog.Error("failed to create track info request", "track_id", trackID, "error", err)
 		return nil
 	}
-	resp, err := t.DoAuthenticatedRequest(req, constants.NadeoServices)
+
+	resp, err := c.DoAuthenticatedRequest(req, constants.NadeoServices)
 	if err != nil {
-		fmt.Println(err)
+		slog.Error("track info request failed", "track_id", trackID, "error", err)
 		return nil
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		fmt.Printf("failed to fetch track: status %d\n", resp.StatusCode)
+		slog.Error("track info endpoint returned non-200", "track_id", trackID, "status", resp.StatusCode)
 		return nil
 	}
 
-	track := &models.Track{}
-	if err := json.NewDecoder(resp.Body).Decode(track); err != nil {
-		fmt.Println(err)
+	var track models.Track
+	if err := json.NewDecoder(resp.Body).Decode(&track); err != nil {
+		slog.Error("failed to decode track info response", "track_id", trackID, "error", err)
 		return nil
 	}
 
 	track.ID = track.MapID
-	return track
+	return &track
 }
 
-func (t *NadeoAPIClient) FetchRecordsOfTrack(trackuid string, length int, offset int) ([]models.Record, error) {
+func (c *NadeoAPIClient) FetchRecordsOfTrack(trackUID string, length int, offset int) ([]models.Record, error) {
 	url := fmt.Sprintf("%s%s/top?onlyWorld=true&length=%d&offset=%d",
-		constants.LeaderboardURL, trackuid, length, offset)
+		constants.LeaderboardURL, trackUID, length, offset)
 
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
+		slog.Error("failed to create records request", "track_uid", trackUID, "error", err)
 		return nil, fmt.Errorf("create request: %w", err)
 	}
-	resp, err := t.DoAuthenticatedRequest(req, constants.NadeoLiveServices)
+
+	resp, err := c.DoAuthenticatedRequest(req, constants.NadeoLiveServices)
 	if err != nil {
-		fmt.Println(err)
+		slog.Error("records request failed", "track_uid", trackUID, "error", err)
 		return nil, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		fmt.Printf("failed to fetch records: status %d\n", resp.StatusCode)
-		return nil, err
+		slog.Error("records endpoint returned non-200", "track_uid", trackUID, "status", resp.StatusCode)
+		return nil, fmt.Errorf("records request failed with status %d", resp.StatusCode)
 	}
 
 	var response models.TrackRecordsResponse
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		fmt.Printf("failed to decode records: %v\n", err)
+		slog.Error("failed to decode records response", "track_uid", trackUID, "error", err)
 		return nil, err
 	}
 
 	if len(response.Tops) == 0 {
-		fmt.Println("no tops data in response")
+		slog.Warn("no tops data in records response", "track_uid", trackUID)
 		return []models.Record{}, nil
 	}
 
-	records := response.Tops[0].Top
-
-	return records, nil
-
+	return response.Tops[0].Top, nil
 }
 
-func (t *NadeoAPIClient) FetchRecordsOfTrackForPlayer(trackID string, playerId string, trackUID string) (models.Record, error) {
+func (c *NadeoAPIClient) FetchRecordsOfTrackForPlayer(trackID string, playerID string, trackUID string) (models.Record, error) {
 	url := fmt.Sprintf("%sby-account/?accountIdList=%s&mapId=%s",
-		constants.GetMapRecordByAccountURL, playerId, trackID)
+		constants.GetMapRecordByAccountURL, playerID, trackID)
+
 	req, err := http.NewRequest("GET", url, nil)
 	if err != nil {
+		slog.Error("failed to create player record request",
+			"track_id", trackID,
+			"player_id", playerID,
+			"error", err,
+		)
 		return models.Record{}, fmt.Errorf("create request: %w", err)
 	}
 
-	resp, err := t.DoAuthenticatedRequest(req, constants.NadeoServices)
+	resp, err := c.DoAuthenticatedRequest(req, constants.NadeoServices)
 	if err != nil {
-		fmt.Println(err)
+		slog.Error("player record request failed",
+			"track_id", trackID,
+			"player_id", playerID,
+			"error", err,
+		)
 		return models.Record{}, err
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		fmt.Printf("failed to fetch records: status %d\n", resp.StatusCode)
+		slog.Error("player record endpoint returned non-200",
+			"track_id", trackID,
+			"player_id", playerID,
+			"status", resp.StatusCode,
+		)
 		return models.Record{}, fmt.Errorf("unexpected status code: %d", resp.StatusCode)
 	}
 
 	var response []models.PlayerRecordResponse
 	if err := json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		fmt.Printf("failed to decode records: %v\n", err)
+		slog.Error("failed to decode player record response",
+			"track_id", trackID,
+			"player_id", playerID,
+			"error", err,
+		)
 		return models.Record{}, err
 	}
 
 	if len(response) == 0 {
+		slog.Warn("no record found for player on track", "track_id", trackID, "player_id", playerID)
 		return models.Record{}, fmt.Errorf("no records found for player")
 	}
 
-	position := 0
-	zoneID := "-"
-	zoneName := "World"
-
-	record := models.Record{
-		PlayerID:   playerId,
+	return models.Record{
+		PlayerID:   playerID,
 		TrackID:    trackID,
 		RecordTime: response[0].RecordScore.Time,
-		Position:   position,
-		ZoneID:     zoneID,
-		ZoneName:   zoneName,
-	}
-
-	return record, nil
+		Position:   0,
+		ZoneID:     "-",
+		ZoneName:   "World",
+	}, nil
 }

@@ -10,8 +10,8 @@ import {
 import { TimeGoal } from "@/types/mappack.types";
 import { useAddTrackForm } from "@/hooks/useAddTrackForm";
 import { trackService } from "@/services/track.service";
-import { TrackIdInput } from "./add-track/TrackIdInput";
-import { TimeGoalsInput } from "./add-track/TimeGoalsInput";
+import { TrackIdInput } from "../add-track/TrackIdInput";
+import { TimeGoalsInput } from "../add-track/TimeGoalsInput";
 import { MODAL_INPUT_CLASSNAMES } from "@/constants/modal-styles";
 
 interface AddTrackModalProps {

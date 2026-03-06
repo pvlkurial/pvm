@@ -13,12 +13,12 @@ import { useState } from "react";
 import { Mappack } from "@/types/mappack.types";
 import { useEditMappack } from "@/hooks/useEditMappack";
 import { mappackEditService } from "@/services/mappack-edit.service";
-import { ConfirmDialog } from "./ConfirmDialog";
-import { BasicInfoTab } from "./mappack-edit/BasicInfoTab";
-import { TimeGoalsTab } from "./mappack-edit/TimeGoalsTab";
-import { TiersTab } from "./mappack-edit/TiersTab";
-import { RanksTab } from "./mappack-edit/RanksTab";
-import { TrackTimesTab } from "./mappack-edit/TrackTimesTab";
+import { ConfirmDialog } from "../ConfirmDialog";
+import { BasicInfoTab } from "../mappack-edit/BasicInfoTab";
+import { TimeGoalsTab } from "../mappack-edit/TimeGoalsTab";
+import { TiersTab } from "../mappack-edit/TiersTab";
+import { RanksTab } from "../mappack-edit/RanksTab";
+import { TrackTimesTab } from "../mappack-edit/TrackTimesTab";
 import { MODAL_INPUT_CLASSNAMES, MODAL_CLASSNAMES, TAB_CLASSNAMES } from "@/constants/modal-styles";
 
 interface EditMappackModalProps {

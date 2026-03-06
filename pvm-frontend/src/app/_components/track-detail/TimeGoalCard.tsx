@@ -1,60 +1,57 @@
-// components/track-detail/TimeGoalCard.tsx
-import { FaClock, FaCheck } from "react-icons/fa";
+// TimeGoalCard.tsx
 import { millisecondsToTimeString, calculateTimeDelta } from "@/utils/time.utils";
 
 interface TimeGoalCardProps {
   name: string;
   time: number;
   personalBest?: number;
+  multiplier?: number;
 }
 
-export function TimeGoalCard({ name, time, personalBest }: TimeGoalCardProps) {
+export function TimeGoalCard({ name, time, personalBest, multiplier }: TimeGoalCardProps) {
   const hasPB = personalBest !== undefined && personalBest > 0;
   const delta = hasPB ? calculateTimeDelta(personalBest, time) : null;
 
   return (
     <div
-      className={`
-        relative rounded-lg p-3 border transition-all duration-200
-        ${delta?.isAchieved
-          ? 'bg-green-500/10 border-green-500/50 hover:bg-green-500/15'
-          : 'bg-white/5 border-white/10 hover:bg-white/10 hover:scale-105'
-        }
-      `}
+      className="relative rounded-xl p-3 transition-all duration-200 hover:scale-[1.02]"
+      style={{
+        background: delta?.isAchieved
+          ? "linear-gradient(135deg, rgba(74,222,128,0.08) 0%, rgba(255,255,255,0.03) 60%)"
+          : "rgba(255,255,255,0.03)",
+        boxShadow: delta?.isAchieved
+          ? "0 0 0 1px rgba(74,222,128,0.2)"
+          : "0 0 0 1px rgba(255,255,255,0.06)",
+      }}
     >
-      {/* Achievement Badge */}
+      {/* Achieved dot */}
       {delta?.isAchieved && (
-        <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-green-500 rounded-full flex items-center justify-center">
-          <FaCheck className="w-2.5 h-2.5 text-white" />
-        </div>
+        <div className="absolute top-2.5 right-2.5 w-1.5 h-1.5 rounded-full bg-green-400/70" />
       )}
 
-      {/* Goal Name & Time on same line */}
-      <div className="flex items-center justify-between gap-2 mb-2">
-        <span className="text-xs uppercase tracking-wider text-white/60 font-semibold truncate">
-          {name}
-        </span>
-        <FaClock className="w-2.5 h-2.5 text-white/30 flex-shrink-0" />
-      </div>
+      {/* Name */}
+      <p className={`text-[10px] tracking-widest uppercase mb-2 pr-4 leading-tight text-label ${
+        delta?.isAchieved ? "text-neutral-400" : "text-neutral-600"
+      }`}>
+        {name}
+      </p>
 
-      {/* Goal Time */}
-      <div className="text-base font-bold font-mono text-white mb-2">
+      {/* Time */}
+      <p className={`text-xl leading-none mb-2 text-label ${
+        delta?.isAchieved ? "text-white" : "text-neutral-500"
+      }`}>
         {millisecondsToTimeString(time)}
-      </div>
+      </p>
 
-      {/* Delta Display - Compact */}
-      {delta ? (
-        <div className="text-xs font-mono font-bold">
-          <span
-            className={delta.isAchieved ? 'text-blue-400' : 'text-red-400'}
-          >
-            {delta.formatted}
-          </span>
-        </div>
+      {/* Delta */}
+      {hasPB && delta ? (
+        <p className={`font-mono text-xs font-bold text.label ${
+          delta.isAchieved ? "text-blue-400" : "text-red-400"
+        }`}>
+          {delta.formatted}
+        </p>
       ) : (
-        <div className="text-xs text-white/20">
-          Not played
-        </div>
+        <p className="text-neutral-700 text-xs">—</p>
       )}
     </div>
   );
