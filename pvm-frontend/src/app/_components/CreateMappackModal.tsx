@@ -1,4 +1,10 @@
-import { Autocomplete, AutocompleteItem, Button, NumberInput, Textarea } from "@heroui/react";
+import {
+  Autocomplete,
+  AutocompleteItem,
+  Button,
+  NumberInput,
+  Textarea,
+} from "@heroui/react";
 import { useRouter } from "next/navigation";
 import {
   Modal,
@@ -11,17 +17,8 @@ import {
 } from "@heroui/react";
 import { useState } from "react";
 import axios from "axios";
-
-export const mapStyles = [
-  { label: "Tech", key: "tech", description: "Tech" },
-  { label: "Fullspeed", key: "fullspeed", description: "FS" },
-  { label: "Mixed", key: "mixed", description: "Mixed" },
-  { label: "Dirt", key: "dirt", description: "noslide heaven" },
-  { label: "RPG", key: "rpg", description: "RPG" },
-  { label: "Trial", key: "trial", description: "Trial" },
-  { label: "LOL", key: "lol", description: "lol" },
-  { label: "Ice", key: "ice", description: "icy" },
-];
+import { API_BASE } from "@/constants/miscellaneous";
+import { MAP_STYLES } from "@/constants/map-styles";
 
 interface TimeGoal {
   name: string;
@@ -39,13 +36,14 @@ export default function CreateMappackModal() {
   const [currentGoalDifficulty, setCurrentGoalDifficulty] = useState(1);
   const router = useRouter();
 
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
-
   const generateId = (name: string) => name.toLowerCase().replace(/\s+/g, "_");
 
   const handleAddTimeGoal = () => {
     if (currentGoalName) {
-      setTimeGoals([...timeGoals, { name: currentGoalName, difficulty: currentGoalDifficulty }]);
+      setTimeGoals([
+        ...timeGoals,
+        { name: currentGoalName, difficulty: currentGoalDifficulty },
+      ]);
       setCurrentGoalName("");
       setCurrentGoalDifficulty(1);
     }
@@ -149,12 +147,12 @@ export default function CreateMappackModal() {
                   }}
                 />
                 <Autocomplete
-                  defaultItems={mapStyles}
+                  defaultItems={MAP_STYLES}
                   label="Map Style"
                   placeholder="Search a style"
                   variant="bordered"
                   onSelectionChange={(key) => {
-                    const match = mapStyles.find(s => s.key === key);
+                    const match = MAP_STYLES.find((s) => s.key === key);
                     setMapStyleName(match?.label ?? null);
                   }}
                   classNames={{
@@ -172,7 +170,9 @@ export default function CreateMappackModal() {
                   }}
                 >
                   {(mapStyle) => (
-                    <AutocompleteItem key={mapStyle.key}>{mapStyle.label}</AutocompleteItem>
+                    <AutocompleteItem key={mapStyle.key}>
+                      {mapStyle.label}
+                    </AutocompleteItem>
                   )}
                 </Autocomplete>
 
@@ -221,7 +221,9 @@ export default function CreateMappackModal() {
                       >
                         <div>
                           <p className="font-semibold">{goal.name}</p>
-                          <p className="text-sm text-gray-400">Difficulty: {goal.difficulty}</p>
+                          <p className="text-sm text-gray-400">
+                            Difficulty: {goal.difficulty}
+                          </p>
                         </div>
                         <Button
                           size="sm"

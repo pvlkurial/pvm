@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Mappack } from "@/types/mappack.types";
@@ -20,10 +20,11 @@ export default function MapppacksPage() {
   const isAdmin = user?.role === "admin";
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
-  // Disable page scroll only while on this page
   useEffect(() => {
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, []);
 
   useEffect(() => {
@@ -80,7 +81,7 @@ export default function MapppacksPage() {
                 isClone={item.isClone}
                 isDragging={isDragging}
               />
-            )
+            ),
           )}
         </div>
       )}

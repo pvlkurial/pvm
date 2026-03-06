@@ -1,5 +1,10 @@
 import { MappackTrack, Mappack } from "@/types/mappack.types";
-import { calculateTrackPoints, formatPointsDelta, formatTimeDelta, getBestAchievedGoal } from "@/utils/player.utils";
+import {
+  calculateTrackPoints,
+  formatPointsDelta,
+  formatTimeDelta,
+  getBestAchievedGoal,
+} from "@/utils/player.utils";
 import { FormattedText } from "@/utils/textConverter";
 import { millisecondsToTimeString } from "@/utils/time.utils";
 import { Image } from "@heroui/react";
@@ -10,13 +15,17 @@ interface TrackRowProps {
   loggedInMappack?: Mappack;
 }
 
-export function TrackRow({ track, playerMappack, loggedInMappack }: TrackRowProps) {
+export function TrackRow({
+  track,
+  playerMappack,
+  loggedInMappack,
+}: TrackRowProps) {
   const playerTime = track.timeGoalMappackTrack?.[0]?.player_time;
   const bestGoal = getBestAchievedGoal(track, playerMappack.timeGoals);
   const points = calculateTrackPoints(track, playerMappack.timeGoals);
 
   const loggedInTrack = loggedInMappack?.MappackTrack.find(
-    (t) => t.track_id === track.track_id
+    (t) => t.track_id === track.track_id,
   );
   const loggedInTime = loggedInTrack?.timeGoalMappackTrack?.[0]?.player_time;
   const loggedInPoints = loggedInTrack
@@ -27,16 +36,14 @@ export function TrackRow({ track, playerMappack, loggedInMappack }: TrackRowProp
     playerTime && loggedInTime
       ? formatTimeDelta(playerTime, loggedInTime)
       : null;
-  
+
   const pointsDelta = loggedInMappack
     ? formatPointsDelta(points, loggedInPoints)
     : null;
 
   return (
     <div className="p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors">
-      {/* Mobile Layout (< MD) */}
       <div className="md:hidden space-y-3">
-        {/* Top Row: Thumbnail + Name */}
         <div className="flex items-center gap-3">
           <div className="relative w-14 h-14 rounded overflow-hidden flex-shrink-0">
             <Image
@@ -53,9 +60,7 @@ export function TrackRow({ track, playerMappack, loggedInMappack }: TrackRowProp
           </div>
         </div>
 
-        {/* Bottom Row: Stats Grid */}
         <div className="grid grid-cols-2 gap-3 text-xs">
-          {/* Goal */}
           <div>
             <p className="text-white/40 uppercase mb-1">Goal</p>
             <p className="text-white font-semibold">
@@ -63,7 +68,6 @@ export function TrackRow({ track, playerMappack, loggedInMappack }: TrackRowProp
             </p>
           </div>
 
-          {/* Time */}
           <div>
             <p className="text-white/40 uppercase mb-1">Time</p>
             <p className="text-white font-mono">
@@ -71,7 +75,6 @@ export function TrackRow({ track, playerMappack, loggedInMappack }: TrackRowProp
             </p>
           </div>
 
-          {/* Points */}
           <div>
             <p className="text-white/40 uppercase mb-1">Points</p>
             <div className="flex items-center gap-2">
@@ -86,7 +89,6 @@ export function TrackRow({ track, playerMappack, loggedInMappack }: TrackRowProp
             </div>
           </div>
 
-          {/* Time Delta (only show if logged in and has delta) */}
           {loggedInMappack && timeDelta && (
             <div>
               <p className="text-white/40 uppercase mb-1">Δ Time</p>
@@ -98,9 +100,7 @@ export function TrackRow({ track, playerMappack, loggedInMappack }: TrackRowProp
         </div>
       </div>
 
-      {/* Desktop Layout (>= MD) */}
       <div className="hidden md:flex items-center gap-4">
-        {/* Thumbnail */}
         <div className="relative w-16 h-16 rounded overflow-hidden flex-shrink-0">
           <Image
             src={track.track.thumbnailUrl}
@@ -109,7 +109,6 @@ export function TrackRow({ track, playerMappack, loggedInMappack }: TrackRowProp
           />
         </div>
 
-        {/* Track Name */}
         <div className="flex-1 min-w-0">
           <FormattedText
             text={track.track.name}
@@ -117,7 +116,6 @@ export function TrackRow({ track, playerMappack, loggedInMappack }: TrackRowProp
           />
         </div>
 
-        {/* Achieved Goal */}
         <div className="text-center min-w-[100px]">
           <p className="text-xs text-white/50 uppercase">Goal</p>
           <p className="text-sm font-semibold text-white">
@@ -125,15 +123,12 @@ export function TrackRow({ track, playerMappack, loggedInMappack }: TrackRowProp
           </p>
         </div>
 
-        {/* Player Time */}
         <div className="text-center min-w-[120px]">
           <p className="text-xs text-white/50 uppercase">Time</p>
           <p className="text-sm font-mono text-white">
             {playerTime ? millisecondsToTimeString(playerTime) : "-"}
           </p>
         </div>
-
-        {/* Time Delta */}
         {loggedInMappack && (
           <div className="text-center min-w-[120px]">
             <p className="text-xs text-white/50 uppercase">Δ Time</p>
@@ -147,7 +142,6 @@ export function TrackRow({ track, playerMappack, loggedInMappack }: TrackRowProp
           </div>
         )}
 
-        {/* Points */}
         <div className="text-center min-w-[80px]">
           <p className="text-xs text-white/50 uppercase">Points</p>
           <p className="text-sm font-bold text-green-400">
@@ -155,7 +149,6 @@ export function TrackRow({ track, playerMappack, loggedInMappack }: TrackRowProp
           </p>
         </div>
 
-        {/* Points Delta */}
         {loggedInMappack && (
           <div className="text-center min-w-[80px]">
             <p className="text-xs text-white/50 uppercase">Δ Pts</p>

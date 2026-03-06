@@ -11,16 +11,22 @@ interface UpdateRecordsButtonProps {
   onSuccess?: () => void;
 }
 
-export function UpdateRecordsButton({ 
-  trackId, 
+export function UpdateRecordsButton({
+  trackId,
   playerId,
-  onSuccess 
+  onSuccess,
 }: UpdateRecordsButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-  
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
   const cooldownKey = `record-update-cooldown-${trackId}-${playerId}`;
-  const { isOnCooldown, secondsLeft, startCooldown } = useCooldown(cooldownKey, 300);
+  const { isOnCooldown, secondsLeft, startCooldown } = useCooldown(
+    cooldownKey,
+    300,
+  );
 
   const handleUpdate = async () => {
     setIsLoading(true);
@@ -29,21 +35,21 @@ export function UpdateRecordsButton({
     try {
       await trackService.fetchPlayerRecords(trackId, playerId);
       startCooldown();
-      setMessage({ 
-        type: 'success', 
-        text: 'Records updated successfully!' 
+      setMessage({
+        type: "success",
+        text: "Records updated successfully!",
       });
-      
+
       setTimeout(() => setMessage(null), 3000);
-      
+
       onSuccess?.();
     } catch (error) {
       console.error("Error fetching records:", error);
-      setMessage({ 
-        type: 'error', 
-        text: 'Failed to update records. Please try again.' 
+      setMessage({
+        type: "error",
+        text: "Failed to update records. Please try again.",
       });
-      
+
       setTimeout(() => setMessage(null), 5000);
     } finally {
       setIsLoading(false);
@@ -58,17 +64,17 @@ export function UpdateRecordsButton({
         isDisabled={isOnCooldown}
         color="primary"
         variant="flat"
-        startContent={!isLoading && <FaSync className={isOnCooldown ? "" : "w-4 h-4"} />}
+        startContent={
+          !isLoading && <FaSync className={isOnCooldown ? "" : "w-4 h-4"} />
+        }
         className="bg-blue-500/20 text-blue-400 border border-blue-500/50 hover:bg-blue-500/30"
       >
-        {isOnCooldown 
+        {isOnCooldown
           ? `${formatSecondsToMMSS(secondsLeft)}`
-          : isLoading 
-            ? 'Updating...' 
-            : 'Update'
-        }
+          : isLoading
+            ? "Updating..."
+            : "Update"}
       </Button>
-
     </div>
   );
 }

@@ -5,10 +5,8 @@ import { useTrackDetails } from "@/hooks/useTrackDetails";
 import { TrackHero } from "@/app/_components/track-detail/TrackHero";
 import { TrackInfoCard } from "@/app/_components/track-detail/TrackInfoCard";
 import { TrackStatsGrid } from "@/app/_components/track-detail/TrackStatsGrid";
-import { TrackTimeGoals } from"@/app/_components/track-detail/TrackTimeGoals";
+import { TrackTimeGoals } from "@/app/_components/track-detail/TrackTimeGoals";
 import { TrackLeaderboard } from "@/app/_components/track-detail/TrackLeaderboard";
-import { UpdateRecordsButton } from "@/app/_components/track-detail/UpdateRecordsButton";
-import RequireRole from "@/app/_components/RequireRole";
 import { BackButton } from "@/app/_components/BackButton";
 import { TrackmaniaIoButton } from "@/app/_components/track-detail/TrackmaniaIoButton";
 import { TmxButton } from "@/app/_components/track-detail/TmxButton";
@@ -45,9 +43,7 @@ export default function TrackPage({
 
   return (
     <div className="max-w-[90rem] mx-auto px-4 py-8">
-      {/* Navigation Bar - Buttons & Breadcrumbs */}
       <div className="flex items-center justify-between mb-6">
-        {/* Left side - Navigation buttons */}
         <div className="flex items-center gap-2">
           <BackButton href={`/mappacks/${mappack}`} />
           <TrackmaniaIoButton mapUID={track.mapUid} />
@@ -59,13 +55,12 @@ export default function TrackPage({
             items={[
               { label: "Mappacks", href: "/mappacks" },
               { label: mappack, href: `/mappacks/${mappack}` },
-              { label: track.name, useFormat: true}
+              { label: track.name, useFormat: true },
             ]}
           />
         </div>
       </div>
 
-      {/* Hero Section */}
       <div className="grid lg:grid-cols-[500px_1fr] gap-6 mb-8">
         <TrackHero
           thumbnailUrl={track.thumbnailUrl}

@@ -2,22 +2,21 @@ import { MappackTrack, TimeGoal } from "@/types/mappack.types";
 
 export function calculateTrackPoints(
   track: MappackTrack,
-  timeGoals: TimeGoal[]
+  timeGoals: TimeGoal[],
 ): number {
   if (!track.tier) return 0;
 
-  const achievedGoals = track.timeGoalMappackTrack?.filter(
-    (tg) => tg.is_achieved
-  ) || [];
-  
+  const achievedGoals =
+    track.timeGoalMappackTrack?.filter((tg) => tg.is_achieved) || [];
+
   if (achievedGoals.length === 0) return 0;
   const bestGoal = achievedGoals.reduce((best, current) => {
     const currentGoal = timeGoals.find((tg) => tg.id === current.time_goal_id);
     const bestGoal = timeGoals.find((tg) => tg.id === best.time_goal_id);
-    
+
     if (!currentGoal) return best;
     if (!bestGoal) return current;
-    
+
     return currentGoal.multiplier > bestGoal.multiplier ? current : best;
   });
 
@@ -29,13 +28,13 @@ export function calculateTrackPoints(
 
 export function calculateMaxTrackPoints(
   track: MappackTrack,
-  timeGoals: TimeGoal[]
+  timeGoals: TimeGoal[],
 ): number {
   if (!track.tier) return 0;
   const trackTimeGoals = track.timeGoalMappackTrack || [];
   if (trackTimeGoals.length === 0) return 0;
   let maxMultiplier = 0;
-  
+
   for (const tgmt of trackTimeGoals) {
     const timeGoal = timeGoals.find((tg) => tg.id === tgmt.time_goal_id);
     if (timeGoal && timeGoal.multiplier > maxMultiplier) {
@@ -48,21 +47,20 @@ export function calculateMaxTrackPoints(
 
 export function getBestAchievedGoal(
   track: MappackTrack,
-  timeGoals: TimeGoal[]
+  timeGoals: TimeGoal[],
 ): TimeGoal | null {
-  const achievedGoals = track.timeGoalMappackTrack?.filter(
-    (tg) => tg.is_achieved
-  ) || [];
-  
+  const achievedGoals =
+    track.timeGoalMappackTrack?.filter((tg) => tg.is_achieved) || [];
+
   if (achievedGoals.length === 0) return null;
 
   const bestGoal = achievedGoals.reduce((best, current) => {
     const currentGoal = timeGoals.find((tg) => tg.id === current.time_goal_id);
     const bestGoal = timeGoals.find((tg) => tg.id === best.time_goal_id);
-    
+
     if (!currentGoal) return best;
     if (!bestGoal) return current;
-    
+
     return currentGoal.multiplier > bestGoal.multiplier ? current : best;
   });
 
@@ -71,7 +69,7 @@ export function getBestAchievedGoal(
 
 export function formatTimeDelta(
   playerTime: number,
-  loggedInTime: number
+  loggedInTime: number,
 ): { formatted: string; color: string } {
   const delta = playerTime - loggedInTime;
 
@@ -80,27 +78,28 @@ export function formatTimeDelta(
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   const milliseconds = absDelta % 1000;
-  
-  const sign = delta > 0 ? '-' : '+';
-  const color = delta > 0 ? 'text-blue-400' : 'text-red-400';
-  const formatted = `${sign}${minutes}:${seconds.toString().padStart(2, '0')}:${milliseconds.toString().padStart(3, '0')}`;
-  
+
+  const sign = delta > 0 ? "-" : "+";
+  const color = delta > 0 ? "text-blue-400" : "text-red-400";
+  const formatted = `${sign}${minutes}:${seconds.toString().padStart(2, "0")}:${milliseconds.toString().padStart(3, "0")}`;
+
   return { formatted, color };
 }
 
 export function formatPointsDelta(
   selectedPoints: number,
-  loggedInPoints: number
+  loggedInPoints: number,
 ): { formatted: string; color: string } | null {
   if (selectedPoints === 0 && loggedInPoints === 0) {
     return null;
   }
 
   const delta = loggedInPoints - selectedPoints;
-  const sign = delta > 0 ? '+' : '';
-  const color = delta > 0 ? 'text-green-400' : delta < 0 ? 'text-red-400' : 'text-white/30';
-  const formatted = delta !== 0 ? `${sign}${delta}` : '0';
-  
+  const sign = delta > 0 ? "+" : "";
+  const color =
+    delta > 0 ? "text-green-400" : delta < 0 ? "text-red-400" : "text-white/30";
+  const formatted = delta !== 0 ? `${sign}${delta}` : "0";
+
   return { formatted, color };
 }
 

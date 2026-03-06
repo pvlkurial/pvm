@@ -100,7 +100,9 @@ export default function AddTrackModal({
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                <h2 className="text-2xl font-bold text-white">Add Track to Mappack</h2>
+                <h2 className="text-2xl font-bold text-white">
+                  Add Track to Mappack
+                </h2>
               </ModalHeader>
               <ModalBody className="gap-6">
                 <TrackIdInput

@@ -9,10 +9,13 @@ interface TrackStatsGridProps {
   dominantColor: string;
 }
 
-export function TrackStatsGrid({ tier, recordsCount, dominantColor }: TrackStatsGridProps) {
+export function TrackStatsGrid({
+  tier,
+  recordsCount,
+  dominantColor,
+}: TrackStatsGridProps) {
   return (
     <div className="grid sm:grid-cols-2 gap-4">
-      {/* Tier Card */}
       <Card
         className="relative overflow-hidden border-2"
         style={{
@@ -37,7 +40,6 @@ export function TrackStatsGrid({ tier, recordsCount, dominantColor }: TrackStats
         </CardBody>
       </Card>
 
-      {/* Records Card */}
       <Card className="bg-black-90 border border-blue-500/30 relative overflow-hidden">
         <FaDatabase className="absolute -right-4 -bottom-4 w-32 h-32 text-white/10 opacity-30" />
         <CardBody className="p-6 relative z-10">
@@ -47,10 +49,10 @@ export function TrackStatsGrid({ tier, recordsCount, dominantColor }: TrackStats
               Records Tracked
             </p>
           </div>
-          <h2 className="text-4xl font-bold font-ruigslay">
-            {recordsCount}
-          </h2>
-          <p className="text-sm text-white/50 mt-1">Records might not be fully updated</p>
+          <h2 className="text-4xl font-bold font-ruigslay">{recordsCount}</h2>
+          <p className="text-sm text-white/50 mt-1">
+            Records might not be fully updated
+          </p>
         </CardBody>
       </Card>
     </div>

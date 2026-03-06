@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 import { FaInfo } from "react-icons/fa";
@@ -17,7 +17,9 @@ export default function InfoButton() {
           <p>Records are updated every 12 hours and</p>
           <p>only top 1000 records are fetched.</p>
           <hr className="mt-2 mb-2"></hr>
-          <h2 className="text-heading text-sm mb-2 text-center">Points formula</h2>
+          <h2 className="text-heading text-sm mb-2 text-center">
+            Points formula
+          </h2>
           <p>Best Timegoal Multiplier × Tier Points.</p>
         </div>
       </PopoverContent>

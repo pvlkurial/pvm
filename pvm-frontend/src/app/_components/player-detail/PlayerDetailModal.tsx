@@ -1,11 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import {
-  Modal,
-  ModalContent,
-  ModalBody,
-  Spinner,
-} from "@heroui/react";
+import { Modal, ModalContent, ModalBody, Spinner } from "@heroui/react";
 import { motion } from "framer-motion";
 import { Mappack } from "@/types/mappack.types";
 import { mappackService } from "@/services/mappack.service";

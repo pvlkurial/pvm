@@ -5,7 +5,6 @@ import { useMemo, useState } from "react";
 import { millisecondsToTimeString } from "@/utils/time.utils";
 import { formatRelativeTime } from "@/utils/date.utils";
 import { getBestAchievedTimeGoal } from "@/utils/record.utils";
-import { Tooltip } from "@heroui/react";
 
 interface TimeGoal {
   name: string;
@@ -184,15 +183,12 @@ export default function RecordsTable({
           </div>
         ) : (
           <>
-            {/* Always show logged-in player's record first (pinned) */}
             {loggedInRecord &&
               loggedInPosition &&
               renderRecord(loggedInRecord, loggedInPosition, true)}
 
-            {/* Show separator between pinned and paginated records */}
             {loggedInRecord && <div className="h-[2px] bg-white/10 my-2" />}
 
-            {/* Show paginated records (including logged-in player in their actual position) */}
             {paginatedRecords.map((record, index) => {
               const actualPosition = (page - 1) * recordsPerPage + index + 1;
               return renderRecord(record, actualPosition, false);

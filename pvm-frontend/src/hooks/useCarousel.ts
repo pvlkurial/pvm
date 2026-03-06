@@ -30,7 +30,6 @@ export function useCarousel<T extends CarouselItem>(items: T[]) {
 
   const effectiveCardWidth = cardWidth;
 
-  // ── Measure ──────────────────────────────────────────────────────────────
   useEffect(() => {
     const measure = () => {
       if (!viewportRef.current) return;
@@ -42,7 +41,7 @@ export function useCarousel<T extends CarouselItem>(items: T[]) {
         if (total === 0) return v;
         const realIdx = Math.max(
           0,
-          Math.min(((p - v + total) % total), total - 1)
+          Math.min((p - v + total) % total, total - 1),
         );
         return v + realIdx;
       });
@@ -52,20 +51,24 @@ export function useCarousel<T extends CarouselItem>(items: T[]) {
     return () => window.removeEventListener("resize", measure);
   }, [total]);
 
-  // ── Cloned track ─────────────────────────────────────────────────────────
   const clonedTrack: TrackItem<T>[] = needsCarousel
     ? [
         ...items
           .slice(-visible)
           .map((item, i) => ({ ...item, isClone: true, cloneKey: `pre-${i}` })),
-        ...items.map((item) => ({ ...item, isClone: false, cloneKey: item.id })),
-        ...items
-          .slice(0, visible)
-          .map((item, i) => ({ ...item, isClone: true, cloneKey: `post-${i}` })),
+        ...items.map((item) => ({
+          ...item,
+          isClone: false,
+          cloneKey: item.id,
+        })),
+        ...items.slice(0, visible).map((item, i) => ({
+          ...item,
+          isClone: true,
+          cloneKey: `post-${i}`,
+        })),
       ]
     : items.map((item) => ({ ...item, isClone: false, cloneKey: item.id }));
 
-  // ── Transition end — silent jump back to real cards ───────────────────────
   const onTransitionEnd = useCallback(() => {
     lockRef.current = false;
     setTransitioning(false);
@@ -76,7 +79,6 @@ export function useCarousel<T extends CarouselItem>(items: T[]) {
     });
   }, [total, visible]);
 
-  // ── Arrow navigation ──────────────────────────────────────────────────────
   const go = useCallback(
     (dir: 1 | -1) => {
       if (lockRef.current || !needsCarousel) return;
@@ -84,7 +86,7 @@ export function useCarousel<T extends CarouselItem>(items: T[]) {
       setTransitioning(true);
       setPos((p) => p + dir * STEP);
     },
-    [needsCarousel]
+    [needsCarousel],
   );
 
   const prev = useCallback(() => go(-1), [go]);
@@ -99,7 +101,6 @@ export function useCarousel<T extends CarouselItem>(items: T[]) {
     return () => window.removeEventListener("keydown", handler);
   }, [prev, next]);
 
-  // ── Drag ──────────────────────────────────────────────────────────────────
   const getClientX = (e: MouseEvent | TouchEvent) => {
     if ("touches" in e)
       return e.touches[0]?.clientX ?? e.changedTouches[0]?.clientX ?? 0;
@@ -114,7 +115,7 @@ export function useCarousel<T extends CarouselItem>(items: T[]) {
       setTransitioning(false);
       lockRef.current = true;
     },
-    [needsCarousel]
+    [needsCarousel],
   );
 
   const onDragMove = useCallback((e: MouseEvent | TouchEvent) => {
@@ -140,7 +141,7 @@ export function useCarousel<T extends CarouselItem>(items: T[]) {
       setTransitioning(true);
       setPos((p) => p + clamped);
     },
-    [effectiveCardWidth]
+    [effectiveCardWidth],
   );
 
   useEffect(() => {
@@ -156,7 +157,9 @@ export function useCarousel<T extends CarouselItem>(items: T[]) {
     };
   }, [onDragMove, onDragEnd]);
 
-  const realPos = needsCarousel ? ((pos - visible) % total + total) % total : 0;
+  const realPos = needsCarousel
+    ? (((pos - visible) % total) + total) % total
+    : 0;
   const translateX = needsCarousel ? -pos * effectiveCardWidth + dragOffset : 0;
 
   const goToIndex = useCallback(
@@ -166,7 +169,7 @@ export function useCarousel<T extends CarouselItem>(items: T[]) {
       setTransitioning(true);
       setPos(visible + i);
     },
-    [visible]
+    [visible],
   );
 
   return {

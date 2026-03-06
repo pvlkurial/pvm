@@ -10,7 +10,12 @@ interface Props {
   isDragging: React.MutableRefObject<boolean>;
 }
 
-export default function MappackCard({ mappack, width, isClone, isDragging }: Props) {
+export default function MappackCard({
+  mappack,
+  width,
+  isClone,
+  isDragging,
+}: Props) {
   return (
     <Link
       href={`/mappacks/${mappack.id}`}
@@ -18,7 +23,9 @@ export default function MappackCard({ mappack, width, isClone, isDragging }: Pro
       style={{ width }}
       tabIndex={isClone ? -1 : 0}
       draggable={false}
-      onClick={(e) => { if (isDragging.current) e.preventDefault(); }}
+      onClick={(e) => {
+        if (isDragging.current) e.preventDefault();
+      }}
     >
       <div className="mp-inner">
         <div
@@ -29,7 +36,9 @@ export default function MappackCard({ mappack, width, isClone, isDragging }: Pro
         <div className="mp-accent" />
         {(mappack as Mappack & { mapStyleName?: string }).mapStyleName && (
           <MapStyleIcon
-            styleKey={(mappack as Mappack & { mapStyleName?: string }).mapStyleName!}
+            styleKey={
+              (mappack as Mappack & { mapStyleName?: string }).mapStyleName!
+            }
             className="mp-style-icon"
           />
         )}

@@ -7,7 +7,11 @@ interface TiersTabProps {
   tiers: MappackTier[];
   tracks: MappackTrack[];
   onAddTier: () => void;
-  onUpdateTier: (index: number, field: keyof MappackTier, value: string | number) => void;
+  onUpdateTier: (
+    index: number,
+    field: keyof MappackTier,
+    value: string | number,
+  ) => void;
   onRemoveTier: (id: number | undefined) => void;
   onAssignTier: (trackId: string, tierId: number | null) => void;
   inputClassNames: any;
@@ -103,13 +107,14 @@ export function TiersTab({
 
         {savedTiers.length === 0 ? (
           <p className="text-sm text-gray-400 italic mt-2">
-            No tiers available. Create and save tiers first to assign them to tracks.
+            No tiers available. Create and save tiers first to assign them to
+            tracks.
           </p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3">
             {sortedTracks.map((mappackTrack) => {
               const assignedTier = savedTiers.find(
-                (t) => t.id === mappackTrack.tier_id
+                (t) => t.id === mappackTrack.tier_id,
               );
               // Use a stable Set<string> — HeroUI Select needs string keys
               const selectedKeys = mappackTrack.tier_id
@@ -167,7 +172,6 @@ export function TiersTab({
                         value: "text-white",
                         innerWrapper: "text-white",
                         trigger: "text-white cursor-pointer",
-                        
                       }}
                     >
                       {savedTiers.map((tier) => (

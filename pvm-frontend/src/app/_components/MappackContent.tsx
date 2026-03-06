@@ -11,7 +11,10 @@ import InfoButton from "./InfoButton";
 interface MappackContentProps {
   mappack: Mappack;
   sortedTiers: string[];
-  tracksByTier: Record<string, { tier: MappackTier | null; tracks: MappackTrack[] }>;
+  tracksByTier: Record<
+    string,
+    { tier: MappackTier | null; tracks: MappackTrack[] }
+  >;
   filteredTracks: MappackTrack[];
   onFilterChange: (tracks: MappackTrack[]) => void;
   onSortOrderChange: (order: "asc" | "desc") => void;
@@ -44,13 +47,15 @@ export function MappackContent({
   };
 
   const handleToggleTrackDetails = (value: boolean) => {
-  setAlwaysShowTrackDetails(value);
-  localStorage.setItem("alwaysShowTrackDetails", String(value));
-};
+    setAlwaysShowTrackDetails(value);
+    localStorage.setItem("alwaysShowTrackDetails", String(value));
+  };
 
-  const completionCurrent = playerId 
+  const completionCurrent = playerId
     ? mappack.MappackTrack.reduce((total, track) => {
-        const achievedCount = track.timeGoalMappackTrack?.filter(tg => tg.is_achieved).length || 0;
+        const achievedCount =
+          track.timeGoalMappackTrack?.filter((tg) => tg.is_achieved).length ||
+          0;
         return total + achievedCount;
       }, 0)
     : 0;
@@ -87,10 +92,12 @@ export function MappackContent({
         color="default"
         variant="underlined"
         classNames={{
-          tabList: "gap-6 w-full relative rounded-none p-0 border-b border-white/10",
+          tabList:
+            "gap-6 w-full relative rounded-none p-0 border-b border-white/10",
           cursor: "w-full bg-white",
           tab: "max-w-fit px-0 h-12",
-          tabContent: "group-data-[selected=true]:text-white text-white/60 font-semibold text-lg",
+          tabContent:
+            "group-data-[selected=true]:text-white text-white/60 font-semibold text-lg",
         }}
         className="mb-6"
       >

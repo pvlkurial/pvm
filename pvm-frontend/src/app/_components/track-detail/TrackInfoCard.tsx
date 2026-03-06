@@ -8,7 +8,11 @@ interface TrackInfoCardProps {
   dominantColor: string;
 }
 
-export function TrackInfoCard({ name, authorName, dominantColor }: TrackInfoCardProps) {
+export function TrackInfoCard({
+  name,
+  authorName,
+  dominantColor,
+}: TrackInfoCardProps) {
   return (
     <Card
       className="relative overflow-hidden"

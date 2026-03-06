@@ -8,28 +8,42 @@ interface RankDisplayProps {
   currentPoints: number;
 }
 
-export function RankDisplay({ rank, nextRank, currentPoints }: RankDisplayProps) {
+export function RankDisplay({
+  rank,
+  nextRank,
+  currentPoints,
+}: RankDisplayProps) {
   const pointsToNext = nextRank ? nextRank.pointsNeeded - currentPoints : 0;
   const progressToNext = nextRank
-    ? ((currentPoints - rank.pointsNeeded) / (nextRank.pointsNeeded - rank.pointsNeeded)) * 100
+    ? ((currentPoints - rank.pointsNeeded) /
+        (nextRank.pointsNeeded - rank.pointsNeeded)) *
+      100
     : 100;
 
   const cardRef = useRef<HTMLDivElement>(null);
 
-  // Raw mouse position values (-0.5 to 0.5 relative to card center)
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
 
-  // Smooth spring physics for the rotation
   const springConfig = { stiffness: 200, damping: 20, mass: 0.5 };
-  const rotateX = useSpring(useTransform(mouseY, [-0.0, 0.0], [5, -5]), springConfig);
-  const rotateY = useSpring(useTransform(mouseX, [-0.0, 0.0], [-5, 5]), springConfig);
+  const rotateX = useSpring(
+    useTransform(mouseY, [-0.0, 0.0], [5, -5]),
+    springConfig,
+  );
+  const rotateY = useSpring(
+    useTransform(mouseX, [-0.0, 0.0], [-5, 5]),
+    springConfig,
+  );
 
-  // Holographic sheen position
-  const sheenX = useSpring(useTransform(mouseX, [-0.5, 0.5], [-60, 120]), springConfig);
-  const sheenY = useSpring(useTransform(mouseY, [-0.5, 0.5], [-60, 120]), springConfig);
+  const sheenX = useSpring(
+    useTransform(mouseX, [-0.5, 0.5], [-60, 120]),
+    springConfig,
+  );
+  const sheenY = useSpring(
+    useTransform(mouseY, [-0.5, 0.5], [-60, 120]),
+    springConfig,
+  );
 
-  // Scale up on hover
   const scale = useSpring(1, { stiffness: 300, damping: 25 });
 
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
@@ -53,7 +67,6 @@ export function RankDisplay({ rank, nextRank, currentPoints }: RankDisplayProps)
 
   return (
     <div className="space-y-3">
-      {/* 3D Rank Card */}
       <div
         style={{ perspective: "500px", perspectiveOrigin: "center" }}
         className="w-full"
@@ -75,7 +88,6 @@ export function RankDisplay({ rank, nextRank, currentPoints }: RankDisplayProps)
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.4 }}
         >
-          {/* Base card layer */}
           <div
             className="relative px-4 py-4"
             style={{
@@ -83,7 +95,6 @@ export function RankDisplay({ rank, nextRank, currentPoints }: RankDisplayProps)
               boxShadow: `inset 0 0 0 1px ${rank.color}40, 0 30px 80px -10px ${rank.color}40, 0 10px 30px -5px #00000080`,
             }}
           >
-            {/* Ambient glow behind */}
             {rank.backgroundGlow && (
               <div
                 className="absolute inset-0 blur-3xl opacity-25 pointer-events-none"
@@ -91,16 +102,13 @@ export function RankDisplay({ rank, nextRank, currentPoints }: RankDisplayProps)
               />
             )}
 
-            {/* Holographic rainbow sheen — follows mouse */}
             <motion.div
               className="absolute inset-0 pointer-events-none rounded-xl"
               style={{
-                
                 mixBlendMode: "screen",
               }}
             />
 
-            {/* Subtle diagonal gloss lines */}
             <div
               className="absolute inset-0 pointer-events-none opacity-[0.04]"
               style={{
@@ -114,7 +122,6 @@ export function RankDisplay({ rank, nextRank, currentPoints }: RankDisplayProps)
               }}
             />
 
-            {/* Left color bar */}
             <div
               className="absolute left-0 top-0 bottom-0 w-[3px]"
               style={{
@@ -123,20 +130,21 @@ export function RankDisplay({ rank, nextRank, currentPoints }: RankDisplayProps)
               }}
             />
 
-            {/* Content */}
             <div className="relative z-10">
               <p className="text-[10px] tracking-widest uppercase mb-1.5 text-label">
                 Current Rank
               </p>
               <p
                 className="font-ruigslay leading-none"
-                style={{ fontSize: "clamp(24px, 3vw, 34px)", color: rank.color }}
+                style={{
+                  fontSize: "clamp(24px, 3vw, 34px)",
+                  color: rank.color,
+                }}
               >
                 {rank.name}
               </p>
             </div>
 
-            {/* Corner accent */}
             <div
               className="absolute bottom-3 right-4 opacity-20"
               style={{
@@ -151,7 +159,6 @@ export function RankDisplay({ rank, nextRank, currentPoints }: RankDisplayProps)
         </motion.div>
       </div>
 
-      {/* Progress to next rank */}
       {nextRank && (
         <div className="space-y-1.5">
           <div className="flex items-center justify-between">

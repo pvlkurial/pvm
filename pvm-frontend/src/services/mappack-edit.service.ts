@@ -1,6 +1,5 @@
-import { Mappack } from '@/types/mappack.types';
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+import { Mappack } from "@/types/mappack.types";
+import { API_BASE } from "@/constants/miscellaneous";
 
 export const mappackEditService = {
   updateMappack: async (mappack: Mappack): Promise<void> => {
@@ -69,10 +68,13 @@ export const mappackEditService = {
     }
   },
 
-  deleteTimeGoal: async (mappackId: string, timeGoalId: number): Promise<void> => {
+  deleteTimeGoal: async (
+    mappackId: string,
+    timeGoalId: number,
+  ): Promise<void> => {
     const response = await fetch(
       `${API_BASE}/mappacks/${mappackId}/timegoals/${timeGoalId}`,
-      { method: "DELETE" }
+      { method: "DELETE" },
     );
     if (!response.ok) throw new Error("Failed to delete time goal");
   },
@@ -80,7 +82,7 @@ export const mappackEditService = {
   deleteTier: async (mappackId: string, tierId: number): Promise<void> => {
     const response = await fetch(
       `${API_BASE}/mappacks/${mappackId}/tiers/${tierId}`,
-      { method: "DELETE" }
+      { method: "DELETE" },
     );
     if (!response.ok) throw new Error("Failed to delete tier");
   },
@@ -88,7 +90,7 @@ export const mappackEditService = {
   deleteRank: async (mappackId: string, rankId: number): Promise<void> => {
     const response = await fetch(
       `${API_BASE}/mappacks/${mappackId}/ranks/${rankId}`,
-      { method: "DELETE" }
+      { method: "DELETE" },
     );
     if (!response.ok) throw new Error("Failed to delete rank");
   },
@@ -96,7 +98,7 @@ export const mappackEditService = {
   deleteTrack: async (mappackId: string, trackId: string): Promise<void> => {
     const response = await fetch(
       `${API_BASE}/mappacks/${mappackId}/tracks/${trackId}`,
-      { method: "DELETE" }
+      { method: "DELETE" },
     );
     if (!response.ok) throw new Error("Failed to delete track");
   },

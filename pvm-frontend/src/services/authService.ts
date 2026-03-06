@@ -1,6 +1,5 @@
 import { AuthResponse, User } from "@/types/auth";
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+import { API_BASE } from "@/constants/miscellaneous";
 
 export const authService = {
   async getAuthUrl(): Promise<string> {
@@ -13,10 +12,10 @@ export const authService = {
     const response = await fetch(`${API_BASE}/auth/callback`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
+      body: JSON.stringify({
         code,
         state,
-        redirect_uri: `${window.location.origin}/auth/callback`
+        redirect_uri: `${window.location.origin}/auth/callback`,
       }),
     });
 

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Spinner } from "@heroui/react";
+import { API_BASE } from "@/constants/miscellaneous";
 import axios from "axios";
 
 interface PlayerSearchResult {
@@ -17,8 +18,6 @@ interface PlayerSearchProps {
   placeholder?: string;
   className?: string;
 }
-
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
 export default function PlayerSearch({
   mappackId,
@@ -48,7 +47,7 @@ export default function PlayerSearch({
       try {
         const response = await axios.get<PlayerSearchResult[]>(
           `${API_BASE}/mappacks/${mappackId}/players/search`,
-          { params: { q: searchQuery, limit: 5 } }
+          { params: { q: searchQuery, limit: 5 } },
         );
         setResults(response.data || []);
         setShowDropdown(true);
@@ -67,7 +66,10 @@ export default function PlayerSearch({
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+      if (
+        wrapperRef.current &&
+        !wrapperRef.current.contains(event.target as Node)
+      ) {
         setShowDropdown(false);
         setIsFocused(false);
       }
@@ -84,21 +86,30 @@ export default function PlayerSearch({
 
   return (
     <div ref={wrapperRef} className={`relative ${className}`}>
-
-      {/* Input */}
       <div
         className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-200 cursor-text ${
           isFocused
             ? "bg-white/5 shadow-[0_0_0_1px_rgba(255,255,255,0.15),0_4px_24px_rgba(0,0,0,0.5)]"
             : "bg-white/[0.03] shadow-[0_0_0_1px_rgba(255,255,255,0.06)] hover:bg-white/[0.06] hover:shadow-[0_0_0_1px_rgba(255,255,255,0.1)]"
         }`}
-        onClick={() => (wrapperRef.current?.querySelector("input") as HTMLInputElement)?.focus()}
+        onClick={() =>
+          (
+            wrapperRef.current?.querySelector("input") as HTMLInputElement
+          )?.focus()
+        }
       >
         <svg
           className={`w-3.5 h-3.5 shrink-0 transition-colors duration-200 ${isFocused ? "text-neutral-300" : "text-neutral-600"}`}
-          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2.5}
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0z"
+          />
         </svg>
 
         <input
@@ -128,7 +139,6 @@ export default function PlayerSearch({
         </div>
       </div>
 
-      {/* Dropdown */}
       {showDropdown && (results.length > 0 || (!isLoading && searchQuery)) && (
         <div className="absolute z-50 w-full mt-1 bg-neutral-900 border border-neutral-800 rounded-xl overflow-hidden shadow-2xl">
           {results.length > 0 ? (

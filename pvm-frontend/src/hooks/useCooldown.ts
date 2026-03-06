@@ -1,11 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
 export function useCooldown(key: string, cooldownSeconds: number) {
   const [secondsLeft, setSecondsLeft] = useState(0);
   const [isOnCooldown, setIsOnCooldown] = useState(false);
 
   useEffect(() => {
-    // Check if there's an existing cooldown
     const cooldownEnd = localStorage.getItem(key);
     if (cooldownEnd) {
       const timeLeft = Math.max(0, parseInt(cooldownEnd) - Date.now());

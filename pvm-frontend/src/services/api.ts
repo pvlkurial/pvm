@@ -1,10 +1,10 @@
 import { authService } from "./authService";
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080';
+import { API_BASE } from "@/constants/miscellaneous";
 
 export async function authenticatedFetch(
   url: string,
-  options: RequestInit = {}
+  options: RequestInit = {},
 ): Promise<Response> {
   const savedAuth = authService.loadAuth();
 
@@ -22,13 +22,12 @@ export async function authenticatedFetch(
   });
 }
 
-// Example usage:
 export async function fetchUserAchievements(
   mappackId: string,
-  playerId: string
+  playerId: string,
 ) {
   const response = await authenticatedFetch(
-    `/mappacks/${mappackId}/players/${playerId}/achievements`
+    `/mappacks/${mappackId}/players/${playerId}/achievements`,
   );
   return response.json();
 }

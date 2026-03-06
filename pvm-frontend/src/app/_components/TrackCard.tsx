@@ -6,8 +6,10 @@ import { FormattedText } from "@/utils/textConverter";
 import { millisecondsToTimeString } from "@/utils/time.utils";
 import { MappackTrack, TimeGoal } from "@/types/mappack.types";
 import { TrackCardGoals } from "./track-card/TrackCardGoals";
-import { TrackCardTier } from "./track-card/TrackCardTier";
-import { calculateMaxTrackPoints, calculateTrackPoints } from "@/utils/player.utils";
+import {
+  calculateMaxTrackPoints,
+  calculateTrackPoints,
+} from "@/utils/player.utils";
 
 interface TrackCardProps {
   mappackTrack: MappackTrack;
@@ -28,7 +30,9 @@ export default function TrackCard({
 
   const enrichedTimeGoals = timeGoalMappackTrack
     .map((tgmt) => {
-      const definition = timeGoalDefinitions.find((def) => def.id === tgmt.time_goal_id);
+      const definition = timeGoalDefinitions.find(
+        (def) => def.id === tgmt.time_goal_id,
+      );
       return {
         ...tgmt,
         name: definition?.name || `Goal ${tgmt.time_goal_id}`,
@@ -93,7 +97,8 @@ export default function TrackCard({
             <span className="text-[10px] text-white/40 uppercase tracking-wider">
               <span>Points: </span>
               <span
-                className={`text-[10px] uppercase tracking-wider font-semibold ${pointsColor}`}>
+                className={`text-[10px] uppercase tracking-wider font-semibold ${pointsColor}`}
+              >
                 {`${currentPoints}/${maxPoints}`}
               </span>
             </span>

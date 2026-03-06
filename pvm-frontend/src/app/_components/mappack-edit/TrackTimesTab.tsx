@@ -1,4 +1,3 @@
-// components/mappack-edit/TrackTimesTab.tsx
 import { useEffect } from "react";
 import { MappackTrack, TimeGoal } from "@/types/mappack.types";
 import { millisecondsToTimeString } from "@/utils/time.utils";
@@ -8,7 +7,11 @@ interface TrackTimesTabProps {
   tracks: MappackTrack[];
   timeGoals: TimeGoal[];
   timeInputValues: Record<string, Record<number, string>>;
-  onUpdateTrackTime: (trackId: string, timeGoalId: number, timeString: string) => void;
+  onUpdateTrackTime: (
+    trackId: string,
+    timeGoalId: number,
+    timeString: string,
+  ) => void;
   onUpdateMapStyle: (trackId: string, mapStyle: string) => void;
   onDeleteTrack: (trackId: string, trackName: string) => void;
   inputClassNames: any;
@@ -23,11 +26,13 @@ export function TrackTimesTab({
   onDeleteTrack,
   inputClassNames,
 }: TrackTimesTabProps) {
-  // Initialize time input values from existing data
   useEffect(() => {
     tracks.forEach((track) => {
       track.timeGoalMappackTrack?.forEach((tgmt) => {
-        if (tgmt.time && !timeInputValues[track.track_id]?.[tgmt.time_goal_id]) {
+        if (
+          tgmt.time &&
+          !timeInputValues[track.track_id]?.[tgmt.time_goal_id]
+        ) {
           const timeString = millisecondsToTimeString(tgmt.time);
           onUpdateTrackTime(track.track_id, tgmt.time_goal_id, timeString);
         }

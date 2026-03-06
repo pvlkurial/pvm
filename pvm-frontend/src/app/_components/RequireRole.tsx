@@ -8,10 +8,10 @@ interface RequireRoleProps {
   fallback?: ReactNode;
 }
 
-export default function RequireRole({ 
-  role, 
-  children, 
-  fallback = null 
+export default function RequireRole({
+  role,
+  children,
+  fallback = null,
 }: RequireRoleProps) {
   const { user, isAuthenticated } = useAuth();
 

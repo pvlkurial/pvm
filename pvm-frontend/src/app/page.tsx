@@ -4,20 +4,15 @@ import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import Image from "next/image";
 import { HeroPanel } from "./_components/HeroPanel";
-import { SiPatreon } from "react-icons/si";
-import { CgPatreon } from "react-icons/cg";
-import { FaPatreon } from "react-icons/fa";
 import { ContributorsSection } from "./_components/Contributorssection";
 
 const AVAILABLE_STYLES = [
-  { key: "tech", file: "tech.svg",  label: "Tech" },
-  { key: "rpg",  file: "rpg.svg",   label: "RPG" },
+  { key: "tech", file: "tech.svg", label: "Tech" },
+  { key: "rpg", file: "rpg.svg", label: "RPG" },
+  { key: "fullspeed", file: "fullspeed.svg", label: "Fullspeed" },
 ];
 
-const COMING_SOON_STYLES = [
-  { key: "fullspeed", file: "fullspeed.svg", label: "Fullspeed" },
-  { key: "dirt",      file: "dirt.svg",      label: "Dirt" },
-];
+const COMING_SOON_STYLES = [{ key: "dirt", file: "dirt.svg", label: "Dirt" }];
 
 export default function Home() {
   const router = useRouter();
@@ -25,14 +20,9 @@ export default function Home() {
 
   return (
     <div className="min-h-screen flex flex-col">
-
-      {/* ── HERO ── */}
       <section className="relative max-w-5xl mx-auto w-full px-6 pt-28 pb-20 overflow-hidden min-h-[520px]">
-
-        {/* Parallelogram video panel */}
         <HeroPanel />
 
-        {/* Hero text */}
         <div className="relative z-10">
           <p className="text-neutral-500 text-xs tracking-[0.25em] uppercase mb-5">
             Trackmania · PVM Tracking Platform
@@ -90,7 +80,6 @@ export default function Home() {
             </Button>
           </div>
 
-          {/* ── Available PVMs ── */}
           <div className="mt-12 flex flex-wrap items-end gap-5">
             {AVAILABLE_STYLES.map((s) => (
               <div key={s.key} className="flex flex-col items-center gap-1.5">
@@ -110,7 +99,10 @@ export default function Home() {
             <div className="w-px h-8 bg-neutral-800 self-center" />
 
             {COMING_SOON_STYLES.map((s) => (
-              <div key={s.key} className="flex flex-col items-center gap-1.5 group relative">
+              <div
+                key={s.key}
+                className="flex flex-col items-center gap-1.5 group relative"
+              >
                 <Image
                   src={`/map-styles/${s.file}`}
                   alt={s.label}
@@ -132,7 +124,6 @@ export default function Home() {
 
       <div className="border-t border-neutral-800 max-w-5xl mx-auto w-full px-6" />
 
-      {/* ── HOW IT WORKS ── */}
       <section className="max-w-5xl mx-auto w-full px-6 py-14">
         <div className="grid grid-cols-[auto_1fr] items-center gap-3 mb-8">
           <p className="font-ruigslay text-white text-2xl">How It Works</p>
@@ -170,8 +161,12 @@ export default function Home() {
                 {step.n}
               </span>
               <div className="pt-1">
-                <p className="font-ruigslay text-white text-xl mb-1.5">{step.title}</p>
-                <p className="text-neutral-500 text-sm leading-relaxed">{step.body}</p>
+                <p className="font-ruigslay text-white text-xl mb-1.5">
+                  {step.title}
+                </p>
+                <p className="text-neutral-500 text-sm leading-relaxed">
+                  {step.body}
+                </p>
               </div>
             </div>
           ))}
@@ -179,9 +174,8 @@ export default function Home() {
       </section>
 
       <div className="border-t border-neutral-800 max-w-5xl mx-auto w-full px-6" />
-          <ContributorsSection />
+      <ContributorsSection />
 
-      {/* ── BOTTOM CTA ── */}
       <section className="max-w-5xl mx-auto w-full px-6 py-16">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8">
           <div>
@@ -212,13 +206,10 @@ export default function Home() {
           )}
         </div>
       </section>
-          
-      {/* ── FOOTER ── */}
-      
-        <p className="text-neutral-700 text-xs tracking-widest uppercase text-label ml-6 mb-6">
-          Not affiliated with Nadeo
-        </p>
 
+      <p className="text-neutral-700 text-xs tracking-widest uppercase text-label ml-6 mb-6">
+        Not affiliated with Nadeo
+      </p>
     </div>
   );
 }
