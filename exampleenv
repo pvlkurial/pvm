@@ -1,5 +1,6 @@
 # Database
-CONNECTION_STRING=host=localhost user=pvm password=123 dbname=pvm port=5432 sslmode=disable TimeZone=Europe/Paris 
+CONNECTION_STRING=host=localhost user=pvm password=123 dbname=pvm port=5432 sslmode=disable TimeZone=Europe/Paris
+APP_ENV=production
 
 # Trackmania OAuth
 TRACKMANIA_CLIENT_ID=get_from_trackmania_dev_portal

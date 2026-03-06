@@ -89,6 +89,13 @@ func (r *Routes) InitRoutes() {
 		r.POST("/players", controllers.PlayerController.Create)
 	}
 
+	// Plugin Only Routes (Openplanet)
+	plugin := r.Group("/plugin")
+	plugin.Use(middleware.PluginAuthMiddleware(&services.AuthService))
+	{
+		plugin.POST("/records/pb", controllers.RecordController.SubmitPluginPB)
+	}
+
 	r.GET("/tracks/:track_id", controllers.TrackController.GetById)
 
 	r.GET("/players", controllers.PlayerController.GetAll)
