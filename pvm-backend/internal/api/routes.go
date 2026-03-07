@@ -40,6 +40,8 @@ func (r *Routes) InitRoutes() {
 	{
 		auth.GET("/login", controllers.AuthController.Login)
 		auth.POST("/callback", controllers.AuthController.Callback)
+		// For plugin token
+		auth.POST("/plugin", controllers.AuthController.PluginLogin)
 	}
 
 	authorized := r.Group("/")

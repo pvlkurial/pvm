@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 
+	"example/pvm-backend/internal/models"
 	"example/pvm-backend/internal/services"
 
 	"github.com/gin-gonic/gin"
@@ -108,6 +110,13 @@ func (c *AuthController) PluginLogin(ctx *gin.Context) {
 	}
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if os.Getenv("ENV") == "development" && req.Token == "dev" {
+		user := &models.User{ID: "e2f10a7c-d8bc-4484-b49e-dfe2ec3fba2f", Name: "Laser..", Role: "plugin"}
+		jwt, _ := c.authService.GenerateJWT(user)
+		ctx.JSON(http.StatusOK, gin.H{"token": jwt, "name": user.Name})
 		return
 	}
 

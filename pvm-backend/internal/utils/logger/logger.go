@@ -6,7 +6,7 @@ import (
 )
 
 func Init() {
-	env := os.Getenv("APP_ENV")
+	env := os.Getenv("ENV")
 
 	var handler slog.Handler
 	opts := &slog.HandlerOptions{

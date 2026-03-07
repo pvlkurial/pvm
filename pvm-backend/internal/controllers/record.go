@@ -247,5 +247,5 @@ func (c *RecordController) SubmitPluginPB(ctx *gin.Context) {
 			)
 		}
 	}
-	ctx.JSON(http.StatusOK, gin.H{"ok": true})
+	ctx.JSON(http.StatusOK, gin.H{"personal_best": req.Time})
 }
