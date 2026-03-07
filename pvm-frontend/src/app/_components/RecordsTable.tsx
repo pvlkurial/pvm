@@ -78,7 +78,7 @@ export default function RecordsTable({
         >
           <div className="flex items-center justify-center">
             <span
-              className={`text-base md:text-lg font-mono ${getPositionStyle(position)}`}
+              className={`text-base md:text-lg font-mono font-ruigslay ${getPositionStyle(position)}`}
             >
               {position}
             </span>
@@ -86,7 +86,7 @@ export default function RecordsTable({
 
           <div className="flex flex-col md:flex-row md:items-center min-w-0 gap-1 md:gap-0">
             <div className="flex items-center min-w-0">
-              <span className="text-sm md:text-base text-white/90 truncate text-label">
+              <span className="text-xs md:text-base text-white/80 truncate text-label tracking-wide">
                 {record.player.name}
                 {isLoggedInPlayer && isPinnedRecord && (
                   <span className="ml-2 text-xs text-blue-400 font-semibold">
@@ -120,7 +120,7 @@ export default function RecordsTable({
           </div>
 
           <div className="flex items-center justify-end md:justify-center">
-            <span className="text-sm md:text-base font-mono text-white/90 text-label">
+            <span className="text-sm md:text-base font-mono text-white/90 text-label tracking-wide">
               {millisecondsToTimeString(record.score)}
             </span>
           </div>

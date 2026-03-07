@@ -8,6 +8,7 @@ import MappackCard from "@/app/_components/MappackCard";
 import AddMappackCard from "@/app/_components/add-edit-buttons/AddMappackCard";
 import CarouselArrow from "@/app/_components/CarouselArrow";
 import CarouselDots from "@/app/_components/CarouselDots";
+import { API_BASE } from "@/constants/miscellaneous";
 import "./mappacks.css";
 
 type Item =
@@ -18,7 +19,6 @@ export default function MapppacksPage() {
   const [mappacks, setMappacks] = useState<Mappack[]>([]);
   const { user } = useAuth();
   const isAdmin = user?.role === "admin";
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
   useEffect(() => {
     document.body.style.overflow = "hidden";

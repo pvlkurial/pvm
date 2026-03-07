@@ -27,16 +27,13 @@ export function TimeGoalCard({
           ? "linear-gradient(135deg, rgba(74,222,128,0.08) 0%, rgba(255,255,255,0.03) 60%)"
           : "rgba(255,255,255,0.03)",
         boxShadow: delta?.isAchieved
-          ? "0 0 0 1px rgba(74,222,128,0.2)"
+          ? "0 0 0 1px rgba(74,222,128,0.4)"
           : "0 0 0 1px rgba(255,255,255,0.06)",
       }}
     >
-      {delta?.isAchieved && (
-        <div className="absolute top-2.5 right-2.5 w-1.5 h-1.5 rounded-full bg-green-400/70" />
-      )}
 
       <p
-        className={`text-[10px] tracking-widest uppercase mb-2 pr-4 leading-tight text-label ${
+        className={`text-[10px] tracking-wide uppercase mb-2 pr-4 leading-tight text-label ${
           delta?.isAchieved ? "text-neutral-400" : "text-neutral-600"
         }`}
       >
@@ -44,7 +41,7 @@ export function TimeGoalCard({
       </p>
 
       <p
-        className={`text-xl leading-none mb-2 text-label ${
+        className={`text-xl leading-none mb-2 text-label tracking-tight ${
           delta?.isAchieved ? "text-white" : "text-neutral-500"
         }`}
       >
