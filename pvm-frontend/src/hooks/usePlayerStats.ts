@@ -1,9 +1,11 @@
-// hooks/usePlayerStats.ts
-import { useState, useEffect } from 'react';
-import { mappackService } from '@/services/mappack.service';
-import { PlayerLeaderboardEntry } from '@/types/mappack.types';
+import { useState, useEffect } from "react";
+import { mappackService } from "@/services/mappack.service";
+import { PlayerLeaderboardEntry } from "@/types/mappack.types";
 
-export function usePlayerStats(mappackId: string, playerId: string | undefined) {
+export function usePlayerStats(
+  mappackId: string,
+  playerId: string | undefined,
+) {
   const [stats, setStats] = useState<PlayerLeaderboardEntry | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
@@ -17,11 +19,14 @@ export function usePlayerStats(mappackId: string, playerId: string | undefined) 
     const fetchStats = async () => {
       try {
         setLoading(true);
-        const data = await mappackService.getPlayerLeaderboardEntry(mappackId, playerId);
+        const data = await mappackService.getPlayerLeaderboardEntry(
+          mappackId,
+          playerId,
+        );
         setStats(data);
       } catch (err) {
         setError(err as Error);
-        console.error('Error fetching player stats:', err);
+        console.error("Error fetching player stats:", err);
       } finally {
         setLoading(false);
       }

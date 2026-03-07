@@ -34,7 +34,9 @@ export function ModalPlayerStats({
   const { entry, rank } = stats;
 
   const playerRank = getPlayerRank(entry.total_points, ranks);
-  const sortedRanks = [...ranks].sort((a, b) => a.pointsNeeded - b.pointsNeeded);
+  const sortedRanks = [...ranks].sort(
+    (a, b) => a.pointsNeeded - b.pointsNeeded,
+  );
   const nextRank = playerRank
     ? sortedRanks.find((r) => r.pointsNeeded > entry.total_points)
     : sortedRanks[0];

@@ -1,6 +1,6 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { User, AuthState } from "@/types/auth";
+import { AuthState } from "@/types/auth";
 import { authService } from "@/services/authService";
 
 interface AuthContextType extends AuthState {
@@ -18,10 +18,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading: true,
   });
 
-  // Load auth on mount
   useEffect(() => {
     const savedAuth = authService.loadAuth();
-    
+
     if (savedAuth) {
       setState({
         user: savedAuth.user,

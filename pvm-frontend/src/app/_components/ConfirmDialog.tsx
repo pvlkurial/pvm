@@ -1,4 +1,11 @@
-import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@heroui/react";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+} from "@heroui/react";
 
 interface ConfirmDialogProps {
   isOpen: boolean;
@@ -42,7 +49,9 @@ export function ConfirmDialog({
       <ModalContent>
         {(onClose) => (
           <>
-            <ModalHeader className="text-2xl font-ruigslay">{title}</ModalHeader>
+            <ModalHeader className="text-2xl font-ruigslay">
+              {title}
+            </ModalHeader>
             <ModalBody>
               <p className="text-white/90">{message}</p>
             </ModalBody>
@@ -50,7 +59,10 @@ export function ConfirmDialog({
               <Button color="default" variant="bordered" onPress={onClose}>
                 {cancelText}
               </Button>
-              <Button color={isDangerous ? "danger" : "default"} onPress={handleConfirm}>
+              <Button
+                color={isDangerous ? "danger" : "default"}
+                onPress={handleConfirm}
+              >
                 {confirmText}
               </Button>
             </ModalFooter>

@@ -1,5 +1,11 @@
 "use client";
-import { Button, Dropdown, DropdownTrigger, DropdownMenu, DropdownItem } from "@heroui/react";
+import {
+  Button,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@heroui/react";
 import { useAuth } from "@/contexts/AuthContext";
 
 export default function LoginButton() {

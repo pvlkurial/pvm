@@ -1,4 +1,10 @@
-import { Popover, PopoverTrigger, PopoverContent, Button, Input } from "@heroui/react";
+import {
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  Button,
+  Input,
+} from "@heroui/react";
 import { HexColorPicker } from "react-colorful";
 import { useState } from "react";
 
@@ -8,7 +14,11 @@ interface ColorPickerProps {
   label?: string;
 }
 
-export function ColorPicker({ value, onChange, label = "Color" }: ColorPickerProps) {
+export function ColorPicker({
+  value,
+  onChange,
+  label = "Color",
+}: ColorPickerProps) {
   const [hexInput, setHexInput] = useState(value);
 
   const handleHexChange = (newHex: string) => {
@@ -37,7 +47,9 @@ export function ColorPicker({ value, onChange, label = "Color" }: ColorPickerPro
             />
             <div className="flex flex-col items-start flex-1">
               <span className="text-xs text-gray-400">{label}</span>
-              <span className="text-white font-mono">{value.toUpperCase()}</span>
+              <span className="text-white font-mono">
+                {value.toUpperCase()}
+              </span>
             </div>
           </div>
         </Button>
@@ -53,11 +65,19 @@ export function ColorPicker({ value, onChange, label = "Color" }: ColorPickerPro
             placeholder="#FFFFFF"
             classNames={{
               input: "text-white font-mono",
-              inputWrapper: "border-gray-700 data-[hover=true]:border-gray-600 group-data-[focus=true]:bg-neutral-900 group-data-[focus=true]:border-white",
+              inputWrapper:
+                "border-gray-700 data-[hover=true]:border-gray-600 group-data-[focus=true]:bg-neutral-900 group-data-[focus=true]:border-white",
             }}
           />
           <div className="flex gap-1 flex-wrap justify-center">
-            {['#ff0000ff', '#ff7b00ff', '#ffbf00ff', '#ffea00ff', '#000000ff', '#FFFFFF'].map((presetColor) => (
+            {[
+              "#ff0000ff",
+              "#ff7b00ff",
+              "#ffbf00ff",
+              "#ffea00ff",
+              "#000000ff",
+              "#FFFFFF",
+            ].map((presetColor) => (
               <button
                 key={presetColor}
                 className="w-6 h-6 rounded border border-gray-600 hover:scale-110 transition-transform"

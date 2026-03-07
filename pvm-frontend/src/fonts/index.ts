@@ -1,34 +1,34 @@
-import localFont from 'next/font/local'
+import localFont from "next/font/local";
 
 export const myCustomFont = localFont({
   src: [
     {
-      path: './RuigslayFixed.otf',
-      weight: '900',
-      style: 'normal',
+      path: "./RuigslayFixed.otf",
+      weight: "900",
+      style: "normal",
     },
   ],
-  variable: '--font-my-custom'
-})
+  variable: "--font-my-custom",
+});
 
 export const HeatherGreen = localFont({
   src: [
     {
-      path: './casko.otf',
-      weight: '900',
-      style: 'italic',
+      path: "./casko.otf",
+      weight: "900",
+      style: "italic",
     },
   ],
-  variable: '--font-heathergreen',
-})
+  variable: "--font-heathergreen",
+});
 
 export const Casko = localFont({
   src: [
     {
-      path: './casko.otf',
-      weight: '900',
-      style: 'italic',
+      path: "./casko.otf",
+      weight: "900",
+      style: "italic",
     },
   ],
-  variable: '--font-casko',
-})
+  variable: "--font-casko",
+});

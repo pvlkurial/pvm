@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Spinner, Button } from "@heroui/react";
 import { Casko } from "@/fonts";
@@ -29,8 +29,13 @@ interface LeaderboardTabProps {
 
 const ITEMS_PER_PAGE = 100;
 
-const getPlayerRank = (points: number, ranks: MappackRank[]): MappackRank | null => {
-  const sortedRanks = [...ranks].sort((a, b) => b.pointsNeeded - a.pointsNeeded);
+const getPlayerRank = (
+  points: number,
+  ranks: MappackRank[],
+): MappackRank | null => {
+  const sortedRanks = [...ranks].sort(
+    (a, b) => b.pointsNeeded - a.pointsNeeded,
+  );
   for (const rank of sortedRanks) {
     if (points >= rank.pointsNeeded) return rank;
   }
@@ -39,10 +44,14 @@ const getPlayerRank = (points: number, ranks: MappackRank[]): MappackRank | null
 
 const getAnimationClass = (animationType: string): string => {
   switch (animationType) {
-    case "shine": return "animate-shine";
-    case "pulse": return "animate-pulse";
-    case "shimmer": return "animate-shimmer";
-    default: return "";
+    case "shine":
+      return "animate-shine";
+    case "pulse":
+      return "animate-pulse";
+    case "shimmer":
+      return "animate-shimmer";
+    default:
+      return "";
   }
 };
 
@@ -85,21 +94,31 @@ const getCardStyleEffects = (cardStyle: string, color: string) => {
 
 const getFontSizeClass = (fontSize: string): string => {
   switch (fontSize) {
-    case "large": return "text-xl";
-    case "xl": return "text-2xl";
-    default: return "text-lg";
+    case "large":
+      return "text-xl";
+    case "xl":
+      return "text-2xl";
+    default:
+      return "text-lg";
   }
 };
 
 const getFontWeightClass = (fontWeight: string): string => {
   switch (fontWeight) {
-    case "bold": return "font-bold";
-    case "black": return "font-black";
-    default: return "font-semibold";
+    case "bold":
+      return "font-bold";
+    case "black":
+      return "font-black";
+    default:
+      return "font-semibold";
   }
 };
 
-export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappack }: LeaderboardTabProps) {
+export default function LeaderboardTab({
+  mappackId,
+  mappackRanks,
+  loggedInMappack,
+}: LeaderboardTabProps) {
   const [leaderboard, setLeaderboard] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingMore, setLoadingMore] = useState(false);
@@ -111,14 +130,19 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
   } | null>(null);
   const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
-  const fetchLeaderboard = async (currentOffset: number, append: boolean = false) => {
+  const fetchLeaderboard = async (
+    currentOffset: number,
+    append: boolean = false,
+  ) => {
     try {
       append ? setLoadingMore(true) : setLoading(true);
       const response = await axios.get(
-        `${API_BASE}/mappacks/${mappackId}/leaderboard?limit=${ITEMS_PER_PAGE}&offset=${currentOffset}`
+        `${API_BASE}/mappacks/${mappackId}/leaderboard?limit=${ITEMS_PER_PAGE}&offset=${currentOffset}`,
       );
       const newData = response.data;
-      append ? setLeaderboard((prev) => [...prev, ...newData]) : setLeaderboard(newData);
+      append
+        ? setLeaderboard((prev) => [...prev, ...newData])
+        : setLeaderboard(newData);
       setHasMore(newData.length === ITEMS_PER_PAGE);
       setOffset(currentOffset + newData.length);
     } catch (err) {
@@ -133,13 +157,19 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
     fetchLeaderboard(0, false);
   }, [mappackId]);
 
-  const playersByRank = leaderboard.reduce((acc, entry) => {
-    const rank = getPlayerRank(entry.total_points, mappackRanks);
-    const rankName = rank?.name || "Unranked";
-    if (!acc[rankName]) acc[rankName] = { rank, players: [] };
-    acc[rankName].players.push(entry);
-    return acc;
-  }, {} as Record<string, { rank: MappackRank | null; players: LeaderboardEntry[] }>);
+  const playersByRank = leaderboard.reduce(
+    (acc, entry) => {
+      const rank = getPlayerRank(entry.total_points, mappackRanks);
+      const rankName = rank?.name || "Unranked";
+      if (!acc[rankName]) acc[rankName] = { rank, players: [] };
+      acc[rankName].players.push(entry);
+      return acc;
+    },
+    {} as Record<
+      string,
+      { rank: MappackRank | null; players: LeaderboardEntry[] }
+    >,
+  );
 
   const sortedRanks = Object.keys(playersByRank).sort((a, b) => {
     const pointsA = playersByRank[a].rank?.pointsNeeded || 0;
@@ -187,7 +217,8 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
 
           const rankColor = rank.color || "#6b7280";
           const borderColorToUse = rank.borderColor || rankColor;
-          const glowOpacity = Math.min(100, Math.max(0, rank.glowIntensity || 50)) / 100;
+          const glowOpacity =
+            Math.min(100, Math.max(0, rank.glowIntensity || 50)) / 100;
 
           let globalPosition = 0;
           for (const r of sortedRanks) {
@@ -202,7 +233,10 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
                 {rank.backgroundGlow && (
                   <div
                     className="absolute blur-3xl w-64 h-16 pointer-events-none"
-                    style={{ backgroundColor: rankColor, opacity: glowOpacity * 0.25 }}
+                    style={{
+                      backgroundColor: rankColor,
+                      opacity: glowOpacity * 0.25,
+                    }}
                   />
                 )}
                 <h2
@@ -212,17 +246,37 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
                     letterSpacing: "0.08em",
                     color: rankColor,
                     textShadow: rank.textShadow
-                      ? `0 0 40px ${rankColor}${Math.round(glowOpacity * 128).toString(16).padStart(2, "0")}, 0 0 80px ${rankColor}${Math.round(glowOpacity * 64).toString(16).padStart(2, "0")}`
+                      ? `0 0 40px ${rankColor}${Math.round(glowOpacity * 128)
+                          .toString(16)
+                          .padStart(2, "0")}, 0 0 80px ${rankColor}${Math.round(
+                          glowOpacity * 64,
+                        )
+                          .toString(16)
+                          .padStart(2, "0")}`
                       : `0 0 60px ${rankColor}20`,
                   }}
                 >
-                  {rank.symbolsAround} {rankName.toUpperCase()} {rank.symbolsAround}
+                  {rank.symbolsAround} {rankName.toUpperCase()}{" "}
+                  {rank.symbolsAround}
                 </h2>
                 {/* Decorative lines flanking the title */}
                 <div className="flex items-center gap-4 mt-3 w-full max-w-sm">
-                  <div className="flex-1 h-px" style={{ background: `linear-gradient(to right, transparent, ${rankColor}40)` }} />
-                  <div className="w-1 h-1 rounded-full" style={{ backgroundColor: `${rankColor}60` }} />
-                  <div className="flex-1 h-px" style={{ background: `linear-gradient(to left, transparent, ${rankColor}40)` }} />
+                  <div
+                    className="flex-1 h-px"
+                    style={{
+                      background: `linear-gradient(to right, transparent, ${rankColor}40)`,
+                    }}
+                  />
+                  <div
+                    className="w-1 h-1 rounded-full"
+                    style={{ backgroundColor: `${rankColor}60` }}
+                  />
+                  <div
+                    className="flex-1 h-px"
+                    style={{
+                      background: `linear-gradient(to left, transparent, ${rankColor}40)`,
+                    }}
+                  />
                 </div>
               </div>
 
@@ -231,9 +285,15 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
                 {rankData.players.map((entry, index) => {
                   const position = globalPosition + index + 1;
                   const isTopThree = position <= 3;
-                  const cardStyleEffects = getCardStyleEffects(rank.cardStyle, rankColor);
+                  const cardStyleEffects = getCardStyleEffects(
+                    rank.cardStyle,
+                    rankColor,
+                  );
                   const animationClass = getAnimationClass(rank.animationType);
-                  const patternBg = getBackgroundPattern(rank.backgroundPattern, rankColor);
+                  const patternBg = getBackgroundPattern(
+                    rank.backgroundPattern,
+                    rankColor,
+                  );
                   const fontSizeClass = getFontSizeClass(rank.fontSize);
                   const fontWeightClass = getFontWeightClass(rank.fontWeight);
 
@@ -241,26 +301,45 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
                     return (
                       <div
                         key={entry.player_id}
-                        onClick={() => handlePlayerClick(entry.player_id, entry.player.name)}
+                        onClick={() =>
+                          handlePlayerClick(entry.player_id, entry.player.name)
+                        }
                         className={`relative p-4 rounded-xl transition-all duration-200 hover:scale-[1.02] overflow-hidden cursor-pointer ${animationClass}`}
                         style={{
-                          background: cardStyleEffects.background || `linear-gradient(135deg, ${rankColor}dd, ${rankColor}aa)`,
+                          background:
+                            cardStyleEffects.background ||
+                            `linear-gradient(135deg, ${rankColor}dd, ${rankColor}aa)`,
                           border: `${rank.borderWidth || 2}px solid ${borderColorToUse}`,
                           boxShadow: rank.backgroundGlow
-                            ? `0 0 ${20 * glowOpacity}px ${rankColor}${Math.round(glowOpacity * 96).toString(16).padStart(2, "0")}`
+                            ? `0 0 ${20 * glowOpacity}px ${rankColor}${Math.round(
+                                glowOpacity * 96,
+                              )
+                                .toString(16)
+                                .padStart(2, "0")}`
                             : "none",
                           backgroundImage: patternBg,
-                          backgroundSize: rank.backgroundPattern === "dots" || rank.backgroundPattern === "grid" ? "20px 20px" : "auto",
+                          backgroundSize:
+                            rank.backgroundPattern === "dots" ||
+                            rank.backgroundPattern === "grid"
+                              ? "20px 20px"
+                              : "auto",
                           filter: cardStyleEffects.filter,
                           animation: cardStyleEffects.animation,
                         }}
                       >
                         {rank.animationType === "shine" && (
-                          <div className="absolute inset-0 opacity-30 animate-shine-move"
-                            style={{ background: "linear-gradient(45deg, transparent 30%, white 50%, transparent 70%)" }}
+                          <div
+                            className="absolute inset-0 opacity-30 animate-shine-move"
+                            style={{
+                              background:
+                                "linear-gradient(45deg, transparent 30%, white 50%, transparent 70%)",
+                            }}
                           />
                         )}
-                        <span className="absolute top-2.5 right-3 font-ruigslay text-sm" style={{ color: `${rankColor}25` }}>
+                        <span
+                          className="absolute top-2.5 right-3 font-ruigslay text-sm"
+                          style={{ color: `${rankColor}25` }}
+                        >
                           #{position}
                         </span>
                         <div className="flex items-baseline gap-3 relative z-10 pr-8">
@@ -268,13 +347,21 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
                             className="font-ruigslay leading-none text-black shrink-0"
                             style={{
                               fontSize: "clamp(28px, 4vw, 40px)",
-                              textShadow: rank.textShadow ? `0 0 10px ${rankColor}` : "none",
+                              textShadow: rank.textShadow
+                                ? `0 0 10px ${rankColor}`
+                                : "none",
                             }}
                           >
                             {entry.total_points}
                           </p>
-                          <p className={`${fontSizeClass} ${fontWeightClass} leading-tight text-black truncate`}
-                            style={{ textShadow: rank.textShadow ? `0 0 10px ${rankColor}40` : "none" }}>
+                          <p
+                            className={`${fontSizeClass} ${fontWeightClass} leading-tight text-black truncate`}
+                            style={{
+                              textShadow: rank.textShadow
+                                ? `0 0 10px ${rankColor}40`
+                                : "none",
+                            }}
+                          >
                             {entry.player.name}
                           </p>
                         </div>
@@ -285,23 +372,40 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
                   return (
                     <div
                       key={entry.player_id}
-                      onClick={() => handlePlayerClick(entry.player_id, entry.player.name)}
+                      onClick={() =>
+                        handlePlayerClick(entry.player_id, entry.player.name)
+                      }
                       className={`relative p-4 rounded-xl transition-all duration-200 hover:scale-[1.02] cursor-pointer overflow-hidden ${animationClass} ${
-                        isTopThree ? "bg-white/[0.07]" : "bg-white/[0.03] hover:bg-white/[0.06]"
+                        isTopThree
+                          ? "bg-white/[0.07]"
+                          : "bg-white/[0.03] hover:bg-white/[0.06]"
                       }`}
                       style={{
                         border: `${rank.borderWidth || 1}px solid ${isTopThree ? `${borderColorToUse}35` : "rgba(255,255,255,0.06)"}`,
-                        boxShadow: rank.backgroundGlow && isTopThree
-                          ? `0 0 ${20 * glowOpacity}px ${rankColor}${Math.round(glowOpacity * 96).toString(16).padStart(2, "0")}`
-                          : "none",
+                        boxShadow:
+                          rank.backgroundGlow && isTopThree
+                            ? `0 0 ${20 * glowOpacity}px ${rankColor}${Math.round(
+                                glowOpacity * 96,
+                              )
+                                .toString(16)
+                                .padStart(2, "0")}`
+                            : "none",
                         backgroundImage: patternBg,
-                        backgroundSize: rank.backgroundPattern === "dots" || rank.backgroundPattern === "grid" ? "20px 20px" : "auto",
+                        backgroundSize:
+                          rank.backgroundPattern === "dots" ||
+                          rank.backgroundPattern === "grid"
+                            ? "20px 20px"
+                            : "auto",
                         ...cardStyleEffects,
                       }}
                     >
                       {rank.animationType === "shine" && (
-                        <div className="absolute inset-0 opacity-20 animate-shine-move"
-                          style={{ background: "linear-gradient(45deg, transparent 30%, white 50%, transparent 70%)" }}
+                        <div
+                          className="absolute inset-0 opacity-20 animate-shine-move"
+                          style={{
+                            background:
+                              "linear-gradient(45deg, transparent 30%, white 50%, transparent 70%)",
+                          }}
                         />
                       )}
                       <span className="absolute top-2.5 right-3 font-ruigslay text-sm text-white/20">
@@ -313,19 +417,30 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
                           style={{
                             fontSize: "clamp(28px, 4vw, 40px)",
                             color: rankColor,
-                            textShadow: rank.textShadow ? `0 0 10px ${rankColor}80` : "none",
+                            textShadow: rank.textShadow
+                              ? `0 0 10px ${rankColor}80`
+                              : "none",
                           }}
                         >
                           {entry.total_points}
                         </p>
-                        <p className={`text-white leading-tight truncate ${fontSizeClass} ${fontWeightClass}`}
-                          style={{ textShadow: rank.textShadow ? `0 0 10px ${rankColor}40` : "none" }}>
+                        <p
+                          className={`text-white leading-tight truncate ${fontSizeClass} ${fontWeightClass}`}
+                          style={{
+                            textShadow: rank.textShadow
+                              ? `0 0 10px ${rankColor}40`
+                              : "none",
+                          }}
+                        >
                           {entry.player.name}
                         </p>
                       </div>
                       {isTopThree && (
-                        <div className="absolute inset-0 rounded-xl opacity-10 pointer-events-none"
-                          style={{ background: `radial-gradient(circle at top right, ${rankColor}80, transparent)` }}
+                        <div
+                          className="absolute inset-0 rounded-xl opacity-10 pointer-events-none"
+                          style={{
+                            background: `radial-gradient(circle at top right, ${rankColor}80, transparent)`,
+                          }}
                         />
                       )}
                     </div>
@@ -353,18 +468,36 @@ export default function LeaderboardTab({ mappackId, mappackRanks, loggedInMappac
 
       <style jsx>{`
         @keyframes shine-move {
-          0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
-          100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+          0% {
+            transform: translateX(-100%) translateY(-100%) rotate(45deg);
+          }
+          100% {
+            transform: translateX(100%) translateY(100%) rotate(45deg);
+          }
         }
-        .animate-shine-move { animation: shine-move 3s infinite; }
+        .animate-shine-move {
+          animation: shine-move 3s infinite;
+        }
         @keyframes shimmer {
-          0%, 100% { opacity: 1; }
-          50% { opacity: 0.5; }
+          0%,
+          100% {
+            opacity: 1;
+          }
+          50% {
+            opacity: 0.5;
+          }
         }
-        .animate-shimmer { animation: shimmer 2s ease-in-out infinite; }
+        .animate-shimmer {
+          animation: shimmer 2s ease-in-out infinite;
+        }
         @keyframes holographic {
-          0%, 100% { background-position: 0% 50%; }
-          50% { background-position: 100% 50%; }
+          0%,
+          100% {
+            background-position: 0% 50%;
+          }
+          50% {
+            background-position: 100% 50%;
+          }
         }
       `}</style>
 

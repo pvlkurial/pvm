@@ -21,18 +21,17 @@ export function TierSection({
   const tierColor = tierData.tier?.color || "#6b7280";
 
   return (
-    <div
-      ref={onRef}
-      data-tier={tierName}
-      className="scroll-mt-4"
-    >
+    <div ref={onRef} data-tier={tierName} className="scroll-mt-4">
       <hr className="divider" />
       <div className="mb-4 pt-4 justify-center items-center flex">
-        <h2 className="text-3xl uppercase tracking-wider text-white/70 font-semibold justify-center uppercase" style={{ color: tierColor }}>
+        <h2
+          className="text-3xl tracking-wider text-white/70 font-semibold justify-center uppercase"
+          style={{ color: tierColor }}
+        >
           {tierName.toUpperCase()} TIER
         </h2>
       </div>
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
         {tierData.tracks.map((mappackTrack) => (
           <TrackCard
             key={mappackTrack.track_id}

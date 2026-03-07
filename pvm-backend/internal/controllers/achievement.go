@@ -1,4 +1,3 @@
-// controllers/achievement_controller.go
 package controllers
 
 import (

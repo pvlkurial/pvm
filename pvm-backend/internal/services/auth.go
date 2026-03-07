@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"os"
 	"time"
 
 	"example/pvm-backend/internal/models"
@@ -164,4 +165,42 @@ func (s *AuthService) GetClientID() string {
 
 func (s *AuthService) GetRedirectURI() string {
 	return s.RedirectURI
+}
+
+func (s *AuthService) VerifyOpenplanetToken(opToken string) (*models.User, error) {
+	body := url.Values{
+		"token":  {opToken},
+		"secret": {os.Getenv("OPENPLANET_PLUGIN_SECRET")},
+	}
+
+	resp, err := http.PostForm("https://openplanet.dev/api/auth/validate", body)
+	if err != nil {
+		return nil, fmt.Errorf("openplanet request: %w", err)
+	}
+	defer resp.Body.Close()
+
+	var result struct {
+		AccountID   string `json:"account_id"`
+		DisplayName string `json:"display_name"`
+		TokenTime   int64  `json:"token_time"`
+		Error       string `json:"error"`
+	}
+	if err := json.NewDecoder(resp.Body).Decode(&result); err != nil {
+		return nil, fmt.Errorf("decode response: %w", err)
+	}
+	if result.Error != "" {
+		return nil, fmt.Errorf("openplanet rejected token: %s", result.Error)
+	}
+
+	tmUser := TrackmaniaUser{
+		AccountID: result.AccountID,
+		Name:      result.DisplayName,
+	}
+	user, err := s.CreateOrUpdateUser(&tmUser)
+	if err != nil {
+		return nil, err
+	}
+
+	user.Role = "plugin"
+	return user, nil
 }

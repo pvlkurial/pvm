@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 const HERO_IMAGES = [
   "https://core.trackmania.nadeo.live/maps/7669739d-a846-4869-bfe3-6a2e7c75012f/thumbnail.jpg",
   "https://core.trackmania.nadeo.live/maps/323cbe74-b262-4e8f-bd64-6a5c33aa9127/thumbnail.jpg",
+  "https://core.trackmania.nadeo.live/maps/d0030278-ac88-4392-91df-ce9c14024dd9/thumbnail.jpg",
 ];
 
 const INTERVAL_MS = 10000;
@@ -37,11 +38,11 @@ export function HeroPanel() {
         style={{ opacity: visible ? 1 : 0 }}
       />
 
-      {/* Left-edge fade for text readability */}
       <div
         className="absolute inset-0 z-10"
         style={{
-          background: "linear-gradient(to right, rgba(10,10,10,0.7) 0%, transparent 45%)",
+          background:
+            "linear-gradient(to right, rgba(10,10,10,0.7) 0%, transparent 45%)",
         }}
       />
     </div>

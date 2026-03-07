@@ -27,23 +27,26 @@ export const timeStringToMilliseconds = (timeString: string): number => {
   }
 };
 
-export function calculateTimeDelta(personalBest: number, goalTime: number): {
+export function calculateTimeDelta(
+  personalBest: number,
+  goalTime: number,
+): {
   delta: number;
   isAchieved: boolean;
   formatted: string;
 } {
   const delta = personalBest - goalTime;
   const isAchieved = delta <= 0;
-  
+
   const absDelta = Math.abs(delta);
   const totalSeconds = Math.floor(absDelta / 1000);
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
   const milliseconds = absDelta % 1000;
-  
-  const sign = isAchieved ? '-' : '+';
-  const formatted = `${sign}${minutes}:${seconds.toString().padStart(2, '0')}:${milliseconds.toString().padStart(3, '0')}`;
-  
+
+  const sign = isAchieved ? "-" : "+";
+  const formatted = `${sign}${minutes}:${seconds.toString().padStart(2, "0")}:${milliseconds.toString().padStart(3, "0")}`;
+
   return {
     delta,
     isAchieved,
@@ -54,5 +57,5 @@ export function calculateTimeDelta(personalBest: number, goalTime: number): {
 export function formatSecondsToMMSS(seconds: number): string {
   const minutes = Math.floor(seconds / 60);
   const secs = seconds % 60;
-  return `${minutes}:${secs.toString().padStart(2, '0')}`;
+  return `${minutes}:${secs.toString().padStart(2, "0")}`;
 }

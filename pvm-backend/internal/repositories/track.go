@@ -106,10 +106,8 @@ func (t *trackRepository) GetMappacksForTrack(trackID string) ([]string, error) 
 func (t *trackRepository) GetTrackTimeGoals(mappackID, trackID string) ([]models.TimeGoalMappackTrack, error) {
 	var timeGoals []models.TimeGoalMappackTrack
 
-	// ✅ Add debug logging
 	log.Printf("GetTrackTimeGoals called with mappackID=%s, trackID=%s", mappackID, trackID)
 
-	// ✅ Log the table name being used
 	tableName := t.db.NamingStrategy.TableName(reflect.TypeOf(models.TimeGoalMappackTrack{}).Name())
 	log.Printf("Using table name: %s", tableName)
 
@@ -118,7 +116,6 @@ func (t *trackRepository) GetTrackTimeGoals(mappackID, trackID string) ([]models
 		Where("mappack_id = ? AND track_id = ?", mappackID, trackID).
 		Find(&timeGoals).Error
 
-	// ✅ Log the query result
 	log.Printf("Query returned %d time goals, error: %v", len(timeGoals), err)
 
 	if err != nil {
@@ -126,7 +123,6 @@ func (t *trackRepository) GetTrackTimeGoals(mappackID, trackID string) ([]models
 		return nil, err
 	}
 
-	// ✅ Log what was found
 	for i, tg := range timeGoals {
 		log.Printf("  [%d] TimeGoalID=%d, Time=%d", i, tg.TimegoalID, tg.Time)
 	}

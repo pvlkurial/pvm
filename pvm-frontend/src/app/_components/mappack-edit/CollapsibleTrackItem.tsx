@@ -8,7 +8,11 @@ interface CollapsibleTrackItemProps {
   track: MappackTrack;
   timeGoals: TimeGoal[];
   timeInputValues: Record<string, Record<number, string>>;
-  onTimeGoalChange: (trackId: string, timeGoalId: number, value: string) => void;
+  onTimeGoalChange: (
+    trackId: string,
+    timeGoalId: number,
+    value: string,
+  ) => void;
   onMapStyleChange: (trackId: string, value: string) => void;
   onDelete: (trackId: string, trackName: string) => void;
   inputClassNames: any;
@@ -27,7 +31,6 @@ export function CollapsibleTrackItem({
 
   return (
     <div className="border border-gray-700 rounded-lg overflow-hidden bg-neutral-700">
-      {/* Header - Always Visible */}
       <div className="flex items-center gap-3 p-4 bg-neutral-800">
         <Image
           removeWrapper
@@ -35,7 +38,7 @@ export function CollapsibleTrackItem({
           className="w-16 h-16 object-cover rounded flex-shrink-0"
           src={track.track.thumbnailUrl}
         />
-        
+
         <div className="flex-1 min-w-0">
           <h3 className="font-bold text-base text-white truncate">
             <FormattedText text={track.track.name} />
@@ -53,7 +56,7 @@ export function CollapsibleTrackItem({
           >
             <FaTrash className="w-3 h-3" />
           </Button>
-          
+
           <Button
             size="sm"
             variant="light"
@@ -70,7 +73,6 @@ export function CollapsibleTrackItem({
         </div>
       </div>
 
-      {/* Collapsible Content */}
       {isOpen && (
         <div className="p-4 space-y-4">
           <Input
@@ -89,7 +91,8 @@ export function CollapsibleTrackItem({
               {timeGoals
                 .filter((tg) => tg.id)
                 .map((timeGoal) => {
-                  const inputValue = timeInputValues[track.track_id]?.[timeGoal.id!] || "";
+                  const inputValue =
+                    timeInputValues[track.track_id]?.[timeGoal.id!] || "";
 
                   return (
                     <Input

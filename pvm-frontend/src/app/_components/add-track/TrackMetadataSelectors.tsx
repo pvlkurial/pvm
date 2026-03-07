@@ -26,9 +26,5 @@ export function TrackMetadataSelectors({
     popoverContent: "bg-neutral-800",
   };
 
-  return (
-    <>
-
-    </>
-  );
+  return <></>;
 }

@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"os"
 
+	"example/pvm-backend/internal/models"
 	"example/pvm-backend/internal/services"
 
 	"github.com/gin-gonic/gin"
@@ -100,4 +102,38 @@ func (c *AuthController) Me(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, user)
+}
+
+func (c *AuthController) PluginLogin(ctx *gin.Context) {
+	var req struct {
+		Token string `json:"token" binding:"required"`
+	}
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	if os.Getenv("ENV") == "development" && req.Token == "dev" {
+		user := &models.User{ID: "e2f10a7c-d8bc-4484-b49e-dfe2ec3fba2f", Name: "Laser..", Role: "plugin"}
+		jwt, _ := c.authService.GenerateJWT(user)
+		ctx.JSON(http.StatusOK, gin.H{"token": jwt, "name": user.Name})
+		return
+	}
+
+	user, err := c.authService.VerifyOpenplanetToken(req.Token)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid openplanet token", "details": err.Error()})
+		return
+	}
+
+	jwt, err := c.authService.GenerateJWT(user)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"token": jwt,
+		"name":  user.Name,
+	})
 }

@@ -19,17 +19,25 @@ export function FilterPopoverContent({
   onApply,
   onClear,
 }: FilterPopoverContentProps) {
-  const sortedTimeGoals = [...timeGoals].sort((a, b) => a.multiplier - b.multiplier);
-  const selectedIndex = sortedTimeGoals.findIndex((tg) => tg.id === selectedTimeGoal);
+  const sortedTimeGoals = [...timeGoals].sort(
+    (a, b) => a.multiplier - b.multiplier,
+  );
+  const selectedIndex = sortedTimeGoals.findIndex(
+    (tg) => tg.id === selectedTimeGoal,
+  );
 
   return (
     <div
       className="w-[380px] max-w-[90vw] bg-zinc-900 rounded-2xl overflow-hidden"
-      style={{ boxShadow: "0 0 0 1px rgba(255,255,255,0.07), 0 16px 40px rgba(0,0,0,0.5)" }}
+      style={{
+        boxShadow:
+          "0 0 0 1px rgba(255,255,255,0.07), 0 16px 40px rgba(0,0,0,0.5)",
+      }}
     >
-      {/* Header */}
       <div className="px-5 pt-5 pb-4">
-        <p className="font-ruigslay text-white text-2xl leading-none">Filter Tracks</p>
+        <p className="font-ruigslay text-white text-2xl leading-none">
+          Filter Tracks
+        </p>
         <p className="text-neutral-500 text-xs tracking-widest uppercase mt-1.5">
           Show tracks you haven't achieved selected timegoal on
         </p>
@@ -37,7 +45,6 @@ export function FilterPopoverContent({
 
       <hr className="border-white/[0.06]" />
 
-      {/* Vertical progression */}
       <div className="px-5 py-5">
         <div className="flex flex-col">
           {sortedTimeGoals.map((tg, i) => {
@@ -59,8 +66,8 @@ export function FilterPopoverContent({
                       isSelected
                         ? "bg-white border-white scale-110"
                         : isPast
-                        ? "bg-white/30 border-white/30"
-                        : "bg-zinc-900 border-white/20 group-hover:border-white/50"
+                          ? "bg-white/30 border-white/30"
+                          : "bg-zinc-900 border-white/20 group-hover:border-white/50"
                     }`}
                   />
                   {!isLast && (
@@ -72,16 +79,23 @@ export function FilterPopoverContent({
                   )}
                 </div>
 
-                {/* Label */}
                 <div className={`pb-4 ${isLast ? "" : ""}`}>
-                  <p className={`font-ruigslay text-base leading-tight transition-colors duration-200 ${
-                    isSelected ? "text-white" : isPast ? "text-white/30" : "text-neutral-500 group-hover:text-neutral-300"
-                  }`}>
+                  <p
+                    className={`font-ruigslay text-base leading-tight transition-colors duration-200 ${
+                      isSelected
+                        ? "text-white"
+                        : isPast
+                          ? "text-white/30"
+                          : "text-neutral-500 group-hover:text-neutral-300"
+                    }`}
+                  >
                     {tg.name}
                   </p>
-                  <p className={`text-[10px] mt-0.5 transition-colors duration-200 ${
-                    isSelected ? "text-neutral-400" : "text-neutral-700"
-                  }`}>
+                  <p
+                    className={`text-[10px] mt-0.5 transition-colors duration-200 ${
+                      isSelected ? "text-neutral-400" : "text-neutral-700"
+                    }`}
+                  >
                     ×{tg.multiplier} · {notAchieved} left
                   </p>
                 </div>
@@ -93,7 +107,6 @@ export function FilterPopoverContent({
 
       <hr className="border-white/[0.06]" />
 
-      {/* Footer */}
       <div className="px-5 py-3 flex items-center justify-between gap-3">
         <Button
           size="sm"

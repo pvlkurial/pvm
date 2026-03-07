@@ -5,6 +5,7 @@ import (
 	"example/pvm-backend/internal/models"
 	"example/pvm-backend/internal/models/dtos"
 	"example/pvm-backend/internal/services"
+	"log/slog"
 	"time"
 
 	"fmt"
@@ -14,17 +15,20 @@ import (
 )
 
 type RecordController struct {
-	recordService services.RecordService
-	client        *clients.NadeoAPIClient
-	trackService  services.TrackService
+	recordService     services.RecordService
+	client            *clients.NadeoAPIClient
+	trackService      services.TrackService
+	achievmentService services.AchievementService
 }
 
 func NewRecordController(recordService services.RecordService, trackService services.TrackService,
-	client *clients.NadeoAPIClient) *RecordController {
+	client *clients.NadeoAPIClient, achievmentService services.AchievementService) *RecordController {
 	return &RecordController{
-		recordService: recordService,
-		trackService:  trackService,
-		client:        client}
+		recordService:     recordService,
+		trackService:      trackService,
+		achievmentService: achievmentService,
+		client:            client,
+	}
 }
 
 func (t *RecordController) Create(c *gin.Context) {
@@ -181,4 +185,67 @@ func (t *RecordController) FetchPlayersRecordsForTrack(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Records saved successfully", "count": len(records)})
+}
+
+func (c *RecordController) SubmitPluginPB(ctx *gin.Context) {
+	var req struct {
+		MapUID string `json:"mapUid" binding:"required"`
+		Time   int    `json:"time" binding:"required"`
+	}
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
+
+	user := ctx.MustGet("user").(*models.User)
+
+	track, err := c.trackService.GetByUID(req.MapUID)
+	if err != nil {
+		ctx.JSON(http.StatusNotFound, gin.H{"error": "track not found"})
+		return
+	}
+
+	record := models.Record{
+		ID:         fmt.Sprintf("%s_%s", track.ID, user.ID),
+		TrackID:    track.ID,
+		PlayerID:   user.ID,
+		RecordTime: req.Time,
+		UpdatedAt:  time.Now(),
+	}
+	records := []models.Record{record}
+
+	if err := c.recordService.SaveFetchedRecords(&records); err != nil {
+		slog.Error("failed to save plugin PB", "player_id", user.ID, "error", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "failed to save record"})
+		return
+	}
+
+	for _, mappackTrack := range track.MappackTrack {
+		if err := c.trackService.SavePlayerMappackTrack(
+			mappackTrack.MappackID,
+			mappackTrack.TrackID,
+			user.ID,
+			req.Time,
+		); err != nil {
+			slog.Error("failed to save player mappack track",
+				"mappack_id", mappackTrack.MappackID,
+				"player_id", user.ID,
+				"error", err,
+			)
+		}
+
+		if err := c.achievmentService.CheckAndUpdateAchievements(
+			user.ID,
+			mappackTrack.MappackID,
+			mappackTrack.TrackID,
+			req.Time,
+		); err != nil {
+			slog.Error("failed to update achievements",
+				"mappack_id", mappackTrack.MappackID,
+				"player_id", user.ID,
+				"error", err,
+			)
+		}
+	}
+	ctx.JSON(http.StatusOK, gin.H{"personal_best": req.Time})
 }

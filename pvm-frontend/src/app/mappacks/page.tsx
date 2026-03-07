@@ -1,13 +1,14 @@
-"use client"
+"use client";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Mappack } from "@/types/mappack.types";
 import { useAuth } from "@/contexts/AuthContext";
 import { useCarousel, CarouselItem } from "@/hooks/useCarousel";
 import MappackCard from "@/app/_components/MappackCard";
-import AddMappackCard from "@/app/_components/AddMappackCard";
+import AddMappackCard from "@/app/_components/add-edit-buttons/AddMappackCard";
 import CarouselArrow from "@/app/_components/CarouselArrow";
 import CarouselDots from "@/app/_components/CarouselDots";
+import { API_BASE } from "@/constants/miscellaneous";
 import "./mappacks.css";
 
 type Item =
@@ -18,12 +19,12 @@ export default function MapppacksPage() {
   const [mappacks, setMappacks] = useState<Mappack[]>([]);
   const { user } = useAuth();
   const isAdmin = user?.role === "admin";
-  const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080";
 
-  // Disable page scroll only while on this page
   useEffect(() => {
     document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, []);
 
   useEffect(() => {
@@ -80,7 +81,7 @@ export default function MapppacksPage() {
                 isClone={item.isClone}
                 isDragging={isDragging}
               />
-            )
+            ),
           )}
         </div>
       )}

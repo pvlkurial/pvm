@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo } from "react";
 
 interface TextStyle {
   color?: string;
@@ -31,7 +31,7 @@ function createDefaultStyle(): TextStyle {
 function parseFormattedText(input: string): TextSegment[] {
   const segments: TextSegment[] = [];
   let currentStyle = createDefaultStyle();
-  let currentText = '';
+  let currentText = "";
   let currentLink: string | undefined = undefined;
   let i = 0;
 
@@ -42,16 +42,19 @@ function parseFormattedText(input: string): TextSegment[] {
         style: { ...currentStyle },
         link: currentLink,
       });
-      currentText = '';
+      currentText = "";
     }
   };
 
   while (i < input.length) {
-    if (input[i] === '$' && i + 1 < input.length) {
+    if (input[i] === "$" && i + 1 < input.length) {
       const nextChar = input[i + 1];
       const nextCharLower = nextChar.toLowerCase();
 
-      if (i + 3 < input.length && /^[0-9a-fA-F]{3}$/.test(input.slice(i + 1, i + 4))) {
+      if (
+        i + 3 < input.length &&
+        /^[0-9a-fA-F]{3}$/.test(input.slice(i + 1, i + 4))
+      ) {
         pushSegment();
         const hex = input.slice(i + 1, i + 4);
         currentStyle.color = `#${hex}`;
@@ -59,41 +62,41 @@ function parseFormattedText(input: string): TextSegment[] {
         continue;
       }
 
-      if (nextChar === '$') {
-        currentText += '$';
+      if (nextChar === "$") {
+        currentText += "$";
         i += 2;
         continue;
       }
 
-      if (nextCharLower === 'z') {
+      if (nextCharLower === "z") {
         pushSegment();
         currentStyle = createDefaultStyle();
         i += 2;
         continue;
       }
 
-      if (nextCharLower === 'g') {
+      if (nextCharLower === "g") {
         pushSegment();
         currentStyle.color = undefined;
         i += 2;
         continue;
       }
 
-      if (nextCharLower === 'o') {
+      if (nextCharLower === "o") {
         pushSegment();
         currentStyle.bold = true;
         i += 2;
         continue;
       }
 
-      if (nextCharLower === 'i') {
+      if (nextCharLower === "i") {
         pushSegment();
         currentStyle.italic = true;
         i += 2;
         continue;
       }
 
-      if (nextCharLower === 'w') {
+      if (nextCharLower === "w") {
         pushSegment();
         currentStyle.wide = true;
         currentStyle.narrow = false;
@@ -101,7 +104,7 @@ function parseFormattedText(input: string): TextSegment[] {
         continue;
       }
 
-      if (nextCharLower === 'n') {
+      if (nextCharLower === "n") {
         pushSegment();
         currentStyle.narrow = true;
         currentStyle.wide = false;
@@ -109,7 +112,7 @@ function parseFormattedText(input: string): TextSegment[] {
         continue;
       }
 
-      if (nextCharLower === 'm') {
+      if (nextCharLower === "m") {
         pushSegment();
         currentStyle.wide = false;
         currentStyle.narrow = false;
@@ -117,21 +120,21 @@ function parseFormattedText(input: string): TextSegment[] {
         continue;
       }
 
-      if (nextCharLower === 't') {
+      if (nextCharLower === "t") {
         pushSegment();
         currentStyle.uppercase = true;
         i += 2;
         continue;
       }
 
-      if (nextCharLower === 's') {
+      if (nextCharLower === "s") {
         pushSegment();
         currentStyle.shadow = true;
         i += 2;
         continue;
       }
 
-      if (nextCharLower === 'l') {
+      if (nextCharLower === "l") {
         pushSegment();
         i += 2;
 
@@ -140,14 +143,14 @@ function parseFormattedText(input: string): TextSegment[] {
           continue;
         }
 
-        if (i < input.length && input[i] === '[') {
-          const closeBracket = input.indexOf(']', i);
+        if (i < input.length && input[i] === "[") {
+          const closeBracket = input.indexOf("]", i);
           if (closeBracket !== -1) {
             currentLink = input.slice(i + 1, closeBracket);
             i = closeBracket + 1;
           }
         } else {
-          const endLink = input.toLowerCase().indexOf('$l', i);
+          const endLink = input.toLowerCase().indexOf("$l", i);
           if (endLink !== -1) {
             currentLink = input.slice(i, endLink);
             currentText = currentLink;
@@ -175,7 +178,7 @@ interface FormattedTextProps {
   className?: string;
 }
 
-export function FormattedText({ text, className = '' }: FormattedTextProps) {
+export function FormattedText({ text, className = "" }: FormattedTextProps) {
   const segments = useMemo(() => parseFormattedText(text), [text]);
 
   return (
@@ -184,7 +187,7 @@ export function FormattedText({ text, className = '' }: FormattedTextProps) {
         <span
           key={index}
           style={{ color: segment.style.color }}
-          className={segment.style.bold ? 'font-bold' : ''}
+          className={segment.style.bold ? "font-bold" : ""}
         >
           {segment.text}
         </span>

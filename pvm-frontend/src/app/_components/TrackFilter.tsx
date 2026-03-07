@@ -1,9 +1,12 @@
 "use client";
-import { Popover, PopoverTrigger, PopoverContent, Button } from "@heroui/react";
+import { Popover, PopoverTrigger, PopoverContent } from "@heroui/react";
 import { TimeGoal, MappackTrack } from "@/types/mappack.types";
 import { useTrackFilter } from "@/hooks/useTrackFilter";
 import { FilterPopoverContent } from "./track-filter/FilterPopoverContent";
-import { FILTER_POPOVER_CLASSNAMES, getFilterButtonClassName } from "@/constants/filter-popover-styles";
+import {
+  FILTER_POPOVER_CLASSNAMES,
+  getFilterButtonClassName,
+} from "@/constants/filter-popover-styles";
 import { FaFilter } from "react-icons/fa6";
 
 interface TrackFilterProps {
@@ -35,9 +38,7 @@ export default function TrackFilter({
       classNames={FILTER_POPOVER_CLASSNAMES}
     >
       <PopoverTrigger>
-        <button
-          className={getFilterButtonClassName(isFilterActive)}
-        >
+        <button className={getFilterButtonClassName(isFilterActive)}>
           <FaFilter></FaFilter>
         </button>
       </PopoverTrigger>

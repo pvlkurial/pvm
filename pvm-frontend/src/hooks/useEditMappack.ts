@@ -1,16 +1,22 @@
-// hooks/useEditMappack.ts
-import { useState, useEffect } from 'react';
-import { Mappack, TimeGoal, MappackTier, MappackRank } from '@/types/mappack.types';
-import { timeStringToMilliseconds } from '@/utils/time.utils';
+import { useState, useEffect } from "react";
+import {
+  Mappack,
+  TimeGoal,
+  MappackTier,
+  MappackRank,
+} from "@/types/mappack.types";
+import { timeStringToMilliseconds } from "@/utils/time.utils";
 
 export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
   const [editData, setEditData] = useState<Mappack | null>(null);
-  const [timeInputValues, setTimeInputValues] = useState<Record<string, Record<number, string>>>({});
+  const [timeInputValues, setTimeInputValues] = useState<
+    Record<string, Record<number, string>>
+  >({});
 
   useEffect(() => {
     if (isOpen && mappack) {
       const deepCopy = JSON.parse(JSON.stringify(mappack));
-      
+
       const sanitizedData = {
         ...deepCopy,
         timeGoals: deepCopy.timeGoals || [],
@@ -44,12 +50,16 @@ export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
     });
   };
 
-  const updateTimeGoal = (index: number, field: keyof TimeGoal, value: string | number) => {
+  const updateTimeGoal = (
+    index: number,
+    field: keyof TimeGoal,
+    value: string | number,
+  ) => {
     if (!editData) return;
     setEditData({
       ...editData,
       timeGoals: editData.timeGoals.map((tg, i) =>
-        i === index ? { ...tg, [field]: value } : tg
+        i === index ? { ...tg, [field]: value } : tg,
       ),
     });
   };
@@ -68,7 +78,7 @@ export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
         MappackTrack: editData.MappackTrack.map((track) => ({
           ...track,
           timeGoalMappackTrack: track.timeGoalMappackTrack.filter(
-            (tgmt) => tgmt.time_goal_id !== id
+            (tgmt) => tgmt.time_goal_id !== id,
           ),
         })),
       });
@@ -89,10 +99,14 @@ export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
     });
   };
 
-  const updateTier = (index: number, field: keyof MappackTier, value: string | number) => {
+  const updateTier = (
+    index: number,
+    field: keyof MappackTier,
+    value: string | number,
+  ) => {
     if (!editData) return;
     const updatedTiers = editData.mappackTiers.map((tier, i) =>
-      i === index ? { ...tier, [field]: value } : tier
+      i === index ? { ...tier, [field]: value } : tier,
     );
     setEditData({
       ...editData,
@@ -114,7 +128,7 @@ export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
         MappackTrack: editData.MappackTrack.map((track) =>
           track.tier_id === id
             ? { ...track, tier_id: null, tier: null }
-            : track
+            : track,
         ),
       });
     }
@@ -149,11 +163,11 @@ export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
   const updateRank = (
     index: number,
     field: keyof MappackRank,
-    value: string | number | boolean | null
+    value: string | number | boolean | null,
   ) => {
     if (!editData) return;
     const updatedRanks = editData.mappackRanks.map((rank, i) =>
-      i === index ? { ...rank, [field]: value } : rank
+      i === index ? { ...rank, [field]: value } : rank,
     );
     setEditData({
       ...editData,
@@ -186,14 +200,18 @@ export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
       MappackTrack: editData.MappackTrack.map((track) =>
         track.track_id === trackId
           ? { ...track, tier_id: tierId, tier: tier || null }
-          : track
+          : track,
       ),
     });
   };
 
-  const updateTrackTime = (trackId: string, timeGoalId: number, timeString: string) => {
+  const updateTrackTime = (
+    trackId: string,
+    timeGoalId: number,
+    timeString: string,
+  ) => {
     if (!editData) return;
-    
+
     setTimeInputValues((prev) => ({
       ...prev,
       [trackId]: {
@@ -210,14 +228,14 @@ export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
         if (track.track_id !== trackId) return track;
 
         const existingIndex = track.timeGoalMappackTrack.findIndex(
-          (tgmt) => tgmt.time_goal_id === timeGoalId
+          (tgmt) => tgmt.time_goal_id === timeGoalId,
         );
 
         if (existingIndex >= 0) {
           return {
             ...track,
             timeGoalMappackTrack: track.timeGoalMappackTrack.map((tgmt, i) =>
-              i === existingIndex ? { ...tgmt, time: milliseconds } : tgmt
+              i === existingIndex ? { ...tgmt, time: milliseconds } : tgmt,
             ),
           };
         } else {
@@ -243,9 +261,7 @@ export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
     setEditData({
       ...editData,
       MappackTrack: editData.MappackTrack.map((t) =>
-        t.track_id === trackId
-          ? { ...t, mapStyle: mapStyle || null }
-          : t
+        t.track_id === trackId ? { ...t, mapStyle: mapStyle || null } : t,
       ),
     });
   };

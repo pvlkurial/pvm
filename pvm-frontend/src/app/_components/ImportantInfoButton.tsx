@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 import { FaExclamationTriangle } from "react-icons/fa";
@@ -15,9 +15,11 @@ export default function ImportantInfoButton() {
         <h2 className="text-heading text-sm text-yellow-400 mb-2">Important</h2>
         <div className="text-white/70 text-sm space-y-1">
           <p>Soon we'll be moving to</p>
-          <a href="http://pvms.club"
-          className="text-yellow-400 hover:text-yellow-300 underline transition-colors">
-          pvms.club
+          <a
+            href="http://pvms.club"
+            className="text-yellow-400 hover:text-yellow-300 underline transition-colors"
+          >
+            pvms.club
           </a>
           <p>As of now, that site still only redirects to here.</p>
         </div>

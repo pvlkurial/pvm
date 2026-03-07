@@ -1,14 +1,17 @@
-import { useState, useMemo } from 'react';
-import { Record } from '@/types/mappack.types';
+import { useState, useMemo } from "react";
+import { Record } from "@/types/mappack.types";
 
-export function useRecordsPagination(records: Record[], itemsPerPage: number = 20) {
+export function useRecordsPagination(
+  records: Record[],
+  itemsPerPage: number = 20,
+) {
   const [page, setPage] = useState(1);
   const [sortDescriptor, setSortDescriptor] = useState<{
     column: string;
-    direction: 'ascending' | 'descending';
+    direction: "ascending" | "descending";
   }>({
-    column: 'score',
-    direction: 'ascending', // Lower time is better
+    column: "score",
+    direction: "ascending",
   });
 
   const sortedRecords = useMemo(() => {
@@ -16,21 +19,19 @@ export function useRecordsPagination(records: Record[], itemsPerPage: number = 2
       let first: any = a[sortDescriptor.column as keyof Record];
       let second: any = b[sortDescriptor.column as keyof Record];
 
-      // Handle nested player.name
-      if (sortDescriptor.column === 'playerName') {
+      if (sortDescriptor.column === "playerName") {
         first = a.player.name;
         second = b.player.name;
       }
 
-      // For numeric values, compare directly
-      if (typeof first === 'number' && typeof second === 'number') {
+      if (typeof first === "number" && typeof second === "number") {
         const cmp = first < second ? -1 : first > second ? 1 : 0;
-        return sortDescriptor.direction === 'descending' ? cmp * -1 : cmp;
+        return sortDescriptor.direction === "descending" ? cmp * -1 : cmp;
       }
 
-      // For strings, compare with fallback
-      const cmp = (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
-      return sortDescriptor.direction === 'descending' ? cmp * -1 : cmp;
+      const cmp =
+        (parseInt(first) || first) < (parseInt(second) || second) ? -1 : 1;
+      return sortDescriptor.direction === "descending" ? cmp * -1 : cmp;
     });
   }, [records, sortDescriptor]);
 

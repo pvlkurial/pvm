@@ -13,13 +13,17 @@ import { useState } from "react";
 import { Mappack } from "@/types/mappack.types";
 import { useEditMappack } from "@/hooks/useEditMappack";
 import { mappackEditService } from "@/services/mappack-edit.service";
-import { ConfirmDialog } from "./ConfirmDialog";
-import { BasicInfoTab } from "./mappack-edit/BasicInfoTab";
-import { TimeGoalsTab } from "./mappack-edit/TimeGoalsTab";
-import { TiersTab } from "./mappack-edit/TiersTab";
-import { RanksTab } from "./mappack-edit/RanksTab";
-import { TrackTimesTab } from "./mappack-edit/TrackTimesTab";
-import { MODAL_INPUT_CLASSNAMES, MODAL_CLASSNAMES, TAB_CLASSNAMES } from "@/constants/modal-styles";
+import { ConfirmDialog } from "../ConfirmDialog";
+import { BasicInfoTab } from "../mappack-edit/BasicInfoTab";
+import { TimeGoalsTab } from "../mappack-edit/TimeGoalsTab";
+import { TiersTab } from "../mappack-edit/TiersTab";
+import { RanksTab } from "../mappack-edit/RanksTab";
+import { TrackTimesTab } from "../mappack-edit/TrackTimesTab";
+import {
+  MODAL_INPUT_CLASSNAMES,
+  MODAL_CLASSNAMES,
+  TAB_CLASSNAMES,
+} from "@/constants/modal-styles";
 
 interface EditMappackModalProps {
   mappack: Mappack | null;
@@ -42,7 +46,9 @@ export function EditMappackModal({
   onClose,
 }: EditMappackModalProps) {
   const [isSaving, setIsSaving] = useState(false);
-  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(null);
+  const [confirmDialog, setConfirmDialog] = useState<ConfirmDialogState | null>(
+    null,
+  );
 
   const {
     editData,
@@ -76,7 +82,7 @@ export function EditMappackModal({
     } catch (error) {
       console.error("Error saving mappack:", error);
       alert(
-        `Failed to save mappack: ${error instanceof Error ? error.message : "Unknown error"}`
+        `Failed to save mappack: ${error instanceof Error ? error.message : "Unknown error"}`,
       );
     } finally {
       setIsSaving(false);
@@ -92,7 +98,8 @@ export function EditMappackModal({
     setConfirmDialog({
       isOpen: true,
       title: "Delete Time Goal",
-      message: "This will permanently delete this time goal and all associated player achievements. This action cannot be undone.",
+      message:
+        "This will permanently delete this time goal and all associated player achievements. This action cannot be undone.",
       onConfirm: async () => {
         try {
           await mappackEditService.deleteTimeGoal(editData.id, id);
@@ -114,7 +121,8 @@ export function EditMappackModal({
     setConfirmDialog({
       isOpen: true,
       title: "Delete Tier",
-      message: "This will remove this tier. Tracks assigned to this tier will become unranked.",
+      message:
+        "This will remove this tier. Tracks assigned to this tier will become unranked.",
       onConfirm: async () => {
         try {
           await mappackEditService.deleteTier(editData.id, id);
@@ -136,7 +144,8 @@ export function EditMappackModal({
     setConfirmDialog({
       isOpen: true,
       title: "Delete Rank",
-      message: "This will permanently delete this rank. Players with this rank will be re-assigned based on their points.",
+      message:
+        "This will permanently delete this rank. Players with this rank will be re-assigned based on their points.",
       onConfirm: async () => {
         try {
           await mappackEditService.deleteRank(editData.id, id);
@@ -187,7 +196,9 @@ export function EditMappackModal({
                   <Tab key="basic" title="Basic Info">
                     <BasicInfoTab
                       editData={editData}
-                      onUpdate={(updates) => setEditData({ ...editData, ...updates })}
+                      onUpdate={(updates) =>
+                        setEditData({ ...editData, ...updates })
+                      }
                       inputClassNames={MODAL_INPUT_CLASSNAMES}
                     />
                   </Tab>
@@ -241,7 +252,11 @@ export function EditMappackModal({
                 <Button color="default" variant="bordered" onPress={onClose}>
                   Cancel
                 </Button>
-                <Button color="default" onPress={handleSave} isLoading={isSaving}>
+                <Button
+                  color="default"
+                  onPress={handleSave}
+                  isLoading={isSaving}
+                >
                   Save All Changes
                 </Button>
               </ModalFooter>

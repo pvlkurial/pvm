@@ -1,6 +1,6 @@
 import { Autocomplete, AutocompleteItem, Input, Switch } from "@heroui/react";
 import { Mappack } from "@/types/mappack.types";
-import { mapStyles } from "@/app/_components/CreateMappackModal";
+import { MAP_STYLES } from "@/constants/map-styles";
 
 interface BasicInfoTabProps {
   editData: Mappack;
@@ -8,7 +8,11 @@ interface BasicInfoTabProps {
   inputClassNames: any;
 }
 
-export function BasicInfoTab({ editData, onUpdate, inputClassNames }: BasicInfoTabProps) {
+export function BasicInfoTab({
+  editData,
+  onUpdate,
+  inputClassNames,
+}: BasicInfoTabProps) {
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-[auto_1fr] items-center gap-2">
@@ -37,15 +41,15 @@ export function BasicInfoTab({ editData, onUpdate, inputClassNames }: BasicInfoT
         classNames={inputClassNames}
       />
       <Autocomplete
-        defaultItems={mapStyles}
+        defaultItems={MAP_STYLES}
         label="Map Style"
         placeholder="Search a style"
         variant="bordered"
         defaultSelectedKey={
-          mapStyles.find(s => s.label === editData.mapStyleName)?.key
+          MAP_STYLES.find((s) => s.label === editData.mapStyleName)?.key
         }
         onSelectionChange={(key) => {
-          const match = mapStyles.find(s => s.key === key);
+          const match = MAP_STYLES.find((s) => s.key === key);
           onUpdate({ mapStyleName: match?.label ?? "" });
         }}
         classNames={{

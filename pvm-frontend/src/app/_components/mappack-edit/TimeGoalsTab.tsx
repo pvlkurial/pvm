@@ -4,7 +4,11 @@ import { TimeGoal } from "@/types/mappack.types";
 interface TimeGoalsTabProps {
   timeGoals: TimeGoal[];
   onAdd: () => void;
-  onUpdate: (index: number, field: keyof TimeGoal, value: string | number) => void;
+  onUpdate: (
+    index: number,
+    field: keyof TimeGoal,
+    value: string | number,
+  ) => void;
   onRemove: (id: number | undefined) => void;
   inputClassNames: any;
 }

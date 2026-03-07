@@ -1,8 +1,8 @@
-import { MappackTrack, TimeGoal } from '@/types/mappack.types';
+import { MappackTrack, TimeGoal } from "@/types/mappack.types";
 
 export function filterTracksByTimeGoal(
   tracks: MappackTrack[],
-  timeGoalId: number | null
+  timeGoalId: number | null,
 ): MappackTrack[] {
   if (timeGoalId === null) {
     return tracks;
@@ -10,7 +10,7 @@ export function filterTracksByTimeGoal(
 
   return tracks.filter((track) => {
     const timeGoalStatus = track.timeGoalMappackTrack?.find(
-      (tg) => tg.time_goal_id === timeGoalId
+      (tg) => tg.time_goal_id === timeGoalId,
     );
     return timeGoalStatus?.is_achieved !== true;
   });
@@ -18,7 +18,7 @@ export function filterTracksByTimeGoal(
 
 export function getNotAchievedCount(
   tracks: MappackTrack[],
-  timeGoalId: number
+  timeGoalId: number,
 ): number {
   return tracks.filter((track) => {
     const goals = track.timeGoalMappackTrack ?? [];

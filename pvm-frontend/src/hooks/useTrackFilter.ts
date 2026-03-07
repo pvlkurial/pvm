@@ -3,7 +3,7 @@ import { MappackTrack } from "@/types/mappack.types";
 
 export function useTrackFilter(
   tracks: MappackTrack[],
-  onFilterChange: (filteredTracks: MappackTrack[]) => void
+  onFilterChange: (filteredTracks: MappackTrack[]) => void,
 ) {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedTimeGoal, setSelectedTimeGoal] = useState<number | null>(null);
@@ -20,7 +20,7 @@ export function useTrackFilter(
     } else {
       const filtered = tracks.filter((track) => {
         const timeGoalTrack = track.timeGoalMappackTrack?.find(
-          (tg) => tg.time_goal_id === selectedTimeGoal
+          (tg) => tg.time_goal_id === selectedTimeGoal,
         );
         return !timeGoalTrack || !timeGoalTrack.is_achieved;
       });

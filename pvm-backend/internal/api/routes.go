@@ -40,6 +40,8 @@ func (r *Routes) InitRoutes() {
 	{
 		auth.GET("/login", controllers.AuthController.Login)
 		auth.POST("/callback", controllers.AuthController.Callback)
+		// For plugin token
+		auth.POST("/plugin", controllers.AuthController.PluginLogin)
 	}
 
 	authorized := r.Group("/")
@@ -87,6 +89,13 @@ func (r *Routes) InitRoutes() {
 
 		// Players (Dev only)
 		r.POST("/players", controllers.PlayerController.Create)
+	}
+
+	// Plugin Only Routes (Openplanet)
+	plugin := r.Group("/plugin")
+	plugin.Use(middleware.PluginAuthMiddleware(&services.AuthService))
+	{
+		plugin.POST("/records/pb", controllers.RecordController.SubmitPluginPB)
 	}
 
 	r.GET("/tracks/:track_id", controllers.TrackController.GetById)

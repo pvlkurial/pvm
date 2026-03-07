@@ -6,8 +6,10 @@ import { FormattedText } from "@/utils/textConverter";
 import { millisecondsToTimeString } from "@/utils/time.utils";
 import { MappackTrack, TimeGoal } from "@/types/mappack.types";
 import { TrackCardGoals } from "./track-card/TrackCardGoals";
-import { TrackCardTier } from "./track-card/TrackCardTier";
-import { calculateMaxTrackPoints, calculateTrackPoints } from "@/utils/player.utils";
+import {
+  calculateMaxTrackPoints,
+  calculateTrackPoints,
+} from "@/utils/player.utils";
 
 interface TrackCardProps {
   mappackTrack: MappackTrack;
@@ -28,7 +30,9 @@ export default function TrackCard({
 
   const enrichedTimeGoals = timeGoalMappackTrack
     .map((tgmt) => {
-      const definition = timeGoalDefinitions.find((def) => def.id === tgmt.time_goal_id);
+      const definition = timeGoalDefinitions.find(
+        (def) => def.id === tgmt.time_goal_id,
+      );
       return {
         ...tgmt,
         name: definition?.name || `Goal ${tgmt.time_goal_id}`,
@@ -75,7 +79,7 @@ export default function TrackCard({
       <CardFooter
         className={`
           absolute bg-black/40 backdrop-blur-sm -bottom-1 left-0 right-0 border-t border-white/10 z-10
-          transition-transform duration-300 ease-in-out pb-2 pt-2
+          transition-transform duration-300 ease-in-out pt-2 p-1.5
           ${
             alwaysShowDetails
               ? "translate-y-0"
@@ -83,17 +87,18 @@ export default function TrackCard({
           }
         `}
       >
-        <div className="w-full flex flex-col gap-2 px-2">
+        <div className="w-full flex flex-col px-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] text-white/40 uppercase tracking-wider">
               {!personal_best
-                ? "Map not played yet"
+                ? "Not played yet"
                 : `PB: ${millisecondsToTimeString(personal_best)}`}
             </span>
             <span className="text-[10px] text-white/40 uppercase tracking-wider">
               <span>Points: </span>
               <span
-                className={`text-[10px] uppercase tracking-wider font-semibold ${pointsColor}`}>
+                className={`text-[10px] uppercase tracking-wider font-semibold ${pointsColor}`}
+              >
                 {`${currentPoints}/${maxPoints}`}
               </span>
             </span>

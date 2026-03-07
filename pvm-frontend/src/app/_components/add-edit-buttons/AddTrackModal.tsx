@@ -10,8 +10,8 @@ import {
 import { TimeGoal } from "@/types/mappack.types";
 import { useAddTrackForm } from "@/hooks/useAddTrackForm";
 import { trackService } from "@/services/track.service";
-import { TrackIdInput } from "./add-track/TrackIdInput";
-import { TimeGoalsInput } from "./add-track/TimeGoalsInput";
+import { TrackIdInput } from "../add-track/TrackIdInput";
+import { TimeGoalsInput } from "../add-track/TimeGoalsInput";
 import { MODAL_INPUT_CLASSNAMES } from "@/constants/modal-styles";
 
 interface AddTrackModalProps {
@@ -100,7 +100,9 @@ export default function AddTrackModal({
           {(onClose) => (
             <>
               <ModalHeader className="flex flex-col gap-1">
-                <h2 className="text-2xl font-bold text-white">Add Track to Mappack</h2>
+                <h2 className="text-2xl font-bold text-white">
+                  Add Track to Mappack
+                </h2>
               </ModalHeader>
               <ModalBody className="gap-6">
                 <TrackIdInput

@@ -1,10 +1,10 @@
 export const MAP_STYLES = [
-  { label: "Tech", key: "tech", description: "Tech tumbled" },
-  { label: "Fullspeed", key: "fullspeed", description: "FS Toilet style" },
-  { label: "Mixed", key: "mixed", description: "tm2020" },
+  { label: "Tech", key: "tech", description: "Tech" },
+  { label: "Fullspeed", key: "fullspeed", description: "FS" },
+  { label: "Mixed", key: "mixed", description: "Mixed" },
   { label: "Dirt", key: "dirt", description: "noslide heaven" },
-  { label: "RPG", key: "rpg", description: "rpg" },
-  { label: "Trial", key: "trial", description: "final enigma style" },
-  { label: "LOL", key: "giraffe", description: "yellaugh" },
+  { label: "RPG", key: "rpg", description: "RPG" },
+  { label: "Trial", key: "trial", description: "Trial" },
+  { label: "LOL", key: "lol", description: "lol" },
   { label: "Ice", key: "ice", description: "icy" },
 ];

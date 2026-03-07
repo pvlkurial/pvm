@@ -15,10 +15,10 @@ interface TrackCardGoalsProps {
   totalCount: number;
 }
 
-export function TrackCardGoals({ 
-  enrichedTimeGoals, 
-  achievedCount, 
-  totalCount 
+export function TrackCardGoals({
+  enrichedTimeGoals,
+  achievedCount,
+  totalCount,
 }: TrackCardGoalsProps) {
   if (enrichedTimeGoals.length === 0) {
     return (
@@ -29,12 +29,12 @@ export function TrackCardGoals({
   }
 
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-1.5">
       <div className="flex items-center justify-between">
         <span className="text-[10px] text-white/40 uppercase tracking-wider">
           Timegoals {achievedCount}/{totalCount}
         </span>
-        <div className="flex-1 h-1 mx-2 bg-white/10 rounded-full overflow-hidden">
+        <div className="flex-1 h-1 ml-2 bg-white/10 rounded-full overflow-hidden">
           <div
             className="h-full bg-green-400 transition-all duration-500"
             style={{ width: `${(achievedCount / totalCount) * 100}%` }}
@@ -42,36 +42,26 @@ export function TrackCardGoals({
         </div>
       </div>
 
-      <div className="flex gap-1 flex-wrap">
+      <div className="flex gap-0.5 flex-wrap">
         {enrichedTimeGoals.map((timegoal) => {
           const isAchieved = timegoal.is_achieved || false;
-          
           return (
             <div
               key={timegoal.time_goal_id}
               className={`
-                group/goal relative flex items-center gap-1 px-2 py-1 rounded text-[10px] font-medium
-                transition-all duration-200
-                ${isAchieved 
-                  ? 'bg-green-500/30 text-green-300 border border-green-400/50' 
-                  : 'bg-white/5 text-white/50 border border-white/10'
+                group/goal relative flex items-center gap-1 pb-1 pt-1 px-1.5 py-px rounded text-[10px] font-medium
+                transition-all duration-200 mb-1
+                ${isAchieved
+                  ? "bg-green-500/30 text-green-300 border border-green-400/50"
+                  : "bg-white/5 text-white/50 border border-white/10"
                 }
               `}
             >
-              <span className="uppercase tracking-wide">
-                {timegoal.name}
-              </span>
-              
-              {isAchieved ? (
-                <span className="text-green-400">✓</span>
-              ) : (
-                <span className="text-white/20">○</span>
-              )}
-
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1 
-                            bg-black/80 text-white text-[10px] rounded whitespace-nowrap
-                            opacity-0 group-hover/goal:opacity-100 pointer-events-none
-                            transition-opacity duration-200">
+              <span className="uppercase tracking-wide">{timegoal.name}</span>
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1
+                              bg-black/80 text-white text-[10px] rounded whitespace-nowrap z-50
+                              opacity-0 group-hover/goal:opacity-100 pointer-events-none
+                              transition-opacity duration-200">
                 <div className="flex flex-col items-center gap-0.5">
                   <span className="font-mono text-white/70">
                     {millisecondsToTimeString(timegoal.time)}
@@ -80,8 +70,8 @@ export function TrackCardGoals({
                     ×{timegoal.multiplier.toFixed(1)}
                   </span>
                 </div>
-                <div className="absolute top-full left-1/2 -translate-x-1/2 
-                              border-4 border-transparent border-t-black/90" />
+                <div className="absolute top-full left-1/2 -translate-x-1/2
+                                border-4 border-transparent border-t-black/90" />
               </div>
             </div>
           );

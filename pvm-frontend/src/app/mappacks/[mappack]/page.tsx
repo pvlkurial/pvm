@@ -1,4 +1,3 @@
-// app/mappack/[mappack]/page.tsx
 "use client";
 import React, { use, useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
@@ -25,7 +24,7 @@ export default function MappackPage({
   const [isEditOpen, setIsEditOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [tierSortOrder, setTierSortOrder] = useState<"asc" | "desc">("asc");
-  
+
   useEffect(() => {
     const fetchMappack = async () => {
       try {
@@ -41,13 +40,16 @@ export default function MappackPage({
     };
     fetchMappack();
   }, [mappackId, user?.id]);
-  
+
   const tracksByTier = groupTracksByTier(filteredTracks);
   const sortedTiers = sortTiersByPoints(tracksByTier, tierSortOrder);
   const pathName = usePathname();
   const { isRestored } = useScrollPosition(pathName, !loading);
-  const { activeTier, tierRefs, scrollToTier } = useTierScroll(tracksByTier, isRestored);
-  
+  const { activeTier, tierRefs, scrollToTier } = useTierScroll(
+    tracksByTier,
+    isRestored,
+  );
+
   const handleEditSave = async () => {
     try {
       const data = await mappackService.getMappack(mappackId, user?.id);
@@ -57,11 +59,13 @@ export default function MappackPage({
       console.error("Error reloading mappack:", error);
     }
   };
-  
+
   if (loading) {
     return (
       <div className="flex items-center justify-center h-screen">
-        <p className="text-white text-xl font-ruigslay animate-pulse">Loading mappack...</p>
+        <p className="text-white text-xl font-ruigslay animate-pulse">
+          Loading mappack...
+        </p>
       </div>
     );
   }

@@ -17,10 +17,10 @@ interface RecordsTableProps {
   loggedInPlayerId?: string;
 }
 
-export default function RecordsTable({ 
-  records, 
+export default function RecordsTable({
+  records,
   timeGoals = [],
-  loggedInPlayerId 
+  loggedInPlayerId,
 }: RecordsTableProps) {
   const [page, setPage] = useState(1);
   const recordsPerPage = 10;
@@ -31,7 +31,7 @@ export default function RecordsTable({
 
   const loggedInRecord = useMemo(() => {
     if (!loggedInPlayerId) return null;
-    return sortedRecords.find(r => r.player.ID === loggedInPlayerId);
+    return sortedRecords.find((r) => r.player.ID === loggedInPlayerId);
   }, [sortedRecords, loggedInPlayerId]);
 
   const loggedInPosition = useMemo(() => {
@@ -55,69 +55,103 @@ export default function RecordsTable({
     return "text-white/60";
   };
 
-  const renderRecord = (record: Record, position: number, isPinnedRecord: boolean = false) => {
+  const renderRecord = (
+    record: Record,
+    position: number,
+    isPinnedRecord: boolean = false,
+  ) => {
     const achievedGoal = getBestAchievedTimeGoal(record.score, timeGoals);
     const isLoggedInPlayer = loggedInPlayerId === record.player.ID;
-    
+
     return (
-      <div key={`${record.mapRecordId}-${isPinnedRecord ? 'pinned' : 'normal'}`}>
-        <div className={`
-          grid grid-cols-[40px_1fr_90px] md:grid-cols-[50px_1fr_140px_140px_100px] 
-          gap-2 md:gap-6 px-2 py-3 md:py-4 
+      <div
+        key={`${record.mapRecordId}-${isPinnedRecord ? "pinned" : "normal"}`}
+      >
+        <div
+          className={`
+          grid grid-cols-[40px_1fr_90px] md:grid-cols-[50px_1fr_140px_140px_100px]
+          gap-2 md:gap-6 px-2 py-3 md:py-4
           hover:bg-white/[0.02] transition-colors
-          ${isLoggedInPlayer && isPinnedRecord ? 'bg-blue-500/10 border-l-2 border-blue-500' : ''}
-          ${isLoggedInPlayer && !isPinnedRecord ? 'bg-blue-500/5 border-l-2 border-blue-500/50' : ''}
-        `}>
+          ${isLoggedInPlayer && isPinnedRecord ? "bg-blue-500/10 border-l-2 border-blue-500" : ""}
+          ${isLoggedInPlayer && !isPinnedRecord ? "bg-blue-500/5 border-l-2 border-blue-500/50" : ""}
+        `}
+        >
           <div className="flex items-center justify-center">
-            <span className={`text-base md:text-lg font-mono ${getPositionStyle(position)}`}>
+            <span
+              className={`text-base md:text-lg font-mono font-ruigslay ${getPositionStyle(position)}`}
+            >
               {position}
             </span>
           </div>
 
           <div className="flex flex-col md:flex-row md:items-center min-w-0 gap-1 md:gap-0">
             <div className="flex items-center min-w-0">
-              <span className="text-sm md:text-base text-white truncate">
+              <span className="text-xs md:text-base text-white/80 truncate text-label tracking-wide">
                 {record.player.name}
                 {isLoggedInPlayer && isPinnedRecord && (
-                  <span className="ml-2 text-xs text-blue-400 font-semibold">(You)</span>
+                  <span className="ml-2 text-xs text-blue-400 font-semibold">
+                    (You)
+                  </span>
                 )}
               </span>
             </div>
             <div className="md:hidden flex items-center gap-2">
-              <span className="text-xs text-white/40">
-                {formatRelativeTime(record.updatedAt)}
-              </span>
               {achievedGoal && (
-                <span className="px-2 py-0.5 rounded-full bg-white/10 text-white/90 text-xs">
+                <span className="px-2 py-0.5 text-label text-xs">
                   {achievedGoal}
                 </span>
               )}
+              <div className="relative group inline-block">
+                <div className="text-sm text-white/30 cursor-default">
+                  {formatRelativeTime(
+                    new Date(record.timestamp * 1000).toDateString(),
+                  )}
+                </div>
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-neutral-800 text-white/80 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 flex flex-col items-center">
+                  <span>
+                    {new Date(record.timestamp * 1000).toLocaleDateString()}
+                  </span>
+                  <span>
+                    {new Date(record.timestamp * 1000).toLocaleTimeString()}
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
 
           <div className="flex items-center justify-end md:justify-center">
-            <span className="text-sm md:text-base font-mono text-white/90">
+            <span className="text-sm md:text-base font-mono text-white/90 text-label tracking-wide">
               {millisecondsToTimeString(record.score)}
             </span>
           </div>
 
           <div className="hidden md:flex items-center justify-center">
             {achievedGoal ? (
-              <span className="px-3 py-1 rounded-full bg-white/10 text-white/90 text-sm font-medium">
-                {achievedGoal}
-              </span>
+              <span className="px-3 py-1 text-label">{achievedGoal}</span>
             ) : (
               <span className="text-white/20 text-sm">—</span>
             )}
           </div>
 
           <div className="hidden md:flex items-center justify-end">
-            <span className="text-sm text-white/30">
-              {formatRelativeTime(record.updatedAt)}
-            </span>
+            <div className="relative group inline-block">
+              <div className="text-sm text-white/30 cursor-default">
+                {formatRelativeTime(
+                  new Date(record.timestamp * 1000).toDateString(),
+                )}
+              </div>
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-neutral-800 text-white/80 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none z-50 flex flex-col items-center">
+                <span>
+                  {new Date(record.timestamp * 1000).toLocaleDateString()}
+                </span>
+                <span>
+                  {new Date(record.timestamp * 1000).toLocaleTimeString()}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
-        
+
         <div className="h-px bg-white/5" />
       </div>
     );
@@ -130,7 +164,7 @@ export default function RecordsTable({
         <span>Player</span>
         <span className="text-center">Time</span>
         <span className="text-center">Timegoal</span>
-        <span className="text-right">Last Updated</span>
+        <span className="text-right">Achieved</span>
       </div>
 
       <div className="md:hidden grid grid-cols-[40px_1fr_90px] gap-2 px-2 text-xs uppercase tracking-wider text-white/30 font-semibold">
@@ -143,23 +177,18 @@ export default function RecordsTable({
         {totalRecords === 0 ? (
           <div className="text-center py-12 md:py-16">
             <p className="text-white/40 text-base md:text-lg">No records yet</p>
-            <p className="text-white/30 text-sm mt-2">If records are supposed to be here contact an admin</p>
+            <p className="text-white/30 text-sm mt-2">
+              If records are supposed to be here contact an admin
+            </p>
           </div>
         ) : (
           <>
-            {/* Always show logged-in player's record first (pinned) */}
-            {loggedInRecord && loggedInPosition && renderRecord(
-              loggedInRecord, 
-              loggedInPosition,
-              true
-            )}
-            
-            {/* Show separator between pinned and paginated records */}
-            {loggedInRecord && (
-              <div className="h-[2px] bg-white/10 my-2" />
-            )}
-            
-            {/* Show paginated records (including logged-in player in their actual position) */}
+            {loggedInRecord &&
+              loggedInPosition &&
+              renderRecord(loggedInRecord, loggedInPosition, true)}
+
+            {loggedInRecord && <div className="h-[2px] bg-white/10 my-2" />}
+
             {paginatedRecords.map((record, index) => {
               const actualPosition = (page - 1) * recordsPerPage + index + 1;
               return renderRecord(record, actualPosition, false);
@@ -171,9 +200,10 @@ export default function RecordsTable({
       {totalRecords > 0 && (
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-4 md:pt-6 border-t border-white/5">
           <p className="text-xs md:text-sm text-white/30">
-            {totalRecords.toLocaleString()} {totalRecords === 1 ? 'record' : 'records'}
+            {totalRecords.toLocaleString()}{" "}
+            {totalRecords === 1 ? "record" : "records"}
           </p>
-          
+
           {pages > 1 && (
             <Pagination
               total={pages}
@@ -183,7 +213,7 @@ export default function RecordsTable({
               size="sm"
               classNames={{
                 wrapper: "gap-1",
-                item: "bg-transparent text-white/40 hover:text-white/70 hover:bg-white/5 min-w-8 w-8 h-8 border-none",
+                item: "bg-transparent text-white/40 hover:text-white/70 cursor-pointer hover:bg-white/5 min-w-8 w-8 h-8 border-none",
                 cursor: "bg-white/10 text-white font-semibold border-none",
                 prev: "bg-transparent hover:bg-white/5 border-none",
                 next: "bg-transparent hover:bg-white/5 border-none",
