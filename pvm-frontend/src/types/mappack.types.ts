@@ -40,6 +40,7 @@ export interface TimeGoalMappackTrack {
   mappack_id: string;
   time_goal_id: number;
   time: number;
+  multiplier: number;
   is_achieved?: boolean;
   player_time?: number;
 }

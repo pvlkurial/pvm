@@ -31,13 +31,12 @@ export function TimeGoalCard({
           : "0 0 0 1px rgba(255,255,255,0.06)",
       }}
     >
-
       <p
         className={`text-[10px] tracking-wide uppercase mb-2 pr-4 leading-tight text-label ${
           delta?.isAchieved ? "text-neutral-400" : "text-neutral-600"
         }`}
       >
-        {name}
+        {name} | {multiplier}x
       </p>
 
       <p

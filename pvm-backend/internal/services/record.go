@@ -170,6 +170,7 @@ func (t *recordService) GetTrackWithRecords(mappackId string, trackId string, pl
 			TimeGoalID: ttg.TimegoalID,
 			Name:       ttg.TimeGoal.Name,
 			Time:       ttg.Time,
+			Multiplier: ttg.TimeGoal.Multiplier,
 			IsAchieved: false,
 		}
 
