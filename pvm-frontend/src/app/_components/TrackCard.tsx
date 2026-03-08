@@ -10,6 +10,7 @@ import {
   calculateMaxTrackPoints,
   calculateTrackPoints,
 } from "@/utils/player.utils";
+import { TrackCardRank } from "./track-card/TrackCardRank";
 
 interface TrackCardProps {
   mappackTrack: MappackTrack;
@@ -68,7 +69,9 @@ export default function TrackCard({
 
         {/* Tier Badge */}
       </CardHeader>
-
+      {mappackTrack.track_position && (
+        <TrackCardRank position={mappackTrack.track_position} />
+      )}
       <Image
         removeWrapper
         alt="Card background"

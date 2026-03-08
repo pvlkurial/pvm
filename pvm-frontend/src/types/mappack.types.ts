@@ -18,19 +18,19 @@ export interface MappackRank {
   name: string;
   pointsNeeded: number;
   color: string;
-  
+
   backgroundGlow: boolean;
   invertedColor: boolean;
   textShadow: boolean;
   glowIntensity: number;
   borderWidth: number;
   borderColor?: string | null;
-  
+
   symbolsAround?: string | null;
   animationType: string;
   cardStyle: string;
   backgroundPattern: string;
-  
+
   fontSize: string;
   fontWeight: string;
 }
@@ -53,6 +53,7 @@ export interface MappackTrack {
   tier: MappackTier | null;
   mapStyle: string | null;
   personal_best?: number;
+  track_position?: number;
 }
 
 export interface Mappack {
