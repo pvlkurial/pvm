@@ -13,6 +13,7 @@ type AchievementRepository interface {
 	UpdateAchievementTime(playerID, mappackID, trackID string, timeGoalID int, playerTime int) error
 	GetPlayerAchievements(playerID, mappackID string) ([]models.PlayerTimeGoalAchievement, error)
 	GetPlayerAchievementsByTrack(playerID, mappackID, trackID string) ([]models.PlayerTimeGoalAchievement, error)
+	GetPlayerTrackPosition(playerID, trackID string) (int, error)
 
 	UpsertLeaderboardEntry(entry *models.MappackLeaderboardEntry) error
 	GetLeaderboard(mappackID string, limit, offset int) ([]models.MappackLeaderboardEntry, error)
@@ -138,14 +139,14 @@ func (r *achievementRepository) CalculatePlayerPoints(playerID, mappackID string
 	var result PointsResult
 
 	err = r.db.Raw(`
-    SELECT 
+    SELECT
         COALESCE(SUM(best.best_points), 0) as total_points,
         SUM(best.achievement_count)         as achievements_count,
         COUNT(*)                            as best_achievements_count
     FROM (
-        SELECT 
+        SELECT
             pta.track_id,
-            MAX(CASE 
+            MAX(CASE
                 WHEN mt.points IS NOT NULL THEN tg.multiplier * mt.points
                 ELSE 0
             END) as best_points,
@@ -169,7 +170,7 @@ func (r *achievementRepository) GetPlayerBestTimesForTrack(trackID string) (map[
 
 	var results []PlayerBestTime
 	err := r.db.Raw(`
-        SELECT 
+        SELECT
             player_id,
             MIN(record_time) as best_time
         FROM records
@@ -191,4 +192,24 @@ func (r *achievementRepository) GetPlayerBestTimesForTrack(trackID string) (map[
 
 func (r *achievementRepository) DeleteMappackAchievements(mappackID string) error {
 	return r.db.Where("mappack_id = ?", mappackID).Delete(&models.PlayerTimeGoalAchievement{}).Error
+}
+
+func (r *achievementRepository) GetPlayerTrackPosition(playerID, trackID string) (int, error) {
+	var playerBest int
+	err := r.db.Model(&models.Record{}).
+		Where("player_id = ? AND track_id = ?", playerID, trackID).
+		Select("COALESCE(MIN(record_time), 0)").
+		Scan(&playerBest).Error
+	if err != nil || playerBest == 0 {
+		return 0, err
+	}
+
+	var betterCount int64
+	err = r.db.Model(&models.Record{}).
+		Where("track_id = ?", trackID).
+		Group("player_id").
+		Having("MIN(record_time) < ?", playerBest).
+		Count(&betterCount).Error
+
+	return int(betterCount) + 1, err
 }

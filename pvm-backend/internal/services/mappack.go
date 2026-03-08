@@ -134,7 +134,7 @@ func (s *mappackService) GetByIdWithAchievements(id string, playerID *string) (*
 				achievementMap[ach.TrackID][ach.TimeGoalID] = &achCopy
 			}
 
-			for _, track := range mappack.MappackTrack {
+			for i, track := range mappack.MappackTrack {
 				trackAchievements := achievementMap[track.TrackID]
 				for j := range track.TimeGoalMappackTrack {
 					timeGoal := &track.TimeGoalMappackTrack[j]
@@ -143,9 +143,16 @@ func (s *mappackService) GetByIdWithAchievements(id string, playerID *string) (*
 							if ach.PlayerTime <= timeGoal.Time {
 								timeGoal.IsAchieved = true
 								timeGoal.PlayerTime = &ach.PlayerTime
-								track.PersonalBest = ach.PlayerTime
+								mappack.MappackTrack[i].PersonalBest = ach.PlayerTime
 							}
 						}
+					}
+				}
+
+				if mappack.MappackTrack[i].PersonalBest > 0 {
+					pos, err := s.achievementService.GetPlayerTrackPosition(*playerID, track.TrackID)
+					if err == nil {
+						mappack.MappackTrack[i].TrackPosition = pos
 					}
 				}
 			}
