@@ -61,7 +61,7 @@ func (t *mappackRepository) GetById(id string) (models.Mappack, error) {
 
 func (t *mappackRepository) GetAll() ([]models.Mappack, error) {
 	mappacks := []models.Mappack{}
-	err := t.db.Find(&mappacks).Error
+	err := t.db.Where("is_active = ?", true).Find(&mappacks).Error
 	return mappacks, err
 }
 
