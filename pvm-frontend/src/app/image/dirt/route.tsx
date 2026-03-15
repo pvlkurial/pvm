@@ -1,15 +1,18 @@
 import ImageResponse from "@takumi-rs/image-response";
+import axios from "axios";
 import React from "react";
+import { FaMedal } from "react-icons/fa";
+import { IoHeart } from "react-icons/io5";
 
-export function GET(request: Request) {
+export async function GET(request: Request) {
 
 
-    return new ImageResponse(
+    let response = new ImageResponse(
         (<div
-            tw="w-full h-full bg-size-[100px_100px] px-8 pt-8 bg-transparent"
+            tw="w-full h-full bg-size-[100px_100px] px-8 pt-1 bg-transparent"
         >
             <h1 tw="flex font-semibold text-[#FAF8F6] text-6xl block whitespace-pre my-0">
-                PvM <span tw="text-[#E0C090]">Leaderboard </span> 🏅
+                {<FaMedal color="#E0C090" size={45} />} PvM <span tw="text-[#E0C090]">Leaderboard </span>
             </h1>
             {
                 mappackRanks.sort((a, b) => {
@@ -43,14 +46,16 @@ export function GET(request: Request) {
                                     return;
                                 }
 
-                                return (<span tw="px-2  items-end">
+                                return (<span tw="px-2 items-end">
                                     <span tw="align-baseline font-[Geist_Mono] r-3 ">#{(index + 1).toLocaleString('en-US', {
                                         minimumIntegerDigits: 2,
                                         useGrouping: false
                                     })}</span>
-                                    <span tw="pl-1 align-baseline text-[#E0C090] text-2xl font-bold ">
+                                    <span tw="text-transparent">d</span> {/* Intended way to add a margin to spans :thumbsup: */}
+                                    <span tw="pl-1 align-baseline text-[#E0C090] text-3xl font-bold ">
                                         {player.player.name}
                                     </span>
+                                    <span tw="text-transparent">d</span>{/* Intended way to add a margin to spans :thumbsup: */}
                                     <span tw={"font-[Geist_Mono] align-baseline pl-1  text-[" + rank.color + "]"}>
                                         {player.total_points}
                                     </span>
@@ -60,22 +65,49 @@ export function GET(request: Request) {
 
                     </div>
                 ))}
-
-            < div tw="flex w-full justify-center items-center text-[#FAF8F6]" >
-                <p tw="  whitespace-pre mt-4">
+            < div tw="flex w-full justify-center mb-0 mt-4 pb-0 items-center text-[#FAF8F6]" >
+                <p tw="whitespace-pre">
                     <span tw="text-[#E0C090]">dirtin' </span>
                 </p>
-                <p tw="text-sm">
-                    - ⚡ by pvms.club
+                <p >
+                    - pvms.club
                 </p>
+            </div>
+            <div tw="flex  justify-center p-0">
+
+                <IoHeart color="#E0C090" size={50} />
             </div>
         </div>)
         ,
         {
             format: "png",
-            devicePixelRatio: 1.0
+            devicePixelRatio: 3.0
         },
     );
+
+
+    let body = await response.bytes();
+
+
+    const webhookUrl = '';
+    const form = new FormData();
+
+    form.append('payload_json', JSON.stringify({
+        embeds: [{
+            //title: Date.now(),
+            image: {
+                url: 'attachment://image.png'
+            },
+            color: 14729360
+        }]
+    }));
+
+    // Append the file
+    form.append('file1', new Blob([body], { type: "image/png" }), 'image.png');
+
+    axios.post(webhookUrl, form)
+
+    return response
 }
 
 
