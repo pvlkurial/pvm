@@ -1,7 +1,7 @@
 "use client";
 import { Card, CardFooter, CardHeader, Image } from "@heroui/react";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { FormattedText } from "@/utils/textConverter";
 import { millisecondsToTimeString } from "@/utils/time.utils";
 import { MappackTrack, TimeGoal } from "@/types/mappack.types";
@@ -11,6 +11,7 @@ import {
   calculateTrackPoints,
 } from "@/utils/player.utils";
 import { TrackCardRank } from "./track-card/TrackCardRank";
+import { TrackCardCopy } from "./track-card/TrackCardCopy";
 
 interface TrackCardProps {
   mappackTrack: MappackTrack;
@@ -69,9 +70,12 @@ export default function TrackCard({
 
         {/* Tier Badge */}
       </CardHeader>
+
       {mappackTrack.track_position && (
         <TrackCardRank position={mappackTrack.track_position} />
       )}
+      <TrackCardCopy tmxId={mappackTrack.track.tmxID ?? "test"} />
+
       <Image
         removeWrapper
         alt="Card background"

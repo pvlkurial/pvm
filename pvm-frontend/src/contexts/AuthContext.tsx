@@ -33,6 +33,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
+  useEffect(() => {
+    const handleAuthChange = () => {
+      const savedAuth = authService.loadAuth();
+      if (savedAuth) {
+        setState({
+          user: savedAuth.user,
+          token: savedAuth.token,
+          isAuthenticated: true,
+          isLoading: false,
+        });
+      }
+    };
+
+    window.addEventListener("auth-changed", handleAuthChange);
+    return () => window.removeEventListener("auth-changed", handleAuthChange);
+  }, []);
+
   const login = async () => {
     const authUrl = await authService.getAuthUrl();
     window.location.href = authUrl;

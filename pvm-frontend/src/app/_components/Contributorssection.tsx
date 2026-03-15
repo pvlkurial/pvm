@@ -10,7 +10,7 @@ const TIER_1: Contributor[] = [{ name: "You, the player" }];
 
 const TIER_2: Contributor[] = [];
 
-const TIER_3: Contributor[] = [{ name: "Zimzalabim" }];
+const TIER_3: Contributor[] = [{ name: "Zimzalabim" }, { name: "Actafabula" }];
 
 const TIER_STYLES = [
   { color: "#FFFFFF", shadow: "rgba(255,255,255,0.15)", size: "text-sm" },

@@ -74,7 +74,7 @@ export interface Track {
   id: string;
   mapId: string;
   mapUid: string;
-  tmxId: string;
+  tmxID: number;
   name: string;
   author: string;
   authorName: string;

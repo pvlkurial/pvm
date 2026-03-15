@@ -52,9 +52,6 @@ export default function RootLayout({
                   <LoginButton />
                 </NavbarItem>
                 <NavbarItem>
-                  <ImportantInfoButton />
-                </NavbarItem>
-                <NavbarItem>
                   <PatreonButton />
                 </NavbarItem>
               </NavbarContent>
