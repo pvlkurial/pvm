@@ -10,9 +10,13 @@ const AVAILABLE_STYLES = [
   { key: "tech", file: "tech.svg", label: "Tech" },
   { key: "rpg", file: "rpg.svg", label: "RPG" },
   { key: "fullspeed", file: "fullspeed.svg", label: "Fullspeed" },
+  { key: "dirt", file: "dirt.svg", label: "Dirt" },
 ];
 
-const COMING_SOON_STYLES = [{ key: "dirt", file: "dirt.svg", label: "Dirt" }];
+const COMING_SOON_STYLES = [
+  { key: "mixed", file: "mixed.svg", label: "Mixed" },
+  { key: "trial", file: "trial.svg", label: "Trial" },
+];
 
 export default function Home() {
   const router = useRouter();
@@ -114,7 +118,7 @@ export default function Home() {
                   {s.label}
                 </span>
                 <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] text-neutral-600 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                  soon
+                  in the future?
                 </span>
               </div>
             ))}
