@@ -19,7 +19,7 @@ export function TrackCardCopy({ tmxId }: TrackCardCopyProps) {
   return (
     <button
       onClick={handleCopy}
-      title={`Copy TMX ID: ${tmxId}`}
+      title={`Copy TMX ID`}
       className="absolute cursor-pointer top-0 left-0 z-20 flex items-center gap-1 px-3 py-1.5 rounded-br-xl transition-all duration-200 opacity-0 group-hover:opacity-100"
       style={{
         background: "rgba(0,0,0,0.5)",
