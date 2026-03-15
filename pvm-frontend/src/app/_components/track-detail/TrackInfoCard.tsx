@@ -26,7 +26,7 @@ export function TrackInfoCard({
       <CardBody className="p-8 relative z-10">
         <div className="flex items-start justify-between gap-4">
           <div className="flex-1">
-            <h1 className="text-5xl font-bold mb-3 bg-gradient-to-r from-white to-white/70 bg-clip-text text-transparent">
+            <h1 className="text-5xl font-bold mb-3 bg-gradient-to-r from-white to-white/70 bg-clip-text">
               <FormattedText text={name} />
             </h1>
             <p className="text-xl text-neutral-400 font-ruigslay flex items-center gap-2">

@@ -22,6 +22,7 @@ function CallbackContent() {
       try {
         const authData = await authService.handleCallback(code, state);
         authService.saveAuth(authData);
+        router.refresh();
         router.push("/");
       } catch (error) {
         console.error("Authentication failed:", error);
@@ -48,7 +49,9 @@ export default function CallbackPage() {
       fallback={
         <div className="flex items-center justify-center min-h-screen">
           <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4">Loading...</h2>
+            <h2 className="text-2xl font-bold mb-4 font-ruigslay">
+              Logging you in...
+            </h2>
           </div>
         </div>
       }
