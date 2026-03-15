@@ -26,7 +26,7 @@ export function useCarousel<T extends CarouselItem>(items: T[]) {
   const isDragging = useRef(false);
 
   const total = items.length;
-  const needsCarousel = total > visible;
+  const needsCarousel = total >= visible;
 
   const effectiveCardWidth = cardWidth;
 
