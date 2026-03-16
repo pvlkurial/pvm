@@ -6,7 +6,8 @@ const tasks: ReturnType<typeof cron.schedule>[] = [];
 export async function registerReportCron() {
     console.log("[Cron] Registering Report Cron...");
 
-    const task = cron.schedule("0 20 * * *", async () => {
+    /* "0 20 * * *" */
+    const task = cron.schedule("* * * * *", async () => {
         console.log("[Cron] Report Job Triggered");
         try {
             await postImage();

@@ -3,6 +3,6 @@ export async function register() {
     if (process.env.NEXT_RUNTIME === "nodejs") {
         const { initCronJobs } = await import("./app/server");
         // start cron jobs / server
-        initCronJobs();
+        initCronJobs()
     }
 }
