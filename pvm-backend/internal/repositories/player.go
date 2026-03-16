@@ -17,6 +17,7 @@ type PlayerRepository interface {
 	GetPlayerInfoInMappackTrackAll(playerId string, mappackId string, trackId string) ([]models.PlayerMappackTrack, error)
 	UpdatePlayersDisplayNames(players *[]models.Player) error
 	SearchPlayersInMappack(mappackID, query string, limit int) ([]dtos.PlayerSearchResult, error)
+	GetByIds(ids []string) ([]models.Player, error)
 }
 
 type playerRepository struct {
@@ -92,4 +93,10 @@ func (r *playerRepository) SearchPlayersInMappack(mappackID, query string, limit
 		return nil, err
 	}
 	return results, nil
+}
+
+func (r *playerRepository) GetByIds(ids []string) ([]models.Player, error) {
+	var players []models.Player
+	err := r.db.Where("id IN ?", ids).Find(&players).Error
+	return players, err
 }

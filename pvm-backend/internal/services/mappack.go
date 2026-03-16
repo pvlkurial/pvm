@@ -110,21 +110,27 @@ func (s *mappackService) GetByIdWithAchievements(id string, playerID *string) (*
 		return nil, err
 	}
 
-	nonFoundPlayers := make([]string, 0)
+	// batch player lookups
+	authorIDs := make([]string, 0, len(mappack.MappackTrack))
 	for _, track := range mappack.MappackTrack {
-		foundPlayer, err := s.playerRepository.GetById(track.Track.Author)
-		if err != nil {
-			fmt.Printf("Player %s not found.\n", track.Track.Author)
-			nonFoundPlayers = append(nonFoundPlayers, track.Track.Author)
-		} else {
-			track.Track.Author = foundPlayer.Name
+		authorIDs = append(authorIDs, track.Track.Author)
+	}
+	players, err := s.playerRepository.GetByIds(authorIDs)
+	if err == nil {
+		playerMap := make(map[string]string)
+		for _, p := range players {
+			playerMap[p.ID] = p.Name
+		}
+		for i := range mappack.MappackTrack {
+			if name, ok := playerMap[mappack.MappackTrack[i].Track.Author]; ok {
+				mappack.MappackTrack[i].Track.Author = name
+			}
 		}
 	}
 
 	if playerID != nil && *playerID != "" {
 		achievements, err := s.achievementService.GetPlayerAchievements(*playerID, id)
 		if err == nil && len(achievements) > 0 {
-			// achievement map: trackID -> timeGoalID -> achievement
 			achievementMap := make(map[string]map[int]*models.PlayerTimeGoalAchievement)
 			for _, ach := range achievements {
 				if achievementMap[ach.TrackID] == nil {
@@ -148,11 +154,22 @@ func (s *mappackService) GetByIdWithAchievements(id string, playerID *string) (*
 						}
 					}
 				}
+			}
 
-				if mappack.MappackTrack[i].PersonalBest > 0 {
-					pos, err := s.achievementService.GetPlayerTrackPosition(*playerID, track.TrackID)
-					if err == nil {
-						mappack.MappackTrack[i].TrackPosition = pos
+			// batch position lookups
+			trackIDsWithPB := make([]string, 0)
+			for _, track := range mappack.MappackTrack {
+				if track.PersonalBest > 0 {
+					trackIDsWithPB = append(trackIDsWithPB, track.TrackID)
+				}
+			}
+			if len(trackIDsWithPB) > 0 {
+				posMap, err := s.achievementService.GetPlayerTrackPositions(*playerID, trackIDsWithPB)
+				if err == nil {
+					for i := range mappack.MappackTrack {
+						if pos, ok := posMap[mappack.MappackTrack[i].TrackID]; ok {
+							mappack.MappackTrack[i].TrackPosition = pos
+						}
 					}
 				}
 			}

@@ -13,7 +13,7 @@ type AchievementRepository interface {
 	UpdateAchievementTime(playerID, mappackID, trackID string, timeGoalID int, playerTime int) error
 	GetPlayerAchievements(playerID, mappackID string) ([]models.PlayerTimeGoalAchievement, error)
 	GetPlayerAchievementsByTrack(playerID, mappackID, trackID string) ([]models.PlayerTimeGoalAchievement, error)
-	GetPlayerTrackPosition(playerID, trackID string) (int, error)
+	GetPlayerTrackPositions(playerID string, trackIDs []string) (map[string]int, error)
 
 	UpsertLeaderboardEntry(entry *models.MappackLeaderboardEntry) error
 	GetLeaderboard(mappackID string, limit, offset int) ([]models.MappackLeaderboardEntry, error)
@@ -194,22 +194,32 @@ func (r *achievementRepository) DeleteMappackAchievements(mappackID string) erro
 	return r.db.Where("mappack_id = ?", mappackID).Delete(&models.PlayerTimeGoalAchievement{}).Error
 }
 
-func (r *achievementRepository) GetPlayerTrackPosition(playerID, trackID string) (int, error) {
-	var playerBest int
-	err := r.db.Model(&models.Record{}).
-		Where("player_id = ? AND track_id = ?", playerID, trackID).
-		Select("COALESCE(MIN(record_time), 0)").
-		Scan(&playerBest).Error
-	if err != nil || playerBest == 0 {
-		return 0, err
+func (r *achievementRepository) GetPlayerTrackPositions(playerID string, trackIDs []string) (map[string]int, error) {
+	type result struct {
+		TrackID  string
+		Position int
 	}
+	var rows []result
+	err := r.db.Raw(`
+        WITH player_bests AS (
+            SELECT track_id, player_id, MIN(record_time) AS best_time
+            FROM records
+            WHERE track_id = ANY(?)
+            GROUP BY track_id, player_id
+        ),
+        ranked AS (
+            SELECT track_id, player_id,
+                   RANK() OVER (PARTITION BY track_id ORDER BY best_time) AS position
+            FROM player_bests
+        )
+        SELECT track_id, position
+        FROM ranked
+        WHERE player_id = ?
+    `, trackIDs, playerID).Scan(&rows).Error
 
-	var betterCount int64
-	err = r.db.Model(&models.Record{}).
-		Where("track_id = ?", trackID).
-		Group("player_id").
-		Having("MIN(record_time) < ?", playerBest).
-		Count(&betterCount).Error
-
-	return int(betterCount) + 1, err
+	posMap := make(map[string]int, len(rows))
+	for _, r := range rows {
+		posMap[r.TrackID] = r.Position
+	}
+	return posMap, err
 }
