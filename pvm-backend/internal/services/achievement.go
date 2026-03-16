@@ -170,6 +170,6 @@ func (s *AchievementService) DeleteMappackAchievements(mappackID string) error {
 	return s.achievementRepo.DeleteMappackAchievements(mappackID)
 }
 
-func (s *AchievementService) GetPlayerTrackPosition(playerID, trackID string) (int, error) {
-	return s.achievementRepo.GetPlayerTrackPosition(playerID, trackID)
+func (s *AchievementService) GetPlayerTrackPositions(playerID string, trackIDs []string) (map[string]int, error) {
+	return s.achievementRepo.GetPlayerTrackPositions(playerID, trackIDs)
 }
