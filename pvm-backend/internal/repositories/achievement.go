@@ -4,6 +4,7 @@ import (
 	"example/pvm-backend/internal/models"
 	"time"
 
+	"github.com/lib/pq"
 	"gorm.io/gorm"
 )
 
@@ -215,7 +216,7 @@ func (r *achievementRepository) GetPlayerTrackPositions(playerID string, trackID
         SELECT track_id, position
         FROM ranked
         WHERE player_id = ?
-    `, trackIDs, playerID).Scan(&rows).Error
+    `, pq.Array(trackIDs), playerID).Scan(&rows).Error
 
 	posMap := make(map[string]int, len(rows))
 	for _, r := range rows {
