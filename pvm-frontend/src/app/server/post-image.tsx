@@ -4,7 +4,7 @@ import React from "react";
 import { FaMedal } from "react-icons/fa";
 import { IoHeart } from "react-icons/io5";
 
-export async function GET(request: Request) {
+export async function postImage() {
 
 
     let response = new ImageResponse(
