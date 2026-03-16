@@ -202,21 +202,25 @@ func (r *achievementRepository) GetPlayerTrackPositions(playerID string, trackID
 	}
 	var rows []result
 	err := r.db.Raw(`
-        WITH player_bests AS (
-            SELECT track_id, player_id, MIN(record_time) AS best_time
-            FROM records
-            WHERE track_id = ANY(?)
-            GROUP BY track_id, player_id
-        ),
-        ranked AS (
-            SELECT track_id, player_id,
-                   RANK() OVER (PARTITION BY track_id ORDER BY best_time) AS position
-            FROM player_bests
-        )
-        SELECT track_id, position
-        FROM ranked
-        WHERE player_id = ?
-    `, pq.Array(trackIDs), playerID).Scan(&rows).Error
+    WITH player_bests AS (
+        SELECT DISTINCT ON (track_id, player_id)
+            track_id, player_id, record_time AS best_time, updated_at
+        FROM records
+        WHERE track_id = ANY(?)
+        ORDER BY track_id, player_id, record_time ASC, updated_at ASC
+    ),
+    ranked AS (
+        SELECT track_id, player_id,
+               RANK() OVER (
+                   PARTITION BY track_id
+                   ORDER BY best_time ASC, updated_at ASC
+               ) AS position
+        FROM player_bests
+    )
+    SELECT track_id, position
+    FROM ranked
+    WHERE player_id = ?
+`, pq.Array(trackIDs), playerID).Scan(&rows).Error
 
 	posMap := make(map[string]int, len(rows))
 	for _, r := range rows {
