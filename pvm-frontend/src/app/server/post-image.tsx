@@ -26,6 +26,11 @@ export async function postImage() {
     const organization = "dirtin'"
     const webhookUrl = ""
 
+    // Skip image generation if the mappack doesnt have a webhook associated.
+    if (webhookUrl === "" || webhookUrl === null || webhookUrl === undefined) {
+        return;
+    }
+
     let response = new ImageResponse(
         (<div
             tw="w-full h-full bg-size-[100px_100px] px-8 pt-1 bg-transparent"
