@@ -68,6 +68,8 @@ export interface Mappack {
   mappackTiers: MappackTier[];
   mappackRanks: MappackRank[];
   mapStyleName: string;
+  organization: string;
+  accentColor: string;
 }
 
 export interface Track {

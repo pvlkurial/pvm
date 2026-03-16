@@ -27,6 +27,7 @@ const AVAILABLE = new Set([
   "dirt",
   "pathfinding",
   "lol",
+  "ice",
 ]);
 
 export default function MapStyleIcon({ styleKey, className = "" }: Props) {
