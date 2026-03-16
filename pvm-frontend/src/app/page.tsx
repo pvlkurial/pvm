@@ -15,7 +15,7 @@ const AVAILABLE_STYLES = [
 
 const COMING_SOON_STYLES = [
   { key: "mixed", file: "mixed.svg", label: "Mixed" },
-  { key: "trial", file: "trial.svg", label: "Trial" },
+  { key: "ice", file: "ice.svg", label: "Ice" },
 ];
 
 export default function Home() {

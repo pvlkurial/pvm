@@ -12,3 +12,5 @@ JWT_SECRET=generate_random_32_char_string
 
 # Frontend
 NEXT_PUBLIC_API_URL=http://localhost:8080
+
+WEBHOOK_URL=webhook_for_generating_image

@@ -16,4 +16,6 @@ type Mappack struct {
 	Description  string        `json:"description"`
 	MappackTier  []MappackTier `gorm:"foreignKey:MappackID;references:ID" json:"mappackTiers"`
 	MappackRank  []MappackRank `gorm:"foreignKey:MappackID;references:ID" json:"mappackRanks"`
+	Organization string        `json:"organization"`
+	AccentColor  string        `json:"accentColor"`
 }
