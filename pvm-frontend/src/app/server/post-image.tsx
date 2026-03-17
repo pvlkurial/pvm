@@ -24,10 +24,9 @@ export async function postImage() {
 
   console.log(players);
 
-  const mappackRanks: MappackRank[] = mappack.data.mappackRanks;
-
-  const accentColor = mappack.data.accentColor;
-  const organization = mappack.data.organization;
+  const mappackRanks: MappackRank[] = mappack.mappackRanks;
+  const accentColor = mappack.accentColor;
+  const organization = mappack.organization;
   const webhookUrl = process.env.WEBHOOK_URL;
   console.log(
     "webhookUrl configured:",
