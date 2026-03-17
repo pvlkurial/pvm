@@ -26,6 +26,5 @@ func (m *MappackSeeder) seedMappacks() error {
 	m.DB.Save(mapStyles)
 	dbMapStyles := []models.MapStyle{}
 	m.DB.Find(&dbMapStyles)
-	mappacks := []models.Mappack{}
-	return m.DB.Save(mappacks).Error
+	return nil
 }
