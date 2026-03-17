@@ -105,10 +105,37 @@ func (s *mappackService) DeleteRank(id int) error {
 }
 
 func (s *mappackService) GetByIdWithAchievements(id string, playerID *string) (*models.Mappack, error) {
-	mappack, err := s.mappackRepository.GetById(id)
+	mappack, err := s.mappackRepository.GetByIdAll(id)
 	if err != nil {
 		return nil, err
 	}
+
+	var playerTotalPoints int
+	if playerID != nil && *playerID != "" {
+		entry, err := s.achievementService.GetPlayerLeaderboardEntry(*playerID, id)
+		if err == nil && entry != nil {
+			playerTotalPoints = entry.TotalPoints
+		}
+	}
+	visibleTracks := make([]*models.MappackTrack, 0, len(mappack.MappackTrack))
+	for _, track := range mappack.MappackTrack {
+		if track.Tier != nil && track.Tier.IsHidden {
+			if playerTotalPoints >= track.Tier.Threshold {
+				visibleTracks = append(visibleTracks, track)
+			}
+		} else {
+			visibleTracks = append(visibleTracks, track)
+		}
+	}
+	mappack.MappackTrack = visibleTracks
+
+	visibleTiers := make([]models.MappackTier, 0, len(mappack.MappackTier))
+	for _, tier := range mappack.MappackTier {
+		if !tier.IsHidden || playerTotalPoints >= tier.Threshold {
+			visibleTiers = append(visibleTiers, tier)
+		}
+	}
+	mappack.MappackTier = visibleTiers
 
 	// batch player lookups
 	authorIDs := make([]string, 0, len(mappack.MappackTrack))
@@ -156,7 +183,6 @@ func (s *mappackService) GetByIdWithAchievements(id string, playerID *string) (*
 				}
 			}
 
-			// batch position lookups
 			trackIDsWithPB := make([]string, 0)
 			for _, track := range mappack.MappackTrack {
 				if track.PersonalBest > 0 {
