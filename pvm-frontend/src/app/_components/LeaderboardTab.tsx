@@ -3,23 +3,9 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Spinner, Button } from "@heroui/react";
 import { Casko } from "@/fonts";
-import { MappackRank, Mappack } from "@/types/mappack.types";
+import { MappackRank, Mappack, LeaderboardEntry } from "@/types/mappack.types";
 import PlayerDetailModal from "./player-detail/PlayerDetailModal";
 import PlayerSearch from "./PlayerSearch";
-
-interface LeaderboardEntry {
-  player_id: string;
-  mappack_id: string;
-  total_points: number;
-  achievements_count: number;
-  best_achievements_count: number;
-  last_updated: string;
-  player: {
-    ID: string;
-    name: string;
-    Records: null;
-  };
-}
 
 interface LeaderboardTabProps {
   mappackId: string;
@@ -247,8 +233,8 @@ export default function LeaderboardTab({
                     color: rankColor,
                     textShadow: rank.textShadow
                       ? `0 0 40px ${rankColor}${Math.round(glowOpacity * 128)
-                          .toString(16)
-                          .padStart(2, "0")}, 0 0 80px ${rankColor}${Math.round(
+                        .toString(16)
+                        .padStart(2, "0")}, 0 0 80px ${rankColor}${Math.round(
                           glowOpacity * 64,
                         )
                           .toString(16)
@@ -312,15 +298,15 @@ export default function LeaderboardTab({
                           border: `${rank.borderWidth || 2}px solid ${borderColorToUse}`,
                           boxShadow: rank.backgroundGlow
                             ? `0 0 ${20 * glowOpacity}px ${rankColor}${Math.round(
-                                glowOpacity * 96,
-                              )
-                                .toString(16)
-                                .padStart(2, "0")}`
+                              glowOpacity * 96,
+                            )
+                              .toString(16)
+                              .padStart(2, "0")}`
                             : "none",
                           backgroundImage: patternBg,
                           backgroundSize:
                             rank.backgroundPattern === "dots" ||
-                            rank.backgroundPattern === "grid"
+                              rank.backgroundPattern === "grid"
                               ? "20px 20px"
                               : "auto",
                           filter: cardStyleEffects.filter,
@@ -375,25 +361,24 @@ export default function LeaderboardTab({
                       onClick={() =>
                         handlePlayerClick(entry.player_id, entry.player.name)
                       }
-                      className={`relative p-4 rounded-xl transition-all duration-200 hover:scale-[1.02] cursor-pointer overflow-hidden ${animationClass} ${
-                        isTopThree
-                          ? "bg-white/[0.07]"
-                          : "bg-white/[0.03] hover:bg-white/[0.06]"
-                      }`}
+                      className={`relative p-4 rounded-xl transition-all duration-200 hover:scale-[1.02] cursor-pointer overflow-hidden ${animationClass} ${isTopThree
+                        ? "bg-white/[0.07]"
+                        : "bg-white/[0.03] hover:bg-white/[0.06]"
+                        }`}
                       style={{
                         border: `${rank.borderWidth || 1}px solid ${isTopThree ? `${borderColorToUse}35` : "rgba(255,255,255,0.06)"}`,
                         boxShadow:
                           rank.backgroundGlow && isTopThree
                             ? `0 0 ${20 * glowOpacity}px ${rankColor}${Math.round(
-                                glowOpacity * 96,
-                              )
-                                .toString(16)
-                                .padStart(2, "0")}`
+                              glowOpacity * 96,
+                            )
+                              .toString(16)
+                              .padStart(2, "0")}`
                             : "none",
                         backgroundImage: patternBg,
                         backgroundSize:
                           rank.backgroundPattern === "dots" ||
-                          rank.backgroundPattern === "grid"
+                            rank.backgroundPattern === "grid"
                             ? "20px 20px"
                             : "auto",
                         ...cardStyleEffects,
