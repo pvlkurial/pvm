@@ -2,39 +2,42 @@
 
 A community-driven platform for Trackmania players to push their limits on technical maps. Track your progress, compete on leaderboards, and achieve time goals across curated map packs.
 
-![PVM Banner](https://via.placeholder.com/1200x300?text=PVM+-+Player+vs+Map)
+All app updates are available on [Patreon](https://www.patreon.com/cw/PVMWebsite).
+
+# https://pvms.club
 
 ## 🎯 Features
 
-- **Time Goals** - Multiple difficulty tiers for each track with point multipliers
+- **Time Goals** - Multiple difficulty tiers (medals) for each track with point multipliers
 - **Global Leaderboards** - Compete against players worldwide with rank progression
 - **Tiered Maps** - Maps organized by difficulty with custom tier systems
 - **Achievement Tracking** - Track your progress and accomplishments across all maps
 - **Trackmania OAuth** - Secure authentication with your Trackmania account
-- **Real-time Stats** - Live integration with Trackmania's official API
-- **Customizable Ranks** - Detailed rank customization with visual effects
+- **Automatic Stats** - Live integration with Trackmania's official API (Updates every 12 hours)
+- **Customizable Ranks** - Ranks based on points gained in each mappack
 
 ## 🚀 Technologies
 
 ### Backend
-- **Go 1.23**
+- **Golang**
 - **Gin**
 - **GORM**
-- **PostgreSQL 16**
+- **PostgreSQL**
 - **JWT**
 
 ### Frontend
-- **Next.js 14**
-- **React 18**
+- **Next.js**
+- **React**
 - **TypeScript**
-- **TailwindCSS**
+- **Tailwind**
 - **HeroUI**
 
 ### DevOps
 - **Docker**
-- **Docker Compose**
 - **GitHub Actions**
 - **Nginx**
+- **Grafana**
+- **Prometheus**
 
 ## 📋 Prerequisites
 
@@ -55,7 +58,7 @@ cd pvm
 
 Create `.env` file in the root directory:
 ```bash
-cp .env.example .env
+cp envexample .env
 ```
 
 Edit `.env` with your credentials:
@@ -81,18 +84,18 @@ USER_AGENT=PVM / your@email.com
 
 # Frontend
 NEXT_PUBLIC_API_URL=/api
+
+# Grafana
+GRAFANA_PASSWORD=your_grafana_password
+
+# Webhook
+WEBHOOK_URL=webhook_for_discord
 ```
 
 ### 3. Run with Docker (Recommended)
 ```bash
 # Start all services
 docker-compose up -d
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
 ```
 
 **Access the application:**
@@ -110,10 +113,7 @@ cd pvm-backend
 go mod download
 
 # Create .env file
-cp .env.example .env
-
-# Run migrations (if applicable)
-go run cmd/app/main.go migrate
+cp envexample .env
 
 # Start server
 go run cmd/app/main.go
@@ -129,7 +129,7 @@ cd pvm-frontend
 npm install
 
 # Create .env.local file
-cp .env.example .env.local
+cp envexample .env
 
 # Start development server
 npm run dev
@@ -152,75 +152,6 @@ docker run -d \
 createdb pvm
 ```
 
-## 📁 Project Structure
-```
-pvm/
-├── pvm-backend/                 # Go backend
-│   ├── cmd/
-│   │   └── app/
-│   │       └── main.go         # Application entry point
-│   ├── internal/
-│   │   ├── controllers/        # HTTP handlers
-│   │   ├── services/           # Business logic
-│   │   ├── models/             # Database models
-│   │   ├── middleware/         # Auth, CORS, etc.
-│   │   └── database/           # Database connection
-│   ├── go.mod
-│   └── Dockerfile
-│
-├── pvm-frontend/               # Next.js frontend
-│   ├── src/
-│   │   ├── app/                # Next.js App Router pages
-│   │   ├── components/         # React components
-│   │   ├── contexts/           # React contexts
-│   │   ├── services/           # API services
-│   │   ├── types/              # TypeScript types
-│   │   └── utils/              # Utility functions
-│   ├── public/                 # Static assets
-│   ├── package.json
-│   └── Dockerfile
-│
-├── .github/
-│   └── workflows/
-│       └── deploy.yml          # CI/CD pipeline
-│
-├── docker-compose.yml          # Docker orchestration
-├── exampleenv                # Environment variables template
-└── README.md
-```
-
-## 🚢 Deployment
-
-### Automated Deployment with GitHub Actions
-
-1. **Set up GitHub Secrets:**
-   - `SERVER_HOST` - Your server IP or domain
-   - `SERVER_USER` - SSH username
-   - `SSH_PRIVATE_KEY` - SSH private key for deployment
-
-2. **Push to main branch:**
-```bash
-   git push origin main
-```
-
-3. **GitHub Actions will automatically:**
-   - Build Docker images
-   - Push to GitHub Container Registry
-   - Deploy to your server via SSH
-
-### Manual Deployment
-```bash
-# On your server
-cd /opt/pvm
-
-# Create docker-compose.yml and .env
-# (See deployment documentation)
-
-# Pull and start
-docker-compose pull
-docker-compose up -d
-```
-
 ## 🔧 Configuration
 
 ### Trackmania OAuth Setup
@@ -232,24 +163,14 @@ docker-compose up -d
 
 ### Nadeo API Credentials
 
-1. Create account at https://api.trackmania.com/
-2. Get API username and password
-3. Add to `.env` file
+1. Using a dedicated server account
 
-### Database Migrations
+## 📚 API Documentation / Logging
 
-The application automatically creates tables on first run. To manually access the database:
-```bash
-# Connect to database
-docker exec -it pvm_db psql -U pvm_user -d pvm
-
-# Or locally
-psql -U pvm_user -d pvm
-```
-
-## 📚 API Documentation
-
-### coming soon...
+  Logging is done using slog, json on production
+  Logs are displayed in grafana on prod
+  
+  API Docs coming soon. For the time being, see routes.go in pvm-backend.
 
 ## 🤝 Contributing
 
@@ -259,22 +180,19 @@ Contributions are welcome! Please follow these steps:
 2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+5. Open a Pull Request to DEV!!!
 
-## 📝 License
+If you wish to contribute to the project financially,
+you may through [Patreon](https://www.patreon.com/cw/PVMWebsite/membership).
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
-- Trackmania community for inspiration and support
-- [Trackmania API](https://api.trackmania.com/) for official integrations
-- All contributors and testers
+- Trackmania community for making PVMs!
+- All contributors and feedback givers
 
 ## 📧 Contact
 
 Shoot me a dm on discord: Laserr__
 
 ---
-
-**Special thanks to Tommy & TechPVM people and the others making PVMs!**
