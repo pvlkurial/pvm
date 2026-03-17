@@ -5,18 +5,22 @@ import React from "react";
 import { FaMedal } from "react-icons/fa";
 import { IoHeart } from "react-icons/io5";
 
+export const runtime = "edge";
+
 const API_BASE =
   process.env.NEXT_PUBLIC_API_URL ||
   "https://pvms.club/api"; /* "http://localhost:8080" */
 const mappackId = "dirt_pvm";
 export async function postImage() {
-  const leadearboard = await axios.get(
-    `${API_BASE}/mappacks/${mappackId}/leaderboard?limit=${20}&offset=${0}`,
+  console.log("postImage called");
+
+  const leaderboardRes = await fetch(
+    `${API_BASE}/mappacks/${mappackId}/leaderboard?limit=20&offset=0`,
   );
+  const players: PlayerLeaderboardEntry[] = await leaderboardRes.json();
 
-  const players: PlayerLeaderboardEntry[] = leadearboard.data;
-
-  const mappack = await axios.get(`${API_BASE}/mappacks/${mappackId}`);
+  const mappackRes = await fetch(`${API_BASE}/mappacks/${mappackId}`);
+  const mappack = await mappackRes.json();
 
   console.log(players);
 
@@ -25,9 +29,14 @@ export async function postImage() {
   const accentColor = mappack.data.accentColor;
   const organization = mappack.data.organization;
   const webhookUrl = process.env.WEBHOOK_URL;
+  console.log(
+    "webhookUrl configured:",
+    webhookUrl ? webhookUrl.slice(0, 30) + "..." : "NOT SET",
+  );
 
   // Skip image generation if the mappack doesnt have a webhook associated.
   if (webhookUrl === "" || webhookUrl === null || webhookUrl === undefined) {
+    console.log("Webhook not set");
     return;
   }
 
@@ -137,24 +146,23 @@ export async function postImage() {
 
   let body = await response.bytes();
 
-  const form = new FormData();
-
-  form.append(
+  const formData = new FormData();
+  formData.append(
     "payload_json",
     JSON.stringify({
-      embeds: [
-        {
-          image: {
-            url: "attachment://image.png",
-          },
-          color: 14729360,
-        },
-      ],
+      embeds: [{ image: { url: "attachment://image.png" }, color: 14729360 }],
     }),
   );
+  formData.append(
+    "file1",
+    new Blob([body], { type: "image/png" }),
+    "image.png",
+  );
 
-  // Append the file
-  form.append("file1", new Blob([body], { type: "image/png" }), "image.png");
+  await fetch(webhookUrl, {
+    method: "POST",
+    body: formData,
+  });
 
-  await axios.post(webhookUrl, form);
+  console.log("Webhook posted");
 }

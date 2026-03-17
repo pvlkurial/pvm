@@ -9,6 +9,7 @@ import (
 type MappackRepository interface {
 	Create(mappack *models.Mappack) error
 	GetById(id string) (models.Mappack, error)
+	GetByIdAll(id string) (models.Mappack, error)
 	GetAll() ([]models.Mappack, error)
 	CreateMappackTimeGoal(timegoal *models.TimeGoal) error
 	GetAllMappackTimeGoals(mappackId string) ([]models.TimeGoal, error)
@@ -47,8 +48,29 @@ func (t *mappackRepository) GetById(id string) (models.Mappack, error) {
 	mappack := models.Mappack{}
 	err := t.db.
 		Preload("TimeGoals").
+		Preload("MappackTier", "is_hidden = ?", false).
+		Preload("MappackRank").
+		Preload("MappackTrack", func(db *gorm.DB) *gorm.DB {
+			return db.Joins("LEFT JOIN mappack_tiers ON mappack_tiers.id = mappack_tracks.tier_id").
+				Where("mappack_tiers.is_hidden = ? OR mappack_tracks.tier_id IS NULL", false)
+		}).
+		Preload("MappackTrack.Track").
+		Preload("MappackTrack.Tier").
+		Preload("MappackTrack.TimeGoalMappackTrack").
+		Preload("MappackTrack.TimeGoalMappackTrack.TimeGoal").
+		Preload("MapStyle").
+		Where("ID = ?", id).
+		First(&mappack).Error
+	return mappack, err
+}
+
+func (t *mappackRepository) GetByIdAll(id string) (models.Mappack, error) {
+	mappack := models.Mappack{}
+	err := t.db.
+		Preload("TimeGoals").
 		Preload("MappackTier").
 		Preload("MappackRank").
+		Preload("MappackTrack").
 		Preload("MappackTrack.Track").
 		Preload("MappackTrack.Tier").
 		Preload("MappackTrack.TimeGoalMappackTrack").

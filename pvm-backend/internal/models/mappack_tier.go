@@ -6,4 +6,6 @@ type MappackTier struct {
 	MappackID string `json:"mappack_id"`
 	Points    int    `json:"points"`
 	Color     string `json:"color"`
+	IsHidden  bool   `json:"is_hidden"`
+	Threshold int    `json:"threshold"`
 }
