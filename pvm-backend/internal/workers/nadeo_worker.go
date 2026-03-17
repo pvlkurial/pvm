@@ -31,7 +31,7 @@ func (n *nadeoWorker) Start() {
 
 		slog.Info("nadeo worker started", "interval_hours", constants.FetchIntervalInHours)
 
-		for range ticker.C {
+		for ; ; <-ticker.C {
 			slog.Info("nadeo worker tick: beginning record fetch cycle")
 
 			dbTracks, err := n.trackService.GetAll()
