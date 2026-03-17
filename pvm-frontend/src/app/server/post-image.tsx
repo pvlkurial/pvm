@@ -14,8 +14,6 @@ const API_BASE =
     "https://pvms.club/api"; /* "http://localhost:8080" */
 const mappackId = "dirt_pvm";
 export async function postImage() {
-    console.log("postImage called");
-
     const leaderboardRes = await fetch(
         `${API_BASE}/mappacks/${mappackId}/leaderboard?limit=20&offset=0`,
     );
@@ -44,10 +42,6 @@ export async function postImage() {
     const accentColor = mappack.accentColor;
     const organization = mappack.organization;
     const webhookUrl = process.env.WEBHOOK_URL;
-    console.log(
-        "webhookUrl configured:",
-        webhookUrl ? webhookUrl.slice(0, 30) + "..." : "NOT SET",
-    );
 
     // Skip image generation if the mappack doesnt have a webhook associated.
     if (webhookUrl === "" || webhookUrl === null || webhookUrl === undefined) {
