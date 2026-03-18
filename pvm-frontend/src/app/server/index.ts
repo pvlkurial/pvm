@@ -5,9 +5,11 @@ const tasks: ReturnType<typeof cron.schedule>[] = [];
 
 export async function registerReportCron() {
   console.log("[Cron] Registering Report Cron...");
+  // Bootstrap the prev_players cache.
+  await postImage();
 
   // "* * * * *"  Replace with this for debug. Runs every minute.
-  const task = cron.schedule("0 8,20 * * *", async () => {
+  const task = cron.schedule("*/10 * * * *", async () => {
     console.log("[Cron] Report Job Triggered");
     try {
       await postImage();
@@ -17,7 +19,7 @@ export async function registerReportCron() {
   });
 
   tasks.push(task);
-  console.log("[Cron] Report Job Scheduled (Runs every day at 20:00)");
+  console.log("[Cron] Report Job Scheduled (Runs every 10 minutes)");
 }
 
 export function initCronJobs() {
