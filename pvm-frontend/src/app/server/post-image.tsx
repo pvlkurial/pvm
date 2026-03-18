@@ -1,13 +1,23 @@
 import { MappackRank, LeaderboardEntry } from "@/types/mappack.types";
 import ImageResponse from "@takumi-rs/image-response";
-import axios from "axios";
 import React from "react";
 import { FaMedal } from "react-icons/fa";
-import { IoHeart } from "react-icons/io5";
+import { IoCaretDown, IoCaretForward, IoCaretUp, IoHeart } from "react-icons/io5";
 
 export const runtime = "edge";
 
 let prev_players: LeaderboardEntry[] = []
+
+function hasPlayerChanged(player: LeaderboardEntry, index: number) {
+    if (index < prev_players.findIndex((p) => p.player_id === player.player_id)) {
+        return (<IoCaretUp tw="align-bottom" color={"#10b981"} size={30} />);
+    } else if (index > prev_players.findIndex((p) => p.player_id == player.player_id)) {
+        return (<IoCaretDown tw="align-bottom" color={"#ef4444"} size={30} />);
+    } else {
+        return (<IoCaretForward tw="align-bottom opacity-0" color={"#71717a"} size={30} />);
+    }
+
+}
 
 const API_BASE =
     process.env.NEXT_PUBLIC_API_URL ||
@@ -15,7 +25,7 @@ const API_BASE =
 const mappackId = "dirt_pvm";
 export async function postImage() {
     const leaderboardRes = await fetch(
-        `${API_BASE}/mappacks/${mappackId}/leaderboard?limit=20&offset=0`,
+        `${API_BASE}/mappacks/${mappackId}/leaderboard?limit=30&offset=0`,
     );
     const players: LeaderboardEntry[] = await leaderboardRes.json();
 
@@ -28,7 +38,9 @@ export async function postImage() {
 
     // Skip rendering when there are no changes in the players ranking (point changes will get ignored).
     if (players.filter((player, index) => {
-        player.player_id === prev_players[index].player_id
+        if (player.player_id === prev_players[index].player_id) { return false } else {
+            return true
+        }
     }).length === 0) {
         console.log("Skipping rendering because nothing in the leaderboard changed.")
         return;
@@ -38,8 +50,34 @@ export async function postImage() {
     const mappack = await mappackRes.json();
 
 
-    const mappackRanks: MappackRank[] = mappack.mappackRanks;
-    const accentColor = mappack.accentColor;
+    const mappackRanks: MappackRank[] = mappack.mappackRanks
+    const usedMappackRanks = mappackRanks.sort((a, b) => {
+        if (a.pointsNeeded > b.pointsNeeded) {
+            return -1;
+        } else if (a.pointsNeeded < b.pointsNeeded) {
+            return 1;
+        }
+        return 0;
+    }).filter((rank, r_index) => {
+        let prev_mappack_rank = mappackRanks[r_index - 1];
+        if (prev_mappack_rank === undefined) {
+            return (
+                players.filter(
+                    (f) =>
+                        f.total_points >= rank.pointsNeeded
+                ).length !== 0
+            );
+        }
+        return (
+            players.filter(
+                (f) =>
+                    f.total_points >= rank.pointsNeeded &&
+                    f.total_points <= prev_mappack_rank.pointsNeeded,
+            ).length !== 0
+        );
+    });
+
+    const accentColor: string = mappack.accentColor;
     const organization = mappack.organization;
     const webhookUrl = process.env.WEBHOOK_URL;
 
@@ -53,111 +91,88 @@ export async function postImage() {
         <div tw="w-full h-full bg-size-[100px_100px] px-8 pt-1 bg-transparent">
             <h1 tw="flex font-semibold text-[#FAF8F6] text-6xl block whitespace-pre my-0">
                 {<FaMedal color={accentColor} size={45} />} PvM{" "}
-                <span tw={"text-[" + accentColor + "]"}>Leaderboard </span>
+                <span tw={'text-[#E0C090]'}>Leaderboard </span>
             </h1>
-            {mappackRanks
-                .sort((a, b) => {
-                    if (a.pointsNeeded > b.pointsNeeded) {
-                        return -1;
-                    } else if (a.pointsNeeded < b.pointsNeeded) {
-                        return 1;
-                    }
-                    return 0;
-                })
-                .filter((rank, r_index) => {
-                    let prev_rank = mappackRanks[r_index - 1];
-                    if (prev_rank === undefined) {
-                        return (
-                            players.filter(
-                                (f) =>
-                                    f.total_points >= rank.pointsNeeded
-                            ).length !== 0
-                        );
-                    }
-                    return (
-                        players.filter(
-                            (f) =>
-                                f.total_points >= rank.pointsNeeded &&
-                                f.total_points <= prev_rank.pointsNeeded,
-                        ).length !== 0
-                    );
-                })
-                .map((rank, r_index) => (
-                    <div tw="justify-start items-start grid grid-cols-2 text-white">
-                        <span
-                            tw={
-                                "pt-6 col-span-2 text-4xl font-[Geist_Mono] font-bold text-[" +
-                                rank.color +
-                                "]"
-                            }
-                        >
-                            {rank.name} - {rank.pointsNeeded}pts
-                        </span>
-                        {players.map((player, index) => {
-                            let prev_mappack_rank = mappackRanks[r_index - 1];
-                            if (prev_mappack_rank === undefined) {
-                                if (player.total_points >= rank.pointsNeeded) {
-
-                                } else {
-                                    return
+            {
+                usedMappackRanks
+                    .map((rank, r_index) => (
+                        <div tw="justify-start items-start grid grid-cols-2 text-white">
+                            <span
+                                tw={
+                                    "pt-6 col-span-2 text-4xl font-[Geist_Mono] font-bold text-[" +
+                                    rank.color +
+                                    "]"
                                 }
-                            } else {
-                                if (
-                                    player.total_points >= rank.pointsNeeded &&
-                                    player.total_points <= prev_mappack_rank.pointsNeeded
-                                ) {
+                            >
+                                {rank.name} - {rank.pointsNeeded}pts
+                            </span>
+                            {players.map((player, index) => {
+                                let prev_mappack_rank = usedMappackRanks[r_index - 1];
+                                if (prev_mappack_rank === undefined) {
+                                    if (player.total_points < rank.pointsNeeded) {
+                                        return
+                                    }
                                 } else {
-                                    return;
+                                    if (
+                                        player.total_points >= rank.pointsNeeded &&
+                                        player.total_points <= prev_mappack_rank.pointsNeeded
+                                    ) {
+                                        // This should get rendered.
+                                    } else {
+                                        return;
+                                    }
                                 }
 
-                            }
-
-                            return (
-                                <span tw="px-2 items-end">
-                                    <span tw="align-baseline font-[Geist_Mono] r-3 ">
-                                        #
-                                        {(index + 1).toLocaleString("en-US", {
-                                            minimumIntegerDigits: 2,
-                                            useGrouping: false,
-                                        })}
-                                    </span>
-                                    <span tw="text-transparent">d</span>{" "}
-                                    {/* Intended way to add a margin to spans :thumbsup: */}
-                                    <span
-                                        tw={
-                                            "pl-1 align-baseline text-3xl font-bold text-[" +
-                                            accentColor +
-                                            "]"
-                                        }
-                                    >
-                                        {player.player.name}
-                                    </span>
-                                    <span tw="text-transparent">d</span>
-                                    {/* Intended way to add a margin to spans :thumbsup: */}
-                                    <span
-                                        tw={
-                                            "font-[Geist_Mono] align-baseline pl-1  text-[" +
-                                            rank.color +
-                                            "]"
-                                        }
-                                    >
-                                        {player.total_points}
-                                    </span>
-                                </span>
-                            );
-                        })}
-                    </div>
-                ))}
-            <div tw="flex w-full justify-center mb-0 mt-4 pb-0 items-center text-[#FAF8F6]">
+                                return (
+                                    <div>
+                                        {hasPlayerChanged(player, index)}
+                                        <span tw="px-2 items-end" >
+                                            <span tw="align-baseline font-[Geist_Mono] r-3 ">
+                                                #
+                                                {(index + 1).toLocaleString("en-US", {
+                                                    minimumIntegerDigits: 2,
+                                                    useGrouping: false,
+                                                })}
+                                            </span>
+                                            <span tw="text-transparent">d</span>
+                                            {/* Intended way to add a margin to spans :thumbsup: */}
+                                            <span
+                                                tw={
+                                                    "pl-1 align-baseline text-3xl font-bold text-[" +
+                                                    accentColor +
+                                                    "]"
+                                                }
+                                            >
+                                                {player.player.name}
+                                            </span>
+                                            <span tw="text-transparent">d</span>
+                                            {/* Intended way to add a margin to spans :thumbsup: */}
+                                            <span
+                                                tw={
+                                                    "font-[Geist_Mono] align-baseline pl-1  text-[" +
+                                                    rank.color +
+                                                    "]"
+                                                }
+                                            >
+                                                {player.total_points}
+                                            </span>
+                                        </span>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ))
+            }
+            < div tw="flex w-full justify-center mb-0 mt-4 pb-0 items-center text-[#FAF8F6]" >
                 <p tw="whitespace-pre">
                     <span tw={"text-[" + accentColor + "]"}>{organization} </span>
                 </p>
                 <p>- pvms.club</p>
-            </div>
+            </div >
             <div tw="flex  justify-center p-0">
                 <IoHeart color={accentColor} size={50} />
             </div>
-        </div>,
+        </div >,
         {
             format: "png",
             devicePixelRatio: 3.0,
