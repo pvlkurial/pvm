@@ -3,8 +3,8 @@ import { Button } from "@heroui/react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import Image from "next/image";
-import { HeroPanel } from "./_components/HeroPanel";
-import { ContributorsSection } from "./_components/Contributorssection";
+import { HeroPanel } from "@/app/_components/HeroPanel";
+import { ContributorsSection } from "@/app/_components/Contributorssection";
 
 const AVAILABLE_STYLES = [
   { key: "tech", file: "tech.svg", label: "Tech" },

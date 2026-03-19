@@ -11,6 +11,7 @@ import { BackButton } from "@/app/_components/BackButton";
 import { TrackmaniaIoButton } from "@/app/_components/track-detail/TrackmaniaIoButton";
 import { TmxButton } from "@/app/_components/track-detail/TmxButton";
 import { Breadcrumbs } from "@/app/_components/Breadcrumbs";
+import { TrackCardOBS } from "@/app/_components/TrackCardOBS";
 
 export default function TrackPage({
   params,
@@ -93,6 +94,8 @@ export default function TrackPage({
         timeGoals={track.timegoals}
         trackId={track.id}
       />
+
+      <TrackCardOBS track={track} mappackId={mappack} />
     </div>
   );
 }
