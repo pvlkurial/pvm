@@ -5,30 +5,29 @@ import { Track } from "@/types/mappack.types";
 import { millisecondsToTimeString } from "@/utils/time.utils";
 import { FormattedText } from "@/utils/textConverter";
 import { trackService } from "@/services/track.service";
-import { useAuth } from "@/contexts/AuthContext";
 
 interface OverlayPageProps {
   params: Promise<{ mappackId: string; trackId: string }>;
-  searchParams: Promise<{ goalIndex?: string }>;
+  searchParams: Promise<{ playerId?: string, goalIndex?: string }>;
 }
 
 export default function OverlayPage({
   params,
   searchParams,
 }: OverlayPageProps) {
-  const { mappackId, trackId } = React.use(params);
-  const { goalIndex: goalIndexParam } = React.use(searchParams);
+  const { mappackId, trackId} = React.use(params);
+  const {playerId: playerIdParam, goalIndex: goalIndexParam } = React.use(searchParams);
   const goalIndex = goalIndexParam ? Number(goalIndexParam) : 0;
+  const playerId = playerIdParam ? String(playerIdParam) : ""
 
   const [track, setTrack] = useState<Track | null>(null);
-  const { user } = useAuth();
 
   const load = async () => {
     try {
       const data = await trackService.getTrackDetails(
         mappackId,
         trackId,
-        user?.id,
+        playerId,
       );
       setTrack(data);
     } catch (e) {
@@ -40,7 +39,7 @@ export default function OverlayPage({
     load();
     const interval = setInterval(load, 30_000);
     return () => clearInterval(interval);
-  }, [mappackId, trackId, user?.id]);
+  }, [mappackId, trackId, playerId]);
 
   if (!track) return null;
 
