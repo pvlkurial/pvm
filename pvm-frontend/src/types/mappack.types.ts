@@ -137,3 +137,17 @@ export interface PlayerLeaderboardEntry {
   };
   rank: number;
 }
+
+export interface LeaderboardEntry {
+  player_id: string;
+  mappack_id: string;
+  total_points: number;
+  achievements_count: number;
+  best_achievements_count: number;
+  last_updated: string;
+  player: {
+    ID: string;
+    name: string;
+    Records: null;
+  };
+}
