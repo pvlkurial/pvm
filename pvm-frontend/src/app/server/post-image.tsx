@@ -77,8 +77,17 @@ export async function postImage() {
         );
     });
 
-    const accentColor: string = mappack.accentColor;
-    const organization = mappack.organization;
+    let accentColor = mappack.accentColor;
+    let organization = mappack.organization;
+
+    if (accentColor === undefined || accentColor === "" || accentColor === null) {
+        accentColor = "#E0C090"
+    }
+
+    if (organization === undefined || organization === "" || organization === null) {
+        organization = "dirtin'"
+    }
+
     const webhookUrl = process.env.WEBHOOK_URL;
 
     // Skip image generation if the mappack doesnt have a webhook associated.
