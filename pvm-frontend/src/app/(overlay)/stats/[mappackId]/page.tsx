@@ -78,7 +78,6 @@ export default function StatsPage({ params, searchParams }: StatsPageProps) {
             minWidth: 0,
           }}
         >
-          {/* Player name — like author */}
           <span
             style={{
               fontFamily: "'Outfit', sans-serif",
@@ -96,7 +95,6 @@ export default function StatsPage({ params, searchParams }: StatsPageProps) {
             {entry.player.name}
           </span>
 
-          {/* Points + rank name + rank pill all in one row */}
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 2, overflow: "hidden" }}>
             {/* Points */}
             <div style={{ display: "flex", alignItems: "baseline", gap: 5 }}>
@@ -126,7 +124,6 @@ export default function StatsPage({ params, searchParams }: StatsPageProps) {
               </span>
             </div>
 
-            {/* Rank name */}
             <div
               style={{
                 fontFamily: "var(--font-my-custom), sans-serif",
@@ -149,7 +146,6 @@ export default function StatsPage({ params, searchParams }: StatsPageProps) {
               {playerRank?.name ?? "—"}
             </div>
 
-            {/* Rank pill — centered to rank name */}
             <span
               style={{
                 fontFamily: "'Outfit', sans-serif",
@@ -171,7 +167,6 @@ export default function StatsPage({ params, searchParams }: StatsPageProps) {
             </span>
           </div>
 
-          {/* Progress bar to next rank — full width, thin */}
           {nextRank && (
             <div
               style={{
