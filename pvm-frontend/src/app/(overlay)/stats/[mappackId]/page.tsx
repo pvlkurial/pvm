@@ -68,14 +68,13 @@ export default function StatsPage({ params, searchParams }: StatsPageProps) {
             display: "flex",
             flexDirection: "column",
             justifyContent: "center",
-            padding: "10px 22px",
+            padding: "10px 20px 10px 22px",
             background: `rgba(15, 15, 18, ${bgOpacity})`,
             backdropFilter: "blur(12px)",
             WebkitBackdropFilter: "blur(12px)",
             border: "1px solid rgba(255,255,255,0.10)",
             borderRadius: 10,
             gap: 2,
-            width: 340,
             minWidth: 0,
           }}
         >
@@ -128,17 +127,20 @@ export default function StatsPage({ params, searchParams }: StatsPageProps) {
             <div
               style={{
                 fontFamily: "var(--font-my-custom), sans-serif",
-                fontSize: 36,
                 fontWeight: 900,
-                lineHeight: 1,
+                lineHeight: 1.15,
                 textTransform: "uppercase",
                 color: accentColor ?? playerRank?.color ?? "#ffffff",
                 textShadow: (accentColor ?? playerRank?.color) ? `0 0 20px ${accentColor ?? playerRank?.color}50` : undefined,
-                whiteSpace: "nowrap",
+                whiteSpace: "normal",
+                wordBreak: "keep-all",
+                overflowWrap: "normal",
                 overflow: "hidden",
-                textOverflow: "ellipsis",
-                minWidth: 0,
-                flexShrink: 1,
+                width: "auto",
+                maxWidth: 280,
+                flexShrink: 0,
+                maxHeight: "2.4em",
+                fontSize: 24,
               }}
             >
               {playerRank?.name ?? "—"}
