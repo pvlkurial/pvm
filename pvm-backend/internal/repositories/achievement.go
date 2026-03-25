@@ -155,8 +155,12 @@ func (r *achievementRepository) CalculatePlayerPoints(playerID, mappackID string
         FROM player_time_goal_achievements pta
         JOIN time_goals tg ON pta.time_goal_id = tg.id
         JOIN mappack_tracks mpt ON pta.track_id = mpt.track_id AND pta.mappack_id = mpt.mappack_id
+        JOIN time_goal_mappack_tracks tgmt ON tgmt.timegoal_id = pta.time_goal_id
+            AND tgmt.track_id = pta.track_id
+            AND tgmt.mappack_id = pta.mappack_id
         LEFT JOIN mappack_tiers mt ON mpt.tier_id = mt.id
         WHERE pta.player_id = ? AND pta.mappack_id = ?
+        AND pta.player_time <= tgmt.time
         GROUP BY pta.track_id
     ) as best
 `, playerID, mappackID).Scan(&result).Error

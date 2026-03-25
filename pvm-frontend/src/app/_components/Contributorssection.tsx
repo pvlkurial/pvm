@@ -8,9 +8,13 @@ interface Contributor {
 
 const TIER_1: Contributor[] = [{ name: "You, the player" }];
 
-const TIER_2: Contributor[] = [];
+const TIER_2: Contributor[] = [{ name: "Loso" }, { name: "Aidan" }];
 
-const TIER_3: Contributor[] = [{ name: "Zimzalabim" }, { name: "Actafabula" }];
+const TIER_3: Contributor[] = [
+  { name: "Zimzalabim" },
+  { name: "Actafabula" },
+  { name: "SajmonOG" },
+];
 
 const TIER_STYLES = [
   { color: "#FFFFFF", shadow: "rgba(255,255,255,0.15)", size: "text-sm" },
@@ -46,7 +50,7 @@ function ContributorName({
 }
 
 export function ContributorsSection() {
-  const allTiers = [TIER_1, TIER_2, TIER_3];
+  const allTiers = [TIER_3, TIER_2, TIER_1];
 
   return (
     <>
