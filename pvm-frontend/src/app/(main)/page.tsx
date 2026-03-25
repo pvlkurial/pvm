@@ -11,11 +11,11 @@ const AVAILABLE_STYLES = [
   { key: "rpg", file: "rpg.svg", label: "RPG" },
   { key: "fullspeed", file: "fullspeed.svg", label: "Fullspeed" },
   { key: "dirt", file: "dirt.svg", label: "Dirt" },
+  { key: "ice", file: "ice.svg", label: "Ice" },
 ];
 
 const COMING_SOON_STYLES = [
   { key: "mixed", file: "mixed.svg", label: "Mixed" },
-  { key: "ice", file: "ice.svg", label: "Ice" },
 ];
 
 export default function Home() {
