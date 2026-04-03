@@ -8,6 +8,7 @@ const HERO_IMAGES = [
   "https://core.trackmania.nadeo.live/maps/323cbe74-b262-4e8f-bd64-6a5c33aa9127/thumbnail.jpg",
   "https://core.trackmania.nadeo.live/maps/d0030278-ac88-4392-91df-ce9c14024dd9/thumbnail.jpg",
   "https://core.trackmania.nadeo.live/maps/afb2d70f-120c-4c4a-8990-e7150e242dd4/thumbnail.jpg",
+  "https://core.trackmania.nadeo.live/maps/c83d7f6d-7a5d-44fa-8de2-d098cc58d72c/thumbnail.jpg",
 ];
 
 const INTERVAL_MS = 5000;

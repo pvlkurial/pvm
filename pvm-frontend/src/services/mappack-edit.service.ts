@@ -10,6 +10,11 @@ export const mappackEditService = {
       thumbnailURL: mappack.thumbnailURL,
       isActive: mappack.isActive,
       mapStyleName: mappack.mapStyleName,
+      organization: mappack.organization,
+      accentColor: mappack.accentColor,
+      sheeturl: mappack.sheeturl,
+      discordurl: mappack.discordurl,
+      websiteurl: mappack.websiteurl,
       timeGoals: mappack.timeGoals.map((tg) => ({
         id: tg.id,
         name: tg.name,

@@ -1,8 +1,9 @@
-import { Button } from "@heroui/react";
+import { Button, Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 import AddTrackModal from "@/app/_components/add-edit-buttons/AddTrackModal";
 import { EditMappackModal } from "@/app/_components/add-edit-buttons/EditMappackModal";
 import RequireRole from "@/app/_components/RequireRole";
 import { Mappack, MappackTier, MappackTrack } from "@/types/mappack.types";
+import { FaDiscord, FaGlobe, FaTable } from "react-icons/fa6";
 
 interface MappackSidebarProps {
   mappack: Mappack;
@@ -44,13 +45,52 @@ export function MappackSidebar({
         <div className="bg-white-900 lg:sticky lg:top-4 lg:self-start">
           <div className="flex flex-col gap-4 p-4">
             <div className="flex justify-center items-center">
-              <p className="font-bold text-3xl font-ruigslay overline">
-                {mappack.name.toUpperCase()}
-              </p>
-            </div>
-
-            <div className="flex justify-center items-center">
-              <p className="font-bold text-sm">{mappack.description}</p>
+              <Popover placement="right">
+                <PopoverTrigger>
+                  <button className="font-bold text-3xl font-ruigslay overline hover:opacity-80 transition-opacity cursor-pointer">
+                    {mappack.name.toUpperCase()}
+                  </button>
+                </PopoverTrigger>
+                <PopoverContent className="bg-zinc-900 border border-white/20 text-white p-4">
+                  <div className="w-56 flex flex-col gap-3">
+                    <p className="text-white/70 text-sm text-center break-words whitespace-normal overflow-hidden">
+                      {mappack.description}
+                    </p>
+                    <div className="flex gap-2 w-full">
+                      {mappack.sheeturl && (
+                        <a
+                          href={mappack.sheeturl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-ghost text-sm flex items-center justify-center gap-1 flex-1"
+                        >
+                          <FaTable />
+                        </a>
+                      )}
+                      {mappack.discordurl && (
+                        <a
+                          href={mappack.discordurl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-ghost text-sm flex items-center justify-center gap-1 flex-1"
+                        >
+                          <FaDiscord />
+                        </a>
+                      )}
+                      {mappack.websiteurl && (
+                        <a
+                          href={mappack.websiteurl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="btn-ghost text-sm flex items-center justify-center gap-1 flex-1"
+                        >
+                          <FaGlobe />
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </PopoverContent>
+              </Popover>
             </div>
 
             <hr className="divider" />

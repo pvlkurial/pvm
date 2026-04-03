@@ -18,4 +18,7 @@ type Mappack struct {
 	MappackRank  []MappackRank `gorm:"foreignKey:MappackID;references:ID" json:"mappackRanks"`
 	Organization string        `json:"organization"`
 	AccentColor  string        `json:"accentColor"`
+	DiscordURL   string        `json:"discordurl"`
+	SheetURL     string        `json:"sheeturl"`
+	WebsiteURL   string        `json:"websiteurl"`
 }
