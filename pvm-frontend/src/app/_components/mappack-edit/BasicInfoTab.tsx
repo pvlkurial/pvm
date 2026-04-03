@@ -1,6 +1,7 @@
 import { Autocomplete, AutocompleteItem, Input, Switch } from "@heroui/react";
 import { Mappack } from "@/types/mappack.types";
 import { MAP_STYLES } from "@/constants/map-styles";
+import { ColorPicker } from "@/utils/colorPicker";
 
 interface BasicInfoTabProps {
   editData: Mappack;
@@ -34,6 +35,13 @@ export function BasicInfoTab({
         classNames={inputClassNames}
       />
       <Input
+        label="Organization"
+        variant="bordered"
+        value={editData.organization}
+        onValueChange={(value) => onUpdate({ organization: value })}
+        classNames={inputClassNames}
+      />
+      <Input
         label="Thumbnail URL"
         variant="bordered"
         value={editData.thumbnailURL}
@@ -64,6 +72,45 @@ export function BasicInfoTab({
           <AutocompleteItem key={style.key}>{style.label}</AutocompleteItem>
         )}
       </Autocomplete>
+
+      <div className="grid grid-cols-[auto_1fr] items-center gap-2 pt-2">
+        <p className="text-xl font-ruigslay">Links</p>
+        <div className="flex-1 h-[5px] bg-neutral-300"></div>
+      </div>
+      <Input
+        label="Sheet URL"
+        variant="bordered"
+        value={editData.sheeturl}
+        onValueChange={(value) => onUpdate({ sheeturl: value })}
+        classNames={inputClassNames}
+      />
+      <Input
+        label="Discord URL"
+        variant="bordered"
+        value={editData.discordurl}
+        onValueChange={(value) => onUpdate({ discordurl: value })}
+        classNames={inputClassNames}
+      />
+      <Input
+        label="Website URL"
+        variant="bordered"
+        value={editData.websiteurl}
+        onValueChange={(value) => onUpdate({ websiteurl: value })}
+        classNames={inputClassNames}
+      />
+
+      <div className="grid grid-cols-[auto_1fr] items-center gap-2 pt-2">
+        <p className="text-xl font-ruigslay">Appearance</p>
+        <div className="flex-1 h-[5px] bg-neutral-300"></div>
+      </div>
+      <div className="flex items-center gap-3">
+        <ColorPicker
+          label="Accent Color"
+          value={editData.accentColor || "#ffffff"}
+          onChange={(color) => onUpdate({ accentColor: color })}
+        />
+      </div>
+
       <Switch
         isSelected={editData.isActive}
         onValueChange={(checked) => onUpdate({ isActive: checked })}

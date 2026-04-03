@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { MappackTrack, TimeGoal } from "@/types/mappack.types";
 import { millisecondsToTimeString } from "@/utils/time.utils";
+import { groupTracksByTier, sortTiersByPoints } from "@/utils/mappack.utils";
 import { CollapsibleTrackItem } from "./CollapsibleTrackItem";
 
 interface TrackTimesTabProps {
@@ -38,13 +39,14 @@ export function TrackTimesTab({
         }
       });
     });
-  }, [tracks]); // Only run when tracks change
+  }, [tracks]);
 
-  const timeGoalIds = timeGoals.filter((tg) => tg.id).map((tg) => tg.id!);
+  const tracksByTier = groupTracksByTier(tracks);
+  const sortedTierKeys = sortTiersByPoints(tracksByTier, "asc");
 
   return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-[auto_1fr] items-center gap-2 mb-4">
+    <div className="space-y-8">
+      <div className="grid grid-cols-[auto_1fr] items-center gap-2">
         <p className="text-xl font-ruigslay">Track Time Goals</p>
         <div className="flex-1 h-[5px] bg-neutral-300"></div>
       </div>
@@ -55,20 +57,42 @@ export function TrackTimesTab({
         </p>
       )}
 
-      <div className="space-y-3">
-        {tracks.map((track) => (
-          <CollapsibleTrackItem
-            key={track.track_id}
-            track={track}
-            timeGoals={timeGoals}
-            timeInputValues={timeInputValues}
-            onTimeGoalChange={onUpdateTrackTime}
-            onMapStyleChange={onUpdateMapStyle}
-            onDelete={onDeleteTrack}
-            inputClassNames={inputClassNames}
-          />
-        ))}
-      </div>
+      {sortedTierKeys.map((tierKey) => {
+        const { tier, tracks: tierTracks } = tracksByTier[tierKey];
+        const tierColor = tier?.color ?? "#6b7280";
+
+        return (
+          <div key={tierKey} className="space-y-3">
+            <div className="flex items-center gap-3">
+              <span
+                className="text-xs font-semibold uppercase tracking-widest"
+                style={{ color: tierColor }}
+              >
+                {tierKey}
+              </span>
+              <div
+                className="flex-1 h-px"
+                style={{ backgroundColor: tierColor + "44" }}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3 items-start">
+              {tierTracks.map((track) => (
+                <CollapsibleTrackItem
+                  key={track.track_id}
+                  track={track}
+                  timeGoals={timeGoals}
+                  timeInputValues={timeInputValues}
+                  onTimeGoalChange={onUpdateTrackTime}
+                  onMapStyleChange={onUpdateMapStyle}
+                  onDelete={onDeleteTrack}
+                  inputClassNames={inputClassNames}
+                />
+              ))}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

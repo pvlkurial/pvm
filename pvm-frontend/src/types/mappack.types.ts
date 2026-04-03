@@ -70,6 +70,9 @@ export interface Mappack {
   mapStyleName: string;
   organization: string;
   accentColor: string;
+  discordurl: string;
+  websiteurl: string;
+  sheeturl: string;
 }
 
 export interface Track {

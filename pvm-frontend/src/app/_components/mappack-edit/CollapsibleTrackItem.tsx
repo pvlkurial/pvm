@@ -105,7 +105,6 @@ export function CollapsibleTrackItem({
                         onTimeGoalChange(track.track_id, timeGoal.id!, value)
                       }
                       classNames={inputClassNames}
-                      description="Format: MM:SS:mmm"
                     />
                   );
                 })}
