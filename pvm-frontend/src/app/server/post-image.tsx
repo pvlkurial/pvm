@@ -9,9 +9,12 @@ export const runtime = "edge";
 let prev_players: LeaderboardEntry[] = []
 
 function hasPlayerChanged(player: LeaderboardEntry, index: number) {
-    if (index < prev_players.findIndex((p) => p.player_id === player.player_id)) {
+    if (index < prev_players.findIndex((p) => p.player_id === player.player_id)
+        || prev_players.findIndex((p) => p.player_id === player.player_id) === -1
+    ) {
         return (<IoCaretUp tw="align-bottom" color={"#10b981"} size={30} />);
-    } else if (index > prev_players.findIndex((p) => p.player_id == player.player_id)) {
+    }
+    else if (index > prev_players.findIndex((p) => p.player_id == player.player_id)) {
         return (<IoCaretDown tw="align-bottom" color={"#ef4444"} size={30} />);
     } else {
         return (<IoCaretForward tw="align-bottom opacity-0" color={"#71717a"} size={30} />);
@@ -124,7 +127,7 @@ export async function postImage() {
                                 } else {
                                     if (
                                         player.total_points >= rank.pointsNeeded &&
-                                        player.total_points <= prev_mappack_rank.pointsNeeded
+                                        player.total_points < prev_mappack_rank.pointsNeeded
                                     ) {
                                         // This should get rendered.
                                     } else {
