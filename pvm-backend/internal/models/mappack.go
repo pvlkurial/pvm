@@ -21,4 +21,5 @@ type Mappack struct {
 	DiscordURL   string        `json:"discordurl"`
 	SheetURL     string        `json:"sheeturl"`
 	WebsiteURL   string        `json:"websiteurl"`
+	Type         string        `json:"type"`
 }

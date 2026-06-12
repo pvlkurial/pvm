@@ -55,6 +55,7 @@ export interface MappackTrack {
   mapStyle: string | null;
   personal_best?: number;
   track_position?: number;
+  orderPosition?: number;
 }
 
 export interface Mappack {
@@ -73,6 +74,7 @@ export interface Mappack {
   discordurl: string;
   websiteurl: string;
   sheeturl: string;
+  type: string;
 }
 
 export interface Track {

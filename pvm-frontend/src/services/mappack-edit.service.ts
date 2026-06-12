@@ -52,6 +52,7 @@ export const mappackEditService = {
         track_id: track.track_id,
         tier_id: track.tier_id,
         mapStyle: track.mapStyle,
+        orderPosition: track.orderPosition,
         timeGoalMappackTrack: track.timeGoalMappackTrack.map((tg) => ({
           track_id: track.track_id,
           mappack_id: mappack.id,

@@ -266,6 +266,16 @@ export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
     });
   };
 
+  const updateOrderPosition = (trackId: string, value: number) => {
+  if (!editData) return;
+  setEditData({
+    ...editData,
+    MappackTrack: editData.MappackTrack.map((t) =>
+      t.track_id === trackId ? { ...t, orderPosition: value } : t,
+    ),
+  });
+  };
+
   const removeTrackFromState = (trackId: string) => {
     if (!editData) return;
     setEditData({
@@ -290,6 +300,7 @@ export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
     assignTierToTrack,
     updateTrackTime,
     updateMapStyle,
+    updateOrderPosition,
     removeTrackFromState,
   };
 }
