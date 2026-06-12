@@ -15,6 +15,7 @@ interface TrackTimesTabProps {
   ) => void;
   onUpdateMapStyle: (trackId: string, mapStyle: string) => void;
   onDeleteTrack: (trackId: string, trackName: string) => void;
+  onUpdateOrderPosition: (trackId: string, value: number) => void;
   inputClassNames: any;
 }
 
@@ -25,6 +26,7 @@ export function TrackTimesTab({
   onUpdateTrackTime,
   onUpdateMapStyle,
   onDeleteTrack,
+  onUpdateOrderPosition,
   inputClassNames,
 }: TrackTimesTabProps) {
   useEffect(() => {
@@ -85,6 +87,7 @@ export function TrackTimesTab({
                   timeInputValues={timeInputValues}
                   onTimeGoalChange={onUpdateTrackTime}
                   onMapStyleChange={onUpdateMapStyle}
+                  onOrderPositionChange={onUpdateOrderPosition}
                   onDelete={onDeleteTrack}
                   inputClassNames={inputClassNames}
                 />

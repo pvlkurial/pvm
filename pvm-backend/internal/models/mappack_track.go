@@ -13,4 +13,5 @@ type MappackTrack struct {
 	MapStyle             *string      `json:"mapStyle"`
 	PersonalBest         int          `gorm:"-" json:"personal_best,omitempty"`
 	TrackPosition        int          `gorm:"-" json:"track_position,omitempty"`
+	OrderPosition        int          `json:"orderPosition"`
 }

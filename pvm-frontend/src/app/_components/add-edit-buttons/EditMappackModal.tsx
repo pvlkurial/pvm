@@ -66,6 +66,7 @@ export function EditMappackModal({
     assignTierToTrack,
     updateTrackTime,
     updateMapStyle,
+    updateOrderPosition,
     removeTrackFromState,
   } = useEditMappack(mappack, isOpen);
 
@@ -242,6 +243,7 @@ export function EditMappackModal({
                       timeInputValues={timeInputValues}
                       onUpdateTrackTime={updateTrackTime}
                       onUpdateMapStyle={updateMapStyle}
+                      onUpdateOrderPosition={updateOrderPosition}
                       onDeleteTrack={handleDeleteTrack}
                       inputClassNames={MODAL_INPUT_CLASSNAMES}
                     />

@@ -1,7 +1,7 @@
 import { MappackTrack, MappackTier, MappackRank } from "@/types/mappack.types";
 
 export function groupTracksByTier(tracks: MappackTrack[]) {
-  return tracks.reduce(
+  const grouped = tracks.reduce(
     (acc, mappackTrack) => {
       const tierName = mappackTrack.tier?.name || "Unranked";
       if (!acc[tierName]) {
@@ -15,6 +15,14 @@ export function groupTracksByTier(tracks: MappackTrack[]) {
     },
     {} as Record<string, { tier: MappackTier | null; tracks: MappackTrack[] }>,
   );
+
+  for (const tierName in grouped) {
+    grouped[tierName].tracks.sort(
+      (a, b) => (a.orderPosition ?? 0) - (b.orderPosition ?? 0),
+    );
+  }
+
+  return grouped;
 }
 
 export function sortTiersByPoints(
