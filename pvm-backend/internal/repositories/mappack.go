@@ -60,7 +60,10 @@ func (t *mappackRepository) GetById(id string) (models.Mappack, error) {
 		}).
 		Preload("MappackTrack.Track").
 		Preload("MappackTrack.Tier").
-		Preload("MappackTrack.TimeGoalMappackTrack").
+		Preload("MappackTrack.TimeGoalMappackTrack", func(db *gorm.DB) *gorm.DB {
+			return db.Joins("JOIN time_goals ON time_goals.id = time_goal_mappack_tracks.timegoal_id").
+				Order("time_goals.multiplier ASC")
+		}).
 		Preload("MappackTrack.TimeGoalMappackTrack.TimeGoal").
 		Preload("MapStyle").
 		Where("ID = ?", id).
@@ -83,7 +86,10 @@ func (t *mappackRepository) GetByIdAll(id string) (models.Mappack, error) {
 		}).
 		Preload("MappackTrack.Track").
 		Preload("MappackTrack.Tier").
-		Preload("MappackTrack.TimeGoalMappackTrack").
+		Preload("MappackTrack.TimeGoalMappackTrack", func(db *gorm.DB) *gorm.DB {
+			return db.Joins("JOIN time_goals ON time_goals.id = time_goal_mappack_tracks.timegoal_id").
+				Order("time_goals.multiplier ASC")
+		}).
 		Preload("MappackTrack.TimeGoalMappackTrack.TimeGoal").
 		Preload("MapStyle").
 		Where("ID = ?", id).
