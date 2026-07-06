@@ -12,6 +12,7 @@ import {
 } from "@/utils/player.utils";
 import { TrackCardRank } from "./track-card/TrackCardRank";
 import { TrackCardCopy } from "./track-card/TrackCardCopy";
+import { TrackCardPlay } from "./track-card/TrackCardPlay";
 
 interface TrackCardProps {
   mappackTrack: MappackTrack;
@@ -62,19 +63,34 @@ export default function TrackCard({
       isPressable
       onPress={() => router.push(`${mappackId}/${track.id}`)}
     >
-      <CardHeader className="absolute z-10 top-0 w-full flex flex-col items-center justify-between bg-transparent group-hover:bg-black/30 group-hover:backdrop-blur-sm transition-all duration-300">
-        <h4 className="text-white text-xl text-shadow-lg/30">
-          <FormattedText text={track.name} />
-        </h4>
-        <p className="text-white/30 text-sm">{track.author}</p>
+<CardHeader className="absolute z-10 top-2 left-1/2 -translate-x-1/2 w-auto max-w-[90%] p-0 bg-transparent flex justify-center">
+  <div
+    className="flex flex-col items-center min-w-0 w-full rounded-2xl px-3 py-1.5"
+    style={{
+      background: "rgba(0,0,0,0.35)",
+      boxShadow: "inset 0 0 0 1px rgba(255,255,255,0.08)",
+      backdropFilter: "blur(10px)",
+    }}
+  >
+    <h4 className="text-white text-xs sm:text-sm font-medium text-center leading-tight text-balance">
+      <FormattedText text={track.name} />
+    </h4>
+
+    <div className="grid grid-rows-[0fr] group-hover:grid-rows-[1fr] transition-[grid-template-rows] duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] w-full">
+      <div className="overflow-hidden min-w-0">
+        <p className="pt-0.5 text-white/50 text-[10px] sm:text-xs text-center leading-tight">
+          {track.author}
+        </p>
+      </div>
+    </div>
+  </div>
+</CardHeader>
 
         {/* Tier Badge */}
-      </CardHeader>
-
       {mappackTrack.track_position && (
         <TrackCardRank position={mappackTrack.track_position} />
       )}
-      <TrackCardCopy tmxId={mappackTrack.track.tmxID ?? "test"} />
+      <TrackCardPlay trackId={track.id} />
 
       <Image
         removeWrapper
@@ -84,16 +100,21 @@ export default function TrackCard({
       />
 
       <CardFooter
-        className={`
-          absolute bg-black/40 backdrop-blur-sm -bottom-1 left-0 right-0 border-t border-white/10 z-10
-          transition-transform duration-300 ease-in-out pt-2 p-1.5
-          ${
-            alwaysShowDetails
-              ? "translate-y-0"
-              : "translate-y-full group-hover:translate-y-0"
-          }
-        `}
-      >
+  className={`
+    absolute -bottom-1 left-0 right-0 z-10
+    transition-transform duration-300 ease-in-out pt-2 p-1.5
+    ${
+      alwaysShowDetails
+        ? "translate-y-0"
+        : "translate-y-full group-hover:translate-y-0"
+    }
+  `}
+  style={{
+    background: "rgba(0,0,0,0.35)",
+    boxShadow: "inset 0 1px 0 rgba(255,255,255,0.08)",
+    backdropFilter: "blur(10px)",
+  }}
+>
         <div className="w-full flex flex-col px-2">
           <div className="flex items-center justify-between">
             <span className="text-[10px] text-white/40 uppercase tracking-wider">
