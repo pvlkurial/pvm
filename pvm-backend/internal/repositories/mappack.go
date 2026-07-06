@@ -56,6 +56,7 @@ func (t *mappackRepository) GetById(id string) (models.Mappack, error) {
 			return db.Joins("LEFT JOIN mappack_tiers ON mappack_tiers.id = mappack_tracks.tier_id").
 				Where("mappack_tiers.is_hidden = ? OR mappack_tracks.tier_id IS NULL", false).
 				Order("mappack_tiers.points ASC").
+				Order("mappack_tiers.name ASC").
 				Order("mappack_tracks.order_position ASC")
 		}).
 		Preload("MappackTrack.Track").
@@ -82,6 +83,7 @@ func (t *mappackRepository) GetByIdAll(id string) (models.Mappack, error) {
 		Preload("MappackTrack", func(db *gorm.DB) *gorm.DB {
 			return db.Joins("LEFT JOIN mappack_tiers ON mappack_tiers.id = mappack_tracks.tier_id").
 				Order("mappack_tiers.points ASC").
+				Order("mappack_tiers.name ASC").
 				Order("mappack_tracks.order_position ASC")
 		}).
 		Preload("MappackTrack.Track").
