@@ -14,24 +14,15 @@
   }
 
   .mp-section-head {
-    display: flex;
-    align-items: center;
-    gap: 18px;
     margin-bottom: 18px;
   }
   .mp-section-label {
-    font-size: 13px;
-    font-weight: 700;
-    letter-spacing: 0.3em;
+    font-size: 30px;
+    line-height: 1.1;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
-    color: rgb(255 255 255 / 0.75);
-    white-space: nowrap;
+    color: #fff;
     margin: 0;
-  }
-  .mp-section-rule {
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(to right, rgb(255 255 255 / 0.2), transparent);
   }
 
   .mp-grid {

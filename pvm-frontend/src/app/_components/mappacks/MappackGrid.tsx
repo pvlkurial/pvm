@@ -24,8 +24,7 @@ export function MappackGrid({
 
   const header = (
     <header className="mp-section-head">
-      <h2 className="mp-section-label">{label}</h2>
-      <span className="mp-section-rule" />
+      <h2 className="mp-section-label font-ruigslay">{label}</h2>
     </header>
   );
 
