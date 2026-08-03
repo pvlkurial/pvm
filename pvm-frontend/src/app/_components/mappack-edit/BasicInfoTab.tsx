@@ -163,6 +163,21 @@ export function BasicInfoTab({
           </span>
         </span>
       </Switch>
+
+      <Switch
+        isSelected={editData.isNew ?? false}
+        onValueChange={(checked) => onUpdate({ isNew: checked })}
+        classNames={{
+          wrapper: "group-data-[selected=true]:bg-white bg-neutral-600",
+        }}
+      >
+        <span className="text-white">
+          New
+          <span className="block text-xs text-neutral-400">
+            Shows a NEW badge on the card
+          </span>
+        </span>
+      </Switch>
     </div>
   );
 }

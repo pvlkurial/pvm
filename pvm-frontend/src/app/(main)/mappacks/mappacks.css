@@ -159,6 +159,40 @@
     line-height: 1.1;
     margin: 0;
   }
+  /* Sits inline after the name, skewed back the other way like .mp-dot so it
+     reads as a tag pinned to the card's slant. Picks up the mappack's accent
+     colour where one is set. */
+  .mp-new {
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 10px;
+    padding: 3px 8px 2px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    line-height: 1;
+    color: #06080c;
+    background: var(--mp-accent, #fff);
+    transform: skewX(-12deg);
+    box-shadow: 0 0 14px var(--mp-accent, rgb(255 255 255 / 0.5));
+    animation: mp-new-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes mp-new-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.72;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mp-new {
+      animation: none;
+    }
+  }
+
   .mp-count {
     font-size: 11px;
     letter-spacing: 0.15em;

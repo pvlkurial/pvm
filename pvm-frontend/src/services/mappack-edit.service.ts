@@ -12,6 +12,7 @@ export const mappackEditService = {
       isActive: mappack.isActive,
       type: mappack.type || DEFAULT_MAPPACK_TYPE,
       featured: mappack.featured ?? false,
+      isNew: mappack.isNew ?? false,
       mapStyleName: mappack.mapStyleName,
       organization: mappack.organization,
       accentColor: mappack.accentColor,

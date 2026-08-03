@@ -22,6 +22,7 @@ export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
         ...deepCopy,
         type: deepCopy.type || DEFAULT_MAPPACK_TYPE,
         featured: deepCopy.featured ?? false,
+        isNew: deepCopy.isNew ?? false,
         timeGoals: deepCopy.timeGoals || [],
         mappackTiers: deepCopy.mappackTiers || [],
         mappackRanks: deepCopy.mappackRanks || [],

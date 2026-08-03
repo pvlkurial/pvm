@@ -79,6 +79,8 @@ export interface Mappack {
   type: MappackType;
   /** Featured mappacks sort ahead of the rest in every listing. */
   featured: boolean;
+  /** Shows a NEW badge on the card until switched off. */
+  isNew: boolean;
 }
 
 export interface Track {

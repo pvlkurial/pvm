@@ -38,6 +38,7 @@ export default function CreateMappackModal() {
   const [thumbnailURL, setThumbnailURL] = useState("");
   const [type, setType] = useState<MappackType>(DEFAULT_MAPPACK_TYPE);
   const [featured, setFeatured] = useState(false);
+  const [isNew, setIsNew] = useState(false);
   const [timeGoals, setTimeGoals] = useState<TimeGoal[]>([]);
   const [currentGoalName, setCurrentGoalName] = useState("");
   const [currentGoalDifficulty, setCurrentGoalDifficulty] = useState(1);
@@ -72,6 +73,7 @@ export default function CreateMappackModal() {
         isActive: true,
         type,
         featured,
+        isNew,
         ...(mapStyleName ? { mapStyleName } : { mapStyleName: "Tech" }),
       });
 
@@ -221,6 +223,21 @@ export default function CreateMappackModal() {
                     Featured
                     <span className="block text-xs text-neutral-400">
                       Shown first in listings
+                    </span>
+                  </span>
+                </Switch>
+
+                <Switch
+                  isSelected={isNew}
+                  onValueChange={setIsNew}
+                  classNames={{
+                    wrapper: "group-data-[selected=true]:bg-white bg-neutral-600",
+                  }}
+                >
+                  <span className="text-white">
+                    New
+                    <span className="block text-xs text-neutral-400">
+                      Shows a NEW badge on the card
                     </span>
                   </span>
                 </Switch>

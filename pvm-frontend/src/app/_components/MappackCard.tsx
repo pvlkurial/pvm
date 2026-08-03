@@ -20,7 +20,13 @@ export default function MappackCard({
     <Link
       href={`/mappacks/${mappack.id}`}
       className="mp-card"
-      style={{ width }}
+      // Set here rather than on the bar so every descendant can pick it up.
+      style={
+        {
+          width,
+          ...(mappack.accentColor ? { "--mp-accent": mappack.accentColor } : {}),
+        } as React.CSSProperties
+      }
       tabIndex={isClone ? -1 : 0}
       draggable={false}
       onClick={(e) => {
@@ -33,14 +39,7 @@ export default function MappackCard({
           style={{ backgroundImage: `url(${mappack.thumbnailURL})` }}
         />
         <div className="mp-grad" />
-        <div
-          className="mp-accent"
-          style={
-            mappack.accentColor
-              ? ({ "--mp-accent": mappack.accentColor } as React.CSSProperties)
-              : undefined
-          }
-        />
+        <div className="mp-accent" />
         {(mappack as Mappack & { mapStyleName?: string }).mapStyleName && (
           <MapStyleIcon
             styleKey={
@@ -50,7 +49,10 @@ export default function MappackCard({
           />
         )}
         <div className="mp-text">
-          <p className="mp-name">{mappack.name}</p>
+          <p className="mp-name">
+            {mappack.name}
+            {mappack.isNew && <span className="mp-new">New</span>}
+          </p>
           {mappack.MappackTrack?.length > 0 && (
             <p className="mp-count">{mappack.MappackTrack.length} tracks</p>
           )}

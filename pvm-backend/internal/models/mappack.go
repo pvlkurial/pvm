@@ -30,4 +30,5 @@ type Mappack struct {
 	WebsiteURL   string        `json:"websiteurl"`
 	Type         string        `gorm:"default:pvm" json:"type"`
 	Featured     bool          `gorm:"default:false" json:"featured"`
+	IsNew        bool          `gorm:"default:false" json:"isNew"`
 }
