@@ -24,6 +24,7 @@ import { API_BASE } from "@/constants/miscellaneous";
 import { MAP_STYLES } from "@/constants/map-styles";
 import { MAPPACK_TYPES, DEFAULT_MAPPACK_TYPE } from "@/constants/mappack-types";
 import { MappackType } from "@/types/mappack.types";
+import { ADMIN_BUTTON, ADMIN_BUTTON_PRIMARY, ADMIN_BUTTON_DANGER } from "@/constants/button-styles";
 
 interface TimeGoal {
   name: string;
@@ -94,7 +95,7 @@ export default function CreateMappackModal() {
 
   return (
     <div>
-      <Button color="default" variant="bordered" onPress={onOpen}>
+      <Button className={ADMIN_BUTTON} onPress={onOpen}>
         Add Mappack
       </Button>
       <Modal
@@ -273,7 +274,7 @@ export default function CreateMappackModal() {
                         "border-gray-700 data-[hover=true]:border-gray-600 group-data-[focus=true]:bg-neutral-900 group-data-[focus=true]:border-white",
                     }}
                   />
-                  <Button color="default" onPress={handleAddTimeGoal}>
+                  <Button className={ADMIN_BUTTON} onPress={handleAddTimeGoal}>
                     Add
                   </Button>
                 </div>
@@ -293,8 +294,7 @@ export default function CreateMappackModal() {
                         </div>
                         <Button
                           size="sm"
-                          color="default"
-                          variant="flat"
+                          className={ADMIN_BUTTON_DANGER}
                           onPress={() => handleRemoveTimeGoal(index)}
                         >
                           Remove
@@ -305,10 +305,10 @@ export default function CreateMappackModal() {
                 )}
               </ModalBody>
               <ModalFooter>
-                <Button color="default" variant="bordered" onPress={onClose}>
+                <Button className={ADMIN_BUTTON} onPress={onClose}>
                   Close
                 </Button>
-                <Button color="default" onPress={handleCreateMappack}>
+                <Button className={ADMIN_BUTTON_PRIMARY} onPress={handleCreateMappack}>
                   Create Mappack
                 </Button>
               </ModalFooter>

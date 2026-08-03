@@ -4,6 +4,7 @@ import { Button, Checkbox, Chip, Select, SelectItem } from "@heroui/react";
 import { adminService } from "@/services/admin.service";
 import { AdminUser, Role } from "@/types/auth";
 import { Mappack } from "@/types/mappack.types";
+import { ADMIN_BUTTON, ADMIN_BUTTON_PRIMARY } from "@/constants/button-styles";
 
 const ROLES: { key: Role; label: string }[] = [
   { key: "user", label: "User" },
@@ -117,7 +118,7 @@ export function AdminUserRow({
         {user.role === "admin" && (
           <Button
             size="sm"
-            variant="flat"
+            className={ADMIN_BUTTON}
             onPress={() => setIsExpanded((open) => !open)}
           >
             {isExpanded ? "Hide" : "Mappacks"} ({selected.length})
@@ -162,7 +163,7 @@ export function AdminUserRow({
           <div className="flex justify-end gap-2">
             <Button
               size="sm"
-              variant="bordered"
+              className={ADMIN_BUTTON}
               isDisabled={!isDirty || isSaving}
               onPress={() => setSelected(user.mappack_ids ?? [])}
             >
@@ -170,7 +171,7 @@ export function AdminUserRow({
             </Button>
             <Button
               size="sm"
-              color="default"
+              className={ADMIN_BUTTON_PRIMARY}
               isDisabled={!isDirty}
               isLoading={isSaving}
               onPress={handleSavePermissions}

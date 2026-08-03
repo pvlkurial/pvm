@@ -2,6 +2,7 @@ import { Button, Input, Select, SelectItem, Image } from "@heroui/react";
 import { MappackTier, MappackTrack } from "@/types/mappack.types";
 import { ColorPicker } from "@/utils/colorPicker";
 import { FormattedText } from "@/utils/textConverter";
+import { ADMIN_BUTTON, ADMIN_BUTTON_DANGER } from "@/constants/button-styles";
 
 interface TiersTabProps {
   tiers: MappackTier[];
@@ -81,11 +82,9 @@ export function TiersTab({
                 />
               </div>
               <Button
-                color="danger"
-                variant="flat"
                 onPress={() => onRemoveTier(tier.id)}
                 isIconOnly
-                className="shrink-0"
+                className={`shrink-0 ${ADMIN_BUTTON_DANGER}`}
               >
                 ✕
               </Button>
@@ -93,7 +92,7 @@ export function TiersTab({
           ))}
         </div>
 
-        <Button color="default" onPress={onAddTier} className="mt-3">
+        <Button onPress={onAddTier} className={`mt-3 ${ADMIN_BUTTON}`}>
           Add Tier
         </Button>
       </div>

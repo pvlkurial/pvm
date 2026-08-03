@@ -1,6 +1,7 @@
 import { Button } from "@heroui/react";
 import { MappackRank } from "@/types/mappack.types";
 import { RankEditor } from "./RankEditor";
+import { ADMIN_BUTTON } from "@/constants/button-styles";
 
 interface RanksTabProps {
   ranks: MappackRank[];
@@ -34,7 +35,7 @@ export function RanksTab({ ranks, onAdd, onUpdate, onRemove, inputClassNames }: 
         ))}
       </div>
 
-      <Button color="default" onPress={onAdd}>
+      <Button className={ADMIN_BUTTON} onPress={onAdd}>
         Add Rank
       </Button>
     </div>

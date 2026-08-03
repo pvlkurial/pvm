@@ -1,5 +1,6 @@
 import { Button, Input } from "@heroui/react";
 import { TimeGoal } from "@/types/mappack.types";
+import { ADMIN_BUTTON, ADMIN_BUTTON_DANGER } from "@/constants/button-styles";
 
 interface TimeGoalsTabProps {
   timeGoals: TimeGoal[];
@@ -52,8 +53,7 @@ export function TimeGoalsTab({
           />
           <Button
             size="sm"
-            color="danger"
-            variant="flat"
+            className={ADMIN_BUTTON_DANGER}
             onPress={() => onRemove(timegoal.id)}
             isIconOnly
           >
@@ -61,7 +61,7 @@ export function TimeGoalsTab({
           </Button>
         </div>
       ))}
-      <Button color="default" onPress={onAdd}>
+      <Button className={ADMIN_BUTTON} onPress={onAdd}>
         Add Time Goal
       </Button>
     </div>

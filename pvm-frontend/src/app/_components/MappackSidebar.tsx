@@ -4,6 +4,7 @@ import { EditMappackModal } from "@/app/_components/add-edit-buttons/EditMappack
 import RequireMappackPermission from "@/app/_components/RequireMappackPermission";
 import { Mappack, MappackTier, MappackTrack } from "@/types/mappack.types";
 import { FaDiscord, FaGlobe, FaTable } from "react-icons/fa6";
+import { ADMIN_BUTTON } from "@/constants/button-styles";
 
 interface MappackSidebarProps {
   mappack: Mappack;
@@ -162,7 +163,7 @@ export function MappackSidebar({
         <RequireMappackPermission mappackId={mappack.id}>
           <hr className="border-white/10" />
           <div className="flex justify-center">
-            <Button onPress={onEditClick} size="sm" variant="flat">
+            <Button onPress={onEditClick} size="sm" className={ADMIN_BUTTON}>
               Edit Mappack
             </Button>
             <EditMappackModal

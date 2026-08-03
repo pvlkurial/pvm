@@ -3,6 +3,7 @@ import { Input, Image, Button } from "@heroui/react";
 import { MappackTrack, TimeGoal } from "@/types/mappack.types";
 import { FormattedText } from "@/utils/textConverter";
 import { FaChevronDown, FaChevronUp, FaTrash } from "react-icons/fa";
+import { ADMIN_BUTTON, ADMIN_BUTTON_DANGER } from "@/constants/button-styles";
 
 interface CollapsibleTrackItemProps {
   track: MappackTrack;
@@ -51,8 +52,7 @@ export function CollapsibleTrackItem({
         <div className="flex items-center gap-2">
           <Button
             size="sm"
-            color="danger"
-            variant="flat"
+            className={ADMIN_BUTTON_DANGER}
             isIconOnly
             onPress={() => onDelete(track.track_id, track.track.name)}
           >
@@ -61,10 +61,9 @@ export function CollapsibleTrackItem({
 
           <Button
             size="sm"
-            variant="light"
             isIconOnly
             onPress={() => setIsOpen(!isOpen)}
-            className="text-white"
+            className={ADMIN_BUTTON}
           >
             {isOpen ? (
               <FaChevronUp className="w-4 h-4" />

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button, Input, Select, SelectItem, Switch } from "@heroui/react";
 import { MappackRank } from "@/types/mappack.types";
 import { ColorPicker } from "@/utils/colorPicker";
+import { ADMIN_BUTTON_DANGER } from "@/constants/button-styles";
 
 interface RankEditorProps {
   rank: MappackRank;
@@ -265,8 +266,7 @@ export function RankEditor({ rank, index, onUpdate, onRemove, inputClassNames }:
           {/* Remove Button */}
           <div className="flex justify-end">
             <Button
-              color="danger"
-              variant="flat"
+              className={ADMIN_BUTTON_DANGER}
               onPress={() => onRemove(rank.id)}
               size="sm"
             >
