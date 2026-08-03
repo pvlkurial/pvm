@@ -29,4 +29,5 @@ type Mappack struct {
 	SheetURL     string        `json:"sheeturl"`
 	WebsiteURL   string        `json:"websiteurl"`
 	Type         string        `gorm:"default:pvm" json:"type"`
+	Featured     bool          `gorm:"default:false" json:"featured"`
 }

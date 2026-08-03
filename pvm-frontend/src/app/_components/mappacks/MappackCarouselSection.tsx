@@ -15,7 +15,6 @@ type Item =
   | { kind: "add"; id: string };
 
 interface MappackCarouselSectionProps {
-  label: string;
   mappacks: Mappack[];
   /** Appends the create card at the end of the row. */
   showAddCard?: boolean;
@@ -26,7 +25,6 @@ interface MappackCarouselSectionProps {
 }
 
 export function MappackCarouselSection({
-  label,
   mappacks,
   showAddCard = false,
   isOnlySection,
@@ -66,14 +64,6 @@ export function MappackCarouselSection({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      <header className="mp-section-head">
-        <span className="mp-section-label">{label}</span>
-        <span className="mp-section-rule" />
-        <span className="mp-section-count">
-          {mappacks.length > 0 ? String(mappacks.length).padStart(2, "0") : ""}
-        </span>
-      </header>
-
       <div className="mp-viewport" ref={viewportRef}>
         {needsCarousel && <CarouselArrow direction="prev" onClick={prev} />}
 

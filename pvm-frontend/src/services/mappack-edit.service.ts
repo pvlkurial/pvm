@@ -11,6 +11,7 @@ export const mappackEditService = {
       thumbnailURL: mappack.thumbnailURL,
       isActive: mappack.isActive,
       type: mappack.type || DEFAULT_MAPPACK_TYPE,
+      featured: mappack.featured ?? false,
       mapStyleName: mappack.mapStyleName,
       organization: mappack.organization,
       accentColor: mappack.accentColor,

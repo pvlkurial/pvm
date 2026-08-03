@@ -5,6 +5,7 @@ import {
   NumberInput,
   Select,
   SelectItem,
+  Switch,
   Textarea,
 } from "@heroui/react";
 import { useRouter } from "next/navigation";
@@ -36,6 +37,7 @@ export default function CreateMappackModal() {
   const [mapStyleName, setMapStyleName] = useState<string | null>(null);
   const [thumbnailURL, setThumbnailURL] = useState("");
   const [type, setType] = useState<MappackType>(DEFAULT_MAPPACK_TYPE);
+  const [featured, setFeatured] = useState(false);
   const [timeGoals, setTimeGoals] = useState<TimeGoal[]>([]);
   const [currentGoalName, setCurrentGoalName] = useState("");
   const [currentGoalDifficulty, setCurrentGoalDifficulty] = useState(1);
@@ -69,6 +71,7 @@ export default function CreateMappackModal() {
         thumbnailURL,
         isActive: true,
         type,
+        featured,
         ...(mapStyleName ? { mapStyleName } : { mapStyleName: "Tech" }),
       });
 
@@ -206,6 +209,21 @@ export default function CreateMappackModal() {
                     </AutocompleteItem>
                   )}
                 </Autocomplete>
+
+                <Switch
+                  isSelected={featured}
+                  onValueChange={setFeatured}
+                  classNames={{
+                    wrapper: "group-data-[selected=true]:bg-white bg-neutral-600",
+                  }}
+                >
+                  <span className="text-white">
+                    Featured
+                    <span className="block text-xs text-neutral-400">
+                      Shown first in listings
+                    </span>
+                  </span>
+                </Switch>
 
                 <div className="grid grid-cols-[auto_1fr] items-center gap-2 mt-4">
                   <p className="text-xl font-ruigslay">Time Goals</p>

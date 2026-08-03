@@ -54,7 +54,6 @@ export default function MapppacksPage() {
   return (
     <div className="mp-page">
       <MappackCarouselSection
-        label="Player vs Map"
         mappacks={mappacks}
         showAddCard={canCreateMappack}
         isOnlySection={!showCampaigns}
@@ -64,7 +63,6 @@ export default function MapppacksPage() {
 
       {showCampaigns && (
         <MappackCarouselSection
-          label="Campaigns"
           mappacks={campaigns}
           isOnlySection={false}
           isLoading={loading}

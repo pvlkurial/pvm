@@ -111,6 +111,7 @@ func (t *mappackRepository) GetAllByType(mappackType string) ([]models.Mappack, 
 	mappacks := []models.Mappack{}
 	err := t.db.Where("is_active = ?", true).
 		Where(`"type" = ?`, mappackType).
+		Order("featured DESC").
 		Order("name ASC").
 		Find(&mappacks).Error
 	return mappacks, err
@@ -120,7 +121,7 @@ func (t *mappackRepository) GetAllByType(mappackType string) ([]models.Mappack, 
 // admin surfaces such as permission management.
 func (t *mappackRepository) GetAllUnfiltered() ([]models.Mappack, error) {
 	mappacks := []models.Mappack{}
-	err := t.db.Order("name ASC").Find(&mappacks).Error
+	err := t.db.Order("featured DESC").Order("name ASC").Find(&mappacks).Error
 	return mappacks, err
 }
 

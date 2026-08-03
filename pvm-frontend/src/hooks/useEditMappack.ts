@@ -21,6 +21,7 @@ export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
       const sanitizedData = {
         ...deepCopy,
         type: deepCopy.type || DEFAULT_MAPPACK_TYPE,
+        featured: deepCopy.featured ?? false,
         timeGoals: deepCopy.timeGoals || [],
         mappackTiers: deepCopy.mappackTiers || [],
         mappackRanks: deepCopy.mappackRanks || [],

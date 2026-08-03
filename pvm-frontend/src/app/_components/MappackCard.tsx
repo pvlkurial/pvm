@@ -33,7 +33,14 @@ export default function MappackCard({
           style={{ backgroundImage: `url(${mappack.thumbnailURL})` }}
         />
         <div className="mp-grad" />
-        <div className="mp-accent" />
+        <div
+          className="mp-accent"
+          style={
+            mappack.accentColor
+              ? ({ "--mp-accent": mappack.accentColor } as React.CSSProperties)
+              : undefined
+          }
+        />
         {(mappack as Mappack & { mapStyleName?: string }).mapStyleName && (
           <MapStyleIcon
             styleKey={

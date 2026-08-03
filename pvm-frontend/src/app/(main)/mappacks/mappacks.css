@@ -20,37 +20,6 @@
     border-top: 1px solid rgb(255 255 255 / 0.07);
   }
 
-  .mp-section-head {
-    display: flex;
-    align-items: center;
-    gap: 16px;
-    padding: 14px 28px 10px;
-    flex-shrink: 0;
-  }
-  .mp-section-label {
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.28em;
-    text-transform: uppercase;
-    color: rgb(255 255 255 / 0.55);
-    white-space: nowrap;
-  }
-  .mp-section-rule {
-    flex: 1;
-    height: 1px;
-    background: linear-gradient(
-      to right,
-      rgb(255 255 255 / 0.18),
-      transparent
-    );
-  }
-  .mp-section-count {
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    color: rgb(255 255 255 / 0.25);
-    font-variant-numeric: tabular-nums;
-  }
-
   .mp-viewport {
     position: relative;
     width: 100%;
@@ -147,18 +116,27 @@
   }
 
 
+  /* Sweeps across the bottom of the card on hover, in the mappack's own accent
+     colour. Falls back to white for mappacks that have none set. */
   .mp-accent {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: rgb(255 255 255 / 0.22);
-    opacity: 0;
-    transition: opacity 0.3s;
+    height: 3px;
+    background: var(--mp-accent, rgb(255 255 255 / 0.5));
+    box-shadow: 0 0 12px var(--mp-accent, rgb(255 255 255 / 0.4));
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   }
   .mp-card:hover .mp-accent {
-    opacity: 1;
+    transform: scaleX(1);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mp-accent {
+      transition: none;
+    }
   }
 
 

@@ -77,6 +77,8 @@ export interface Mappack {
   websiteurl: string;
   sheeturl: string;
   type: MappackType;
+  /** Featured mappacks sort ahead of the rest in every listing. */
+  featured: boolean;
 }
 
 export interface Track {

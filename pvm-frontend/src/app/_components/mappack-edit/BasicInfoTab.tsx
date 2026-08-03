@@ -148,6 +148,21 @@ export function BasicInfoTab({
       >
         <span className="text-white">Active</span>
       </Switch>
+
+      <Switch
+        isSelected={editData.featured ?? false}
+        onValueChange={(checked) => onUpdate({ featured: checked })}
+        classNames={{
+          wrapper: "group-data-[selected=true]:bg-white bg-neutral-600",
+        }}
+      >
+        <span className="text-white">
+          Featured
+          <span className="block text-xs text-neutral-400">
+            Shown first in listings
+          </span>
+        </span>
+      </Switch>
     </div>
   );
 }
