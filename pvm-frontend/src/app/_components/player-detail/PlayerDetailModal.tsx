@@ -93,8 +93,6 @@ export default function PlayerDetailModal({
                   playerId={playerId}
                   playerName={playerName}
                   ranks={playerMappack.mappackRanks}
-                  completionCurrent={current}
-                  completionTotal={total}
                 />
               </div>
 

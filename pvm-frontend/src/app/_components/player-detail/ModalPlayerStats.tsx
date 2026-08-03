@@ -10,9 +10,6 @@ interface ModalPlayerStatsProps {
   playerName: string;
   ranks: MappackRank[];
   accentColor?: string;
-  /** Completed tracks, shown alongside points and rank. */
-  completionCurrent?: number;
-  completionTotal?: number;
 }
 
 function StatTile({
@@ -38,8 +35,6 @@ export function ModalPlayerStats({
   playerName,
   ranks,
   accentColor,
-  completionCurrent,
-  completionTotal,
 }: ModalPlayerStatsProps) {
   const { stats, loading, error } = usePlayerStats(mappackId, playerId);
 
@@ -67,26 +62,13 @@ export function ModalPlayerStats({
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Name is the single headline; the rank badge sits beside it. */}
-      <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0">
-          <p className="text-[10px] tracking-widest uppercase text-white/35 mb-1 text-label">
-            Player
-          </p>
-          <h2 className="text-3xl font-bold leading-tight truncate text-label">
-            {playerName}
-          </h2>
-        </div>
-
-        {playerRank && (
-          <div className="shrink-0">
-            <RankDisplay
-              rank={playerRank}
-              nextRank={nextRank}
-              currentPoints={entry.total_points}
-            />
-          </div>
-        )}
+      <div className="min-w-0">
+        <p className="text-[10px] tracking-widest uppercase text-white/35 mb-1 text-label">
+          Player
+        </p>
+        <h2 className="text-3xl font-bold leading-tight truncate text-label">
+          {playerName}
+        </h2>
       </div>
 
       {/* Equal-weight tiles so no single figure dominates the modal. */}
@@ -106,13 +88,16 @@ export function ModalPlayerStats({
           </p>
         </StatTile>
 
-        {completionTotal !== undefined && completionTotal > 0 && (
-          <StatTile label="Goals Completed">
-            <p className="text-2xl font-ruigslay font-bold text-white leading-none">
-              {completionCurrent}
-              <span className="text-white/35">/{completionTotal}</span>
-            </p>
-          </StatTile>
+        {/* RankDisplay brings its own label and next-rank progress, so it sits
+            in the tile directly rather than inside StatTile. */}
+        {playerRank && (
+          <div className="flex-1 min-w-[180px] rounded-lg bg-white/[0.04] border border-white/[0.06] px-4 py-3">
+            <RankDisplay
+              rank={playerRank}
+              nextRank={nextRank}
+              currentPoints={entry.total_points}
+            />
+          </div>
         )}
       </div>
     </div>
