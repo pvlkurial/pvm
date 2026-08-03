@@ -148,6 +148,19 @@ func (t *RecordController) GetTrackWithRecords(c *gin.Context) {
 	c.JSON(http.StatusOK, track)
 }
 
+func (t *RecordController) GetUIDTrackWithRecords(c *gin.Context) {
+	trackId := c.Param("track_uid")
+	mappack_id := c.Param("mappack_id")
+	playerID := c.Query("player_id")
+	var track dtos.TrackInMappackDto
+	track, err := t.recordService.GetTrackUIDWithRecords(mappack_id, trackId, &playerID)
+	if err != nil {
+		fmt.Printf("Error occurred while creating a Record: %s\n", err)
+		c.String(http.StatusInternalServerError, "Internal Server Error")
+	}
+	c.JSON(http.StatusOK, track)
+}
+
 func (t *RecordController) FetchPlayersRecordsForTrack(c *gin.Context) {
 	trackId := c.Param("track_id")
 	playerId := c.Param("player_id")
