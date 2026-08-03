@@ -24,6 +24,7 @@ import {
   MODAL_CLASSNAMES,
   TAB_CLASSNAMES,
 } from "@/constants/modal-styles";
+import { ADMIN_BUTTON, ADMIN_BUTTON_PRIMARY } from "@/constants/button-styles";
 
 interface EditMappackModalProps {
   mappack: Mappack | null;
@@ -251,11 +252,11 @@ export function EditMappackModal({
                 </Tabs>
               </ModalBody>
               <ModalFooter>
-                <Button color="default" variant="bordered" onPress={onClose}>
+                <Button className={ADMIN_BUTTON} onPress={onClose}>
                   Cancel
                 </Button>
                 <Button
-                  color="default"
+                  className={ADMIN_BUTTON_PRIMARY}
                   onPress={handleSave}
                   isLoading={isSaving}
                 >

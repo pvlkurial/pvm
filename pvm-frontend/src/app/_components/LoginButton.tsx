@@ -7,6 +7,11 @@ import {
   DropdownItem,
 } from "@heroui/react";
 import { useAuth } from "@/contexts/AuthContext";
+import {
+  ROLE_LABELS,
+  ROLE_DESCRIPTIONS,
+  ROLE_BADGE_CLASSES,
+} from "@/constants/roles";
 
 export default function LoginButton() {
   const { isAuthenticated, user, login, logout, isLoading } = useAuth();
@@ -25,9 +30,11 @@ export default function LoginButton() {
         <DropdownTrigger>
           <button className="hover:border-gray-700 hover:bg-neutral-700 text-label py-2 rounded px-4 cursor-pointer rounded-lg duration-200">
             {user.name}
-            {user.role === "admin" && (
-              <span className="ml-2 text-xs bg-yellow-500/20 text-yellow-400 px-2 py-1 rounded">
-                Admin
+            {ROLE_BADGE_CLASSES[user.role] && (
+              <span
+                className={`ml-2 text-xs px-2 py-1 rounded ${ROLE_BADGE_CLASSES[user.role]}`}
+              >
+                {ROLE_LABELS[user.role]}
               </span>
             )}
           </button>
@@ -41,7 +48,7 @@ export default function LoginButton() {
           <DropdownItem key="info" isReadOnly className="opacity-100">
             <p className="text-sm text-white">{user.name}</p>
             <p className="text-xs text-gray-400">
-              {user.role === "admin" ? "Administrator" : "User"}
+              {ROLE_DESCRIPTIONS[user.role] ?? ROLE_DESCRIPTIONS.user}
             </p>
           </DropdownItem>
           <DropdownItem

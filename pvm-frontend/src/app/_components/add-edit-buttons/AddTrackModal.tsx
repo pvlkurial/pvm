@@ -12,7 +12,11 @@ import { useAddTrackForm } from "@/hooks/useAddTrackForm";
 import { trackService } from "@/services/track.service";
 import { TrackIdInput } from "../add-track/TrackIdInput";
 import { TimeGoalsInput } from "../add-track/TimeGoalsInput";
-import { MODAL_INPUT_CLASSNAMES } from "@/constants/modal-styles";
+import {
+  MODAL_INPUT_CLASSNAMES,
+  MODAL_CLASSNAMES,
+} from "@/constants/modal-styles";
+import { ADMIN_BUTTON, ADMIN_BUTTON_PRIMARY } from "@/constants/button-styles";
 
 interface AddTrackModalProps {
   timegoals: TimeGoal[];
@@ -77,10 +81,7 @@ export default function AddTrackModal({
 
   return (
     <div>
-      <Button
-        className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white"
-        onPress={onOpen}
-      >
+      <Button className={ADMIN_BUTTON} onPress={onOpen}>
         Add New Track
       </Button>
       <Modal
@@ -89,20 +90,13 @@ export default function AddTrackModal({
         onOpenChange={onOpenChange}
         size="4xl"
         scrollBehavior="inside"
-        classNames={{
-          base: "bg-neutral-900",
-          header: "border-b border-white/10",
-          body: "py-6",
-          footer: "border-t border-white/10",
-        }}
+        classNames={MODAL_CLASSNAMES}
       >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
-                <h2 className="text-2xl font-bold text-white">
-                  Add Track to Mappack
-                </h2>
+              <ModalHeader className="flex flex-col gap-1 text-4xl font-ruigslay items-center">
+                Add Track to Mappack
               </ModalHeader>
               <ModalBody className="gap-6">
                 <TrackIdInput
@@ -124,14 +118,14 @@ export default function AddTrackModal({
               </ModalBody>
               <ModalFooter className="gap-2">
                 <Button
-                  className="bg-white/5 hover:bg-white/10 border border-white/10 hover:border-white/20 text-white"
+                  className={ADMIN_BUTTON}
                   onPress={onClose}
                   isDisabled={isLoading}
                 >
                   Cancel
                 </Button>
                 <Button
-                  className="bg-blue-500 hover:bg-blue-600 text-white font-semibold"
+                  className={ADMIN_BUTTON_PRIMARY}
                   onPress={handleAddTrack}
                   isLoading={isLoading}
                 >

@@ -11,7 +11,9 @@ import { TrackRow } from "./TrackRow";
 import { ModalPlayerStats } from "./ModalPlayerStats";
 import { MappackProgressBar } from "../mappack-page/MappackProgressBar";
 import { useTierScroll } from "@/hooks/useTierScroll";
-import { TierSection } from "../TierSection";
+import TrackCard from "../TrackCard";
+import { TierHeading } from "./TierHeading";
+import { TrackRowHeader } from "./TrackRowHeader";
 import { IoGrid, IoList } from "react-icons/io5";
 
 interface PlayerDetailModalProps {
@@ -95,12 +97,7 @@ export default function PlayerDetailModal({
               </div>
 
               {/* ─── Progress bar ─────────────────────────────────── */}
-              <div className="px-6 space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] tracking-widest uppercase text-white/30 text-label">
-                    Progress
-                  </span>
-                </div>
+              <div className="px-6">
                 <MappackProgressBar
                   completionCurrent={current}
                   completionTotal={total}
@@ -111,51 +108,48 @@ export default function PlayerDetailModal({
               <div className="h-px bg-white/[0.06]" />
 
               {/* ─── View toggle ──────────────────────────────────── */}
-              <div className="flex justify-end px-6">
+              <div className="flex justify-end px-6 gap-3" role="group">
                 <button
-                  onClick={() => setIsListView(!isListView)}
-                  className="
-                    w-10 h-10
-                    flex items-center justify-center
-                    bg-white/5 hover:bg-white/10
-                    border border-white/10 hover:border-white/20
-                    rounded-lg
-                    transition-all duration-200
-                    hover:scale-105 active:scale-95
-                    cursor-pointer group
-                  "
-                  aria-label="Switch View"
+                  onClick={() => setIsListView(true)}
+                  aria-pressed={isListView}
+                  title="List view"
+                  className={`cursor-pointer transition-colors ${
+                    isListView ? "text-white" : "text-white/30 hover:text-white/60"
+                  }`}
                 >
-                  {isListView ? (
-                    <IoList className="w-5 h-5 text-white/60 group-hover:text-white transition-colors" />
-                  ) : (
-                    <IoGrid className="w-5 h-5 text-white/60 group-hover:text-white transition-colors" />
-                  )}
+                  <IoList className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => setIsListView(false)}
+                  aria-pressed={!isListView}
+                  title="Tile view"
+                  className={`cursor-pointer transition-colors ${
+                    !isListView ? "text-white" : "text-white/30 hover:text-white/60"
+                  }`}
+                >
+                  <IoGrid className="w-5 h-5" />
                 </button>
               </div>
 
               {/* ─── Tracks ───────────────────────────────────────── */}
               <div className="px-6 pb-6">
-                {isListView ? (
-                  <div className="flex flex-col gap-6">
-                    {sortedTiers.map((tierName) => {
-                      const tierData = tracksByTier[tierName];
-                      if (!tierData.tier) return null;
-                      return (
-                        <div key={tierName} className="flex flex-col gap-3">
-                          <div className="flex items-center gap-3 pb-2 border-b border-white/10">
-                            <div
-                              className="w-3 h-3 rounded-full"
-                              style={{ backgroundColor: tierData.tier.color }}
-                            />
-                            <h3 className="text-lg font-bold text-white uppercase">
-                              {tierName}
-                            </h3>
-                            <span className="text-sm text-white/50">
-                              {tierData.tier.points} pts
-                            </span>
-                          </div>
+                <div className="flex flex-col gap-6">
+                  {sortedTiers.map((tierName) => {
+                    const tierData = tracksByTier[tierName];
+                    return (
+                      <div
+                        key={tierName}
+                        ref={(el) => {
+                          tierRefs.current[tierName] = el;
+                        }}
+                        data-tier={tierName}
+                        className="flex flex-col gap-3 scroll-mt-4"
+                      >
+                        <TierHeading tierName={tierName} tier={tierData.tier} />
+
+                        {isListView ? (
                           <div className="flex flex-col gap-2">
+                            <TrackRowHeader withComparison={!!loggedInMappack} />
                             {tierData.tracks.map((track) => (
                               <TrackRow
                                 key={track.track_id}
@@ -165,30 +159,25 @@ export default function PlayerDetailModal({
                               />
                             ))}
                           </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <>
-                    {sortedTiers.map((tierName) => {
-                      const tierData = tracksByTier[tierName];
-                      return (
-                        <TierSection
-                          key={tierName}
-                          tierName={tierName}
-                          tierData={tierData}
-                          timeGoals={playerMappack?.timeGoals ?? []}
-                          mappackId={mappackId}
-                          alwaysShowDetails={true}
-                          onRef={(el) => {
-                            tierRefs.current[tierName] = el;
-                          }}
-                        />
-                      );
-                    })}
-                  </>
-                )}
+                        ) : (
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+                            {tierData.tracks.map((track) => (
+                              <TrackCard
+                                key={track.track_id}
+                                mappackTrack={track}
+                                timeGoalDefinitions={
+                                  playerMappack?.timeGoals ?? []
+                                }
+                                mappackId={mappackId}
+                                alwaysShowDetails={true}
+                              />
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </motion.div>
           )}

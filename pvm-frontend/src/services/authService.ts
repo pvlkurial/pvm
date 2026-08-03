@@ -1,4 +1,4 @@
-import { AuthResponse, User } from "@/types/auth";
+import { AuthResponse, Role, User } from "@/types/auth";
 import { API_BASE } from "@/constants/miscellaneous";
 
 export const authService = {
@@ -48,6 +48,13 @@ export const authService = {
     localStorage.setItem("user_role", authData.role);
   },
 
+  /** Refreshes the cached identity after a server-side role change. */
+  updateCachedUser(user: User): void {
+    localStorage.setItem("user_id", user.id);
+    localStorage.setItem("user_name", user.name);
+    localStorage.setItem("user_role", user.role);
+  },
+
   loadAuth(): { token: string; user: User } | null {
     const token = localStorage.getItem("auth_token");
     const user_id = localStorage.getItem("user_id");
@@ -60,7 +67,7 @@ export const authService = {
         user: {
           id: user_id,
           name,
-          role: role as "user" | "admin",
+          role: role as Role,
         },
       };
     }

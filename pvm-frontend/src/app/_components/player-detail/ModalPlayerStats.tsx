@@ -12,6 +12,23 @@ interface ModalPlayerStatsProps {
   accentColor?: string;
 }
 
+function StatTile({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex-1 min-w-[110px] rounded-lg bg-white/[0.04] border border-white/[0.06] px-4 py-3">
+      <p className="text-[10px] tracking-widest uppercase text-white/35 mb-1 text-label">
+        {label}
+      </p>
+      {children}
+    </div>
+  );
+}
+
 export function ModalPlayerStats({
   mappackId,
   playerId,
@@ -44,38 +61,37 @@ export function ModalPlayerStats({
   const color = playerRank?.color ?? accentColor ?? "#ffffff";
 
   return (
-    <div className="flex flex-col gap-3">
-      {/* Player name — full width */}
-      <div>
-        <p className="text-[10px] tracking-widest uppercase text-white/30 mb-0.5 text-label">
+    <div className="flex flex-col gap-4">
+      <div className="min-w-0">
+        <p className="text-[10px] tracking-widest uppercase text-white/35 mb-1 text-label">
           Player
         </p>
-        <h2 className="text-4xl font-bold leading-tight truncate text-label">
+        <h2 className="text-3xl font-bold leading-tight truncate text-label">
           {playerName}
         </h2>
       </div>
 
-      {/* Points — full width */}
-      <p className="text-5xl font-ruigslay tracking-wide font-bold text-white leading-none">
-        {entry.total_points.toLocaleString()} PTS
-      </p>
-
-      {/* Leaderboard rank + RankDisplay inline */}
-      <div className="flex items-center gap-6">
-        <div>
-          <p className="text-[10px] tracking-widest uppercase text-white/30 mb-0.5 text-label">
-            Leaderboard Rank
+      {/* Equal-weight tiles so no single figure dominates the modal. */}
+      <div className="flex flex-wrap gap-2">
+        <StatTile label="Points">
+          <p className="text-2xl font-ruigslay font-bold text-white leading-none">
+            {entry.total_points.toLocaleString()}
           </p>
+        </StatTile>
+
+        <StatTile label="Leaderboard Rank">
           <p
-            className="text-6xl font-ruigslay font-bold leading-none tracking-widest"
+            className="text-2xl font-ruigslay font-bold leading-none"
             style={{ color }}
           >
             #{rank}
           </p>
-        </div>
+        </StatTile>
 
+        {/* RankDisplay brings its own label and next-rank progress, so it sits
+            in the tile directly rather than inside StatTile. */}
         {playerRank && (
-          <div className="shrink-0">
+          <div className="flex-1 min-w-[180px] rounded-lg bg-white/[0.04] border border-white/[0.06] px-4 py-3">
             <RankDisplay
               rank={playerRank}
               nextRank={nextRank}

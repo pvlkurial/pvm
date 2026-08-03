@@ -2,6 +2,11 @@ import { useState } from "react";
 import { Button, Input, Select, SelectItem, Switch } from "@heroui/react";
 import { MappackRank } from "@/types/mappack.types";
 import { ColorPicker } from "@/utils/colorPicker";
+import { ADMIN_BUTTON_DANGER } from "@/constants/button-styles";
+import {
+  MODAL_SELECT_CLASSNAMES,
+  MODAL_SWITCH_CLASSNAMES,
+} from "@/constants/modal-styles";
 
 interface RankEditorProps {
   rank: MappackRank;
@@ -101,27 +106,21 @@ export function RankEditor({ rank, index, onUpdate, onRemove, inputClassNames }:
             <Switch
               isSelected={rank.backgroundGlow}
               onValueChange={(checked) => onUpdate(index, "backgroundGlow", checked)}
-              classNames={{
-                wrapper: "group-data-[selected=true]:bg-white bg-neutral-600",
-              }}
+              classNames={MODAL_SWITCH_CLASSNAMES}
             >
               <span className="text-white text-sm">Background Glow</span>
             </Switch>
             <Switch
               isSelected={rank.invertedColor}
               onValueChange={(checked) => onUpdate(index, "invertedColor", checked)}
-              classNames={{
-                wrapper: "group-data-[selected=true]:bg-white bg-neutral-600",
-              }}
+              classNames={MODAL_SWITCH_CLASSNAMES}
             >
               <span className="text-white text-sm">Inverted Colors</span>
             </Switch>
             <Switch
               isSelected={rank.textShadow}
               onValueChange={(checked) => onUpdate(index, "textShadow", checked)}
-              classNames={{
-                wrapper: "group-data-[selected=true]:bg-white bg-neutral-600",
-              }}
+              classNames={MODAL_SWITCH_CLASSNAMES}
             >
               <span className="text-white text-sm">Text Shadow</span>
             </Switch>
@@ -159,13 +158,7 @@ export function RankEditor({ rank, index, onUpdate, onRemove, inputClassNames }:
                 const value = Array.from(keys as Set<string>)[0];
                 onUpdate(index, "animationType", value);
               }}
-              classNames={{
-                ...inputClassNames,
-                listboxWrapper: "bg-neutral-800",
-                popoverContent: "bg-neutral-800",
-                label: "text-white",
-                value: "text-white",
-              }}
+              classNames={MODAL_SELECT_CLASSNAMES}
             >
               <SelectItem key="none">None</SelectItem>
               <SelectItem key="shine">Shine</SelectItem>
@@ -181,13 +174,7 @@ export function RankEditor({ rank, index, onUpdate, onRemove, inputClassNames }:
                 const value = Array.from(keys as Set<string>)[0];
                 onUpdate(index, "cardStyle", value);
               }}
-              classNames={{
-                ...inputClassNames,
-                listboxWrapper: "bg-neutral-800",
-                popoverContent: "bg-neutral-800",
-                label: "text-white",
-                value: "text-white",
-              }}
+              classNames={MODAL_SELECT_CLASSNAMES}
             >
               <SelectItem key="normal">Normal</SelectItem>
               <SelectItem key="metallic">Metallic</SelectItem>
@@ -205,13 +192,7 @@ export function RankEditor({ rank, index, onUpdate, onRemove, inputClassNames }:
                 const value = Array.from(keys as Set<string>)[0];
                 onUpdate(index, "backgroundPattern", value);
               }}
-              classNames={{
-                ...inputClassNames,
-                listboxWrapper: "bg-neutral-800",
-                popoverContent: "bg-neutral-800",
-                label: "text-white",
-                value: "text-white",
-              }}
+              classNames={MODAL_SELECT_CLASSNAMES}
             >
               <SelectItem key="none">None</SelectItem>
               <SelectItem key="dots">Dots</SelectItem>
@@ -227,13 +208,7 @@ export function RankEditor({ rank, index, onUpdate, onRemove, inputClassNames }:
                 const value = Array.from(keys as Set<string>)[0];
                 onUpdate(index, "fontSize", value);
               }}
-              classNames={{
-                ...inputClassNames,
-                listboxWrapper: "bg-neutral-800",
-                popoverContent: "bg-neutral-800",
-                label: "text-white",
-                value: "text-white",
-              }}
+              classNames={MODAL_SELECT_CLASSNAMES}
             >
               <SelectItem key="normal">Normal</SelectItem>
               <SelectItem key="large">Large</SelectItem>
@@ -248,13 +223,7 @@ export function RankEditor({ rank, index, onUpdate, onRemove, inputClassNames }:
                 const value = Array.from(keys as Set<string>)[0];
                 onUpdate(index, "fontWeight", value);
               }}
-              classNames={{
-                ...inputClassNames,
-                listboxWrapper: "bg-neutral-800",
-                popoverContent: "bg-neutral-800",
-                label: "text-white",
-                value: "text-white",
-              }}
+              classNames={MODAL_SELECT_CLASSNAMES}
             >
               <SelectItem key="normal">Normal</SelectItem>
               <SelectItem key="bold">Bold</SelectItem>
@@ -265,8 +234,7 @@ export function RankEditor({ rank, index, onUpdate, onRemove, inputClassNames }:
           {/* Remove Button */}
           <div className="flex justify-end">
             <Button
-              color="danger"
-              variant="flat"
+              className={ADMIN_BUTTON_DANGER}
               onPress={() => onRemove(rank.id)}
               size="sm"
             >

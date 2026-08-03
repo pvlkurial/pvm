@@ -8,6 +8,7 @@ import Footer from "@/app/_components/Footer";
 import LoginButton from "@/app/_components/LoginButton";
 import { AuthProvider } from "@/contexts/AuthContext";
 import PatreonButton from "@/app/_components/PatreonButton";
+import RequireRole from "@/app/_components/RequireRole";
 
 export default function RootLayout({
   children,
@@ -33,6 +34,17 @@ export default function RootLayout({
               Mappacks
             </Link>
           </NavbarItem>
+          <RequireRole role="superadmin">
+            <NavbarItem>
+              <Link
+                color="foreground"
+                href="/admin"
+                className="nav-link text-label"
+              >
+                Admin
+              </Link>
+            </NavbarItem>
+          </RequireRole>
         </NavbarContent>
         <NavbarContent justify="end">
           <NavbarItem>

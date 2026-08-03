@@ -1,8 +1,11 @@
-import { Input, Tab, Tabs, Spinner } from "@heroui/react";
+import { Button, Input, Tab, Tabs, Spinner } from "@heroui/react";
 import { useState } from "react";
 import { TmxTrack } from "@/types/tmx.types";
 import { tmxService } from "@/services/tmx.service";
 import { IoSearch } from "react-icons/io5";
+import { SectionHeading } from "../SectionHeading";
+import { TAB_CLASSNAMES } from "@/constants/modal-styles";
+import { ADMIN_BUTTON } from "@/constants/button-styles";
 
 interface TrackIdInputProps {
   selectedTab: string;
@@ -50,22 +53,14 @@ export function TrackIdInput({
 
   return (
     <>
-      <div className="grid grid-cols-[auto_1fr] items-center gap-2">
-        <p className="text-xl font-bold text-white font-ruigslay">Track Info</p>
-        <div className="flex-1 h-[6px] bg-white/70"></div>
-      </div>
+      <SectionHeading>Track Info</SectionHeading>
 
       <Tabs
         aria-label="Track ID Input Method"
         size="md"
         selectedKey={selectedTab}
         onSelectionChange={(key) => onTabChange(key as string)}
-        classNames={{
-          tabList: "bg-white/5",
-          cursor: "bg-blue-500",
-          tab: "data-[selected=true]:text-white",
-          tabContent: "group-data-[selected=true]:text-white",
-        }}
+        classNames={TAB_CLASSNAMES}
       >
         <Tab key="search" title="TMX Search">
           <div className="flex flex-col gap-4 pt-4">
@@ -81,27 +76,18 @@ export function TrackIdInput({
                 }}
                 classNames={inputClassNames}
               />
-              <button
-                onClick={handleSearch}
-                disabled={isSearching || !searchQuery.trim()}
-                className="
-                  px-6 py-2 mt-6
-                  bg-blue-500 hover:bg-blue-600
-                  disabled:bg-white/5 disabled:cursor-not-allowed
-                  rounded-lg
-                  transition-colors
-                  flex items-center gap-2
-                  text-white
-                "
+              <Button
+                onPress={handleSearch}
+                isDisabled={isSearching || !searchQuery.trim()}
+                isIconOnly
+                className={`mt-6 h-[56px] w-14 shrink-0 ${ADMIN_BUTTON}`}
               >
                 {isSearching ? (
                   <Spinner size="sm" color="white" />
                 ) : (
-                  <>
-                    <IoSearch className="w-5 h-5" />
-                  </>
+                  <IoSearch className="w-5 h-5" />
                 )}
-              </button>
+              </Button>
             </div>
 
             {searchResults.length > 0 && (
@@ -115,7 +101,7 @@ export function TrackIdInput({
                       transition-all duration-200
                       ${
                         selectedTrack?.TrackID === track.TrackID
-                          ? "bg-blue-500/20 border-blue-500"
+                          ? "bg-white/15 border-white/40"
                           : "bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20"
                       }
                       `}

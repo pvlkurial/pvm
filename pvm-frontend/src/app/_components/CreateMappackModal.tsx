@@ -3,6 +3,9 @@ import {
   AutocompleteItem,
   Button,
   NumberInput,
+  Select,
+  SelectItem,
+  Switch,
   Textarea,
 } from "@heroui/react";
 import { useRouter } from "next/navigation";
@@ -19,6 +22,17 @@ import { useState } from "react";
 import axios from "axios";
 import { API_BASE } from "@/constants/miscellaneous";
 import { MAP_STYLES } from "@/constants/map-styles";
+import { MAPPACK_TYPES, DEFAULT_MAPPACK_TYPE } from "@/constants/mappack-types";
+import { MappackType } from "@/types/mappack.types";
+import { ADMIN_BUTTON, ADMIN_BUTTON_PRIMARY, ADMIN_BUTTON_DANGER } from "@/constants/button-styles";
+import {
+  MODAL_AUTOCOMPLETE_CLASSNAMES,
+  MODAL_CLASSNAMES,
+  MODAL_INPUT_CLASSNAMES,
+  MODAL_SELECT_CLASSNAMES,
+  MODAL_SWITCH_CLASSNAMES,
+} from "@/constants/modal-styles";
+import { SectionHeading } from "@/app/_components/SectionHeading";
 
 interface TimeGoal {
   name: string;
@@ -31,6 +45,9 @@ export default function CreateMappackModal() {
   const [description, setDescription] = useState("");
   const [mapStyleName, setMapStyleName] = useState<string | null>(null);
   const [thumbnailURL, setThumbnailURL] = useState("");
+  const [type, setType] = useState<MappackType>(DEFAULT_MAPPACK_TYPE);
+  const [featured, setFeatured] = useState(false);
+  const [isNew, setIsNew] = useState(false);
   const [timeGoals, setTimeGoals] = useState<TimeGoal[]>([]);
   const [currentGoalName, setCurrentGoalName] = useState("");
   const [currentGoalDifficulty, setCurrentGoalDifficulty] = useState(1);
@@ -63,6 +80,9 @@ export default function CreateMappackModal() {
         description,
         thumbnailURL,
         isActive: true,
+        type,
+        featured,
+        isNew,
         ...(mapStyleName ? { mapStyleName } : { mapStyleName: "Tech" }),
       });
 
@@ -83,7 +103,7 @@ export default function CreateMappackModal() {
 
   return (
     <div>
-      <Button color="default" variant="bordered" onPress={onOpen}>
+      <Button className={ADMIN_BUTTON} onPress={onOpen}>
         Add Mappack
       </Button>
       <Modal
@@ -91,13 +111,7 @@ export default function CreateMappackModal() {
         placement="top-center"
         onOpenChange={onOpenChange}
         size="2xl"
-        classNames={{
-          base: "bg-neutral-800",
-          header: "bg-neutral-800 text-white",
-          body: "bg-neutral-800 text-white",
-          footer: "bg-neutral-800",
-          closeButton: "text-white hover:bg-neutral-800",
-        }}
+        classNames={MODAL_CLASSNAMES}
       >
         <ModalContent>
           {(onClose) => (
@@ -106,21 +120,14 @@ export default function CreateMappackModal() {
                 Create Mappack
               </ModalHeader>
               <ModalBody>
-                <div className="grid grid-cols-[auto_1fr] items-center gap-2">
-                  <p className="text-xl font-ruigslay">Mappack Info</p>
-                  <div className="flex-1 h-[5px] bg-neutral-300" />
-                </div>
+                <SectionHeading>Mappack Info</SectionHeading>
                 <Input
                   label="Mappack Name"
                   placeholder="Fullspeed PVM"
                   variant="bordered"
                   value={name}
                   onValueChange={setName}
-                  classNames={{
-                    input: "text-white",
-                    inputWrapper:
-                      "border-gray-700 data-[hover=true]:border-gray-600 group-data-[focus=true]:bg-neutral-900 group-data-[focus=true]:border-white",
-                  }}
+                  classNames={MODAL_INPUT_CLASSNAMES}
                 />
                 <Textarea
                   label="Description"
@@ -128,11 +135,7 @@ export default function CreateMappackModal() {
                   variant="bordered"
                   value={description}
                   onValueChange={setDescription}
-                  classNames={{
-                    input: "text-white",
-                    inputWrapper:
-                      "border-gray-700 data-[hover=true]:border-gray-600 group-data-[focus=true]:bg-neutral-900 group-data-[focus=true]:border-white",
-                  }}
+                  classNames={MODAL_INPUT_CLASSNAMES}
                 />
                 <Input
                   label="Thumbnail URL"
@@ -140,12 +143,26 @@ export default function CreateMappackModal() {
                   variant="bordered"
                   value={thumbnailURL}
                   onValueChange={setThumbnailURL}
-                  classNames={{
-                    input: "text-white",
-                    inputWrapper:
-                      "border-gray-700 data-[hover=true]:border-gray-600 group-data-[focus=true]:bg-neutral-900 group-data-[focus=true]:border-white",
-                  }}
+                  classNames={MODAL_INPUT_CLASSNAMES}
                 />
+                <Select
+                  label="Type"
+                  variant="bordered"
+                  selectedKeys={new Set([type])}
+                  onSelectionChange={(keys) => {
+                    const value = Array.from(keys as Set<string>)[0] as
+                      | MappackType
+                      | undefined;
+                    if (value) setType(value);
+                  }}
+                  classNames={MODAL_SELECT_CLASSNAMES}
+                >
+                  {MAPPACK_TYPES.map((mappackType) => (
+                    <SelectItem key={mappackType.key}>
+                      {mappackType.label}
+                    </SelectItem>
+                  ))}
+                </Select>
                 <Autocomplete
                   defaultItems={MAP_STYLES}
                   label="Map Style"
@@ -155,19 +172,8 @@ export default function CreateMappackModal() {
                     const match = MAP_STYLES.find((s) => s.key === key);
                     setMapStyleName(match?.label ?? null);
                   }}
-                  classNames={{
-                    base: "text-white",
-                    selectorButton: "text-white",
-                    listboxWrapper: "bg-neutral-800",
-                    popoverContent: "bg-neutral-800",
-                  }}
-                  inputProps={{
-                    classNames: {
-                      input: "text-white",
-                      inputWrapper:
-                        "border-gray-700 data-[hover=true]:border-gray-600 group-data-[focus=true]:bg-neutral-900 group-data-[focus=true]:border-white",
-                    },
-                  }}
+                  classNames={MODAL_AUTOCOMPLETE_CLASSNAMES}
+                  inputProps={{ classNames: MODAL_INPUT_CLASSNAMES }}
                 >
                   {(mapStyle) => (
                     <AutocompleteItem key={mapStyle.key}>
@@ -176,10 +182,33 @@ export default function CreateMappackModal() {
                   )}
                 </Autocomplete>
 
-                <div className="grid grid-cols-[auto_1fr] items-center gap-2 mt-4">
-                  <p className="text-xl font-ruigslay">Time Goals</p>
-                  <div className="flex-1 h-[5px] bg-neutral-300" />
-                </div>
+                <Switch
+                  isSelected={featured}
+                  onValueChange={setFeatured}
+                  classNames={MODAL_SWITCH_CLASSNAMES}
+                >
+                  <span className="text-white">
+                    Featured
+                    <span className="block text-xs text-neutral-400">
+                      Shown first in listings
+                    </span>
+                  </span>
+                </Switch>
+
+                <Switch
+                  isSelected={isNew}
+                  onValueChange={setIsNew}
+                  classNames={MODAL_SWITCH_CLASSNAMES}
+                >
+                  <span className="text-white">
+                    New
+                    <span className="block text-xs text-neutral-400">
+                      Shows a NEW badge on the card
+                    </span>
+                  </span>
+                </Switch>
+
+                <SectionHeading className="mt-4">Time Goals</SectionHeading>
 
                 <div className="flex gap-2 items-center justify-between">
                   <Input
@@ -188,11 +217,7 @@ export default function CreateMappackModal() {
                     variant="bordered"
                     value={currentGoalName}
                     onValueChange={setCurrentGoalName}
-                    classNames={{
-                      input: "text-white",
-                      inputWrapper:
-                        "border-gray-700 data-[hover=true]:border-gray-600 group-data-[focus=true]:bg-neutral-900 group-data-[focus=true]:border-white",
-                    }}
+                    classNames={MODAL_INPUT_CLASSNAMES}
                   />
                   <NumberInput
                     label="Difficulty"
@@ -201,13 +226,9 @@ export default function CreateMappackModal() {
                     value={currentGoalDifficulty}
                     onValueChange={setCurrentGoalDifficulty}
                     min={1}
-                    classNames={{
-                      input: "text-white",
-                      inputWrapper:
-                        "border-gray-700 data-[hover=true]:border-gray-600 group-data-[focus=true]:bg-neutral-900 group-data-[focus=true]:border-white",
-                    }}
+                    classNames={MODAL_INPUT_CLASSNAMES}
                   />
-                  <Button color="default" onPress={handleAddTimeGoal}>
+                  <Button className={ADMIN_BUTTON} onPress={handleAddTimeGoal}>
                     Add
                   </Button>
                 </div>
@@ -227,8 +248,7 @@ export default function CreateMappackModal() {
                         </div>
                         <Button
                           size="sm"
-                          color="default"
-                          variant="flat"
+                          className={ADMIN_BUTTON_DANGER}
                           onPress={() => handleRemoveTimeGoal(index)}
                         >
                           Remove
@@ -239,10 +259,10 @@ export default function CreateMappackModal() {
                 )}
               </ModalBody>
               <ModalFooter>
-                <Button color="default" variant="bordered" onPress={onClose}>
+                <Button className={ADMIN_BUTTON} onPress={onClose}>
                   Close
                 </Button>
-                <Button color="default" onPress={handleCreateMappack}>
+                <Button className={ADMIN_BUTTON_PRIMARY} onPress={handleCreateMappack}>
                   Create Mappack
                 </Button>
               </ModalFooter>

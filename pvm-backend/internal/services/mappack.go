@@ -11,6 +11,8 @@ type MappackService interface {
 	Create(mappack *models.Mappack) error
 	GetById(id string) (models.Mappack, error)
 	GetAll() ([]models.Mappack, error)
+	GetAllCampaigns() ([]models.Mappack, error)
+	GetAllUnfiltered() ([]models.Mappack, error)
 	CreateMappackTimeGoal(timegoal *models.TimeGoal) error
 	GetAllMappackTimeGoals(mappackId string) ([]models.TimeGoal, error)
 	RemoveTimeGoalFromMappack(id string) (models.TimeGoal, error)
@@ -76,6 +78,12 @@ func (t *mappackService) GetById(id string) (models.Mappack, error) {
 }
 func (t *mappackService) GetAll() ([]models.Mappack, error) {
 	return t.mappackRepository.GetAll()
+}
+func (t *mappackService) GetAllCampaigns() ([]models.Mappack, error) {
+	return t.mappackRepository.GetAllByType(models.MappackTypeCampaign)
+}
+func (t *mappackService) GetAllUnfiltered() ([]models.Mappack, error) {
+	return t.mappackRepository.GetAllUnfiltered()
 }
 func (t *mappackService) CreateMappackTimeGoal(timegoal *models.TimeGoal) error {
 	return t.mappackRepository.CreateMappackTimeGoal(timegoal)

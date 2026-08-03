@@ -2,11 +2,7 @@
 import React, { useRef } from "react";
 import CreateMappackModal from "../CreateMappackModal";
 
-interface Props {
-  width: number;
-}
-
-export default function AddMappackCard({ width }: Props) {
+export default function AddMappackCard() {
   const modalRef = useRef<HTMLDivElement>(null);
 
   const handleClick = () => {
@@ -16,12 +12,21 @@ export default function AddMappackCard({ width }: Props) {
   };
 
   return (
-    <div className="mp-add-wrap" style={{ width }} onClick={handleClick}>
-      <div className="mp-add-inner">
-        <div className="mp-add-content">
-          <span className="mp-add-icon">+</span>
-          <span>Add Mappack</span>
-        </div>
+    <div
+      className="mp-card mp-add"
+      role="button"
+      tabIndex={0}
+      onClick={handleClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          handleClick();
+        }
+      }}
+    >
+      <div className="mp-add-content">
+        <span className="mp-add-icon">+</span>
+        <span>Add Mappack</span>
       </div>
       <div
         ref={modalRef}

@@ -6,6 +6,7 @@ import {
   MappackRank,
 } from "@/types/mappack.types";
 import { timeStringToMilliseconds } from "@/utils/time.utils";
+import { DEFAULT_MAPPACK_TYPE } from "@/constants/mappack-types";
 
 export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
   const [editData, setEditData] = useState<Mappack | null>(null);
@@ -19,6 +20,9 @@ export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
 
       const sanitizedData = {
         ...deepCopy,
+        type: deepCopy.type || DEFAULT_MAPPACK_TYPE,
+        featured: deepCopy.featured ?? false,
+        isNew: deepCopy.isNew ?? false,
         timeGoals: deepCopy.timeGoals || [],
         mappackTiers: deepCopy.mappackTiers || [],
         mappackRanks: deepCopy.mappackRanks || [],

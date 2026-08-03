@@ -1,6 +1,9 @@
 import { Autocomplete, AutocompleteItem } from "@heroui/react";
 import { MappackTier } from "@/types/mappack.types";
 import { MAP_STYLES } from "@/constants/map-styles";
+import {
+  MODAL_AUTOCOMPLETE_CLASSNAMES,
+} from "@/constants/modal-styles";
 
 interface TrackMetadataSelectorsProps {
   tiers: MappackTier[];
@@ -19,12 +22,6 @@ export function TrackMetadataSelectors({
   onStyleChange,
   inputClassNames,
 }: TrackMetadataSelectorsProps) {
-  const autocompleteClassNames = {
-    base: "text-white",
-    selectorButton: "text-white",
-    listboxWrapper: "bg-neutral-800",
-    popoverContent: "bg-neutral-800",
-  };
 
   return <></>;
 }

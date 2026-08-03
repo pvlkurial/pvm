@@ -1,5 +1,6 @@
 import { Mappack } from "@/types/mappack.types";
 import { API_BASE } from "@/constants/miscellaneous";
+import { DEFAULT_MAPPACK_TYPE } from "@/constants/mappack-types";
 
 export const mappackEditService = {
   updateMappack: async (mappack: Mappack): Promise<void> => {
@@ -9,6 +10,9 @@ export const mappackEditService = {
       description: mappack.description,
       thumbnailURL: mappack.thumbnailURL,
       isActive: mappack.isActive,
+      type: mappack.type || DEFAULT_MAPPACK_TYPE,
+      featured: mappack.featured ?? false,
+      isNew: mappack.isNew ?? false,
       mapStyleName: mappack.mapStyleName,
       organization: mappack.organization,
       accentColor: mappack.accentColor,

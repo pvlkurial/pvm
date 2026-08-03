@@ -93,6 +93,7 @@ export default function TrackPage({
         records={track.records}
         timeGoals={track.timegoals}
         trackId={track.id}
+        mappackId={mappack}
       />
 
       <TrackCardOBS track={track} mappackId={mappack} />

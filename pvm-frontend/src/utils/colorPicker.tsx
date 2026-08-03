@@ -7,6 +7,9 @@ import {
 } from "@heroui/react";
 import { HexColorPicker } from "react-colorful";
 import { useState } from "react";
+import {
+  MODAL_INPUT_CLASSNAMES,
+} from "@/constants/modal-styles";
 
 interface ColorPickerProps {
   value: string;
@@ -64,9 +67,8 @@ export function ColorPicker({
             onValueChange={handleHexChange}
             placeholder="#FFFFFF"
             classNames={{
+              ...MODAL_INPUT_CLASSNAMES,
               input: "text-white font-mono",
-              inputWrapper:
-                "border-gray-700 data-[hover=true]:border-gray-600 group-data-[focus=true]:bg-neutral-900 group-data-[focus=true]:border-white",
             }}
           />
           <div className="flex gap-1 flex-wrap justify-center">

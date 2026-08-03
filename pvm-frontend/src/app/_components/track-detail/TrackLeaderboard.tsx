@@ -2,7 +2,7 @@ import { Card, CardBody } from "@heroui/react";
 import { FaDatabase } from "react-icons/fa";
 import RecordsTable from "@/app/_components/RecordsTable";
 import { Record } from "@/types/mappack.types";
-import RequireRole from "../RequireRole";
+import RequireMappackPermission from "../RequireMappackPermission";
 import { UpdateRecordsButton } from "./UpdateRecordsButton";
 import { useAuth } from "@/contexts/AuthContext";
 
@@ -15,12 +15,14 @@ interface TrackLeaderboardProps {
   records: Record[];
   timeGoals: TimeGoal[];
   trackId: string;
+  mappackId: string;
 }
 
 export function TrackLeaderboard({
   records,
   timeGoals,
   trackId,
+  mappackId,
 }: TrackLeaderboardProps) {
   const { user } = useAuth();
 
@@ -30,13 +32,13 @@ export function TrackLeaderboard({
         <div className="flex items-center gap-3 mb-6">
           <FaDatabase className="w-6 h-6 text-blue-500/70" />
           <h3 className="text-3xl font-ruigslay font-bold">Leaderboard</h3>
-          <RequireRole role="admin">
+          <RequireMappackPermission mappackId={mappackId}>
             <UpdateRecordsButton
               trackId={trackId || ""}
               playerId={user?.id || ""}
               onSuccess={() => window.location.reload()}
             />
-          </RequireRole>
+          </RequireMappackPermission>
         </div>
         <RecordsTable
           records={records}

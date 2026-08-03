@@ -16,6 +16,7 @@ type RecordService interface {
 	GetPlayersRecordsForTrack(trackId string, playerId string) ([]models.Record, error)
 	SaveFetchedRecords(records *[]models.Record) error
 	GetTrackWithRecords(mappackId string, trackId string, playerID *string) (dtos.TrackInMappackDto, error)
+	GetTrackUIDWithRecords(mappackId string, trackId string, playerID *string) (dtos.TrackInMappackDto, error)
 }
 
 type recordService struct {
@@ -155,6 +156,109 @@ func (t *recordService) GetTrackWithRecords(mappackId string, trackId string, pl
 	var playerAchievements map[int]*models.PlayerTimeGoalAchievement
 	if playerID != nil && *playerID != "" {
 		achievements, err := t.achievementService.GetPlayerAchievementsByTrack(*playerID, mappackId, trackId)
+		if err == nil {
+			playerAchievements = make(map[int]*models.PlayerTimeGoalAchievement)
+			for _, ach := range achievements {
+				achCopy := ach
+				playerAchievements[ach.TimeGoalID] = &achCopy
+			}
+		}
+	}
+
+	timeGoalDtos := make([]dtos.TrackTimeGoalDto, 0, len(trackTimeGoals))
+	for _, ttg := range trackTimeGoals {
+		dto := dtos.TrackTimeGoalDto{
+			TimeGoalID: ttg.TimegoalID,
+			Name:       ttg.TimeGoal.Name,
+			Time:       ttg.Time,
+			Multiplier: ttg.TimeGoal.Multiplier,
+			IsAchieved: false,
+		}
+
+		if playerAchievements != nil {
+			if ach, exists := playerAchievements[ttg.TimegoalID]; exists {
+				dto.IsAchieved = true
+				dto.PlayerTime = &ach.PlayerTime
+			}
+		}
+
+		timeGoalDtos = append(timeGoalDtos, dto)
+	}
+
+	var tier models.MappackTier
+	if mappackTrack.Tier != nil {
+		tier = *mappackTrack.Tier
+	} else {
+		tier = models.MappackTier{
+			Name: "Unranked",
+		}
+	}
+
+	personalBest, err := t.recordRepository.GetPlayerBestScore(*playerID, trackId)
+	if err != nil {
+		personalBest = 0
+	}
+	authorName, _ := t.playerRepository.GetById(trackInDb.Author)
+
+	track := dtos.TrackInMappackDto{
+		ID:                       trackInDb.ID,
+		MapID:                    trackInDb.MapID,
+		MapUID:                   trackInDb.MapUID,
+		Name:                     trackInDb.Name,
+		Author:                   authorName.Name,
+		Submitter:                trackInDb.Submitter,
+		AuthorScore:              trackInDb.AuthorScore,
+		GoldScore:                trackInDb.GoldScore,
+		SilverScore:              trackInDb.SilverScore,
+		BronzeScore:              trackInDb.BronzeScore,
+		CollectionName:           trackInDb.CollectionName,
+		Filename:                 trackInDb.Filename,
+		MapType:                  trackInDb.MapType,
+		MapStyle:                 trackInDb.MapStyle,
+		IsPlayable:               trackInDb.IsPlayable,
+		CreatedWithGamepadEditor: trackInDb.CreatedWithGamepadEditor,
+		CreatedWithSimpleEditor:  trackInDb.CreatedWithSimpleEditor,
+		Timestamp:                trackInDb.Timestamp,
+		FileURL:                  trackInDb.FileURL,
+		ThumbnailURL:             trackInDb.ThumbnailURL,
+		Time:                     int(time.Now().Unix()),
+		UpdatedAt:                trackInDb.UpdatedAt,
+		Records:                  records,
+		TimeGoals:                timeGoalDtos,
+		DominantColor:            trackInDb.DominantColor,
+		Tier:                     tier,
+		PersonalBest:             personalBest,
+		TmxID:                    trackInDb.TmxID,
+	}
+	return track, nil
+}
+
+func (t *recordService) GetTrackUIDWithRecords(mappackId string, trackId string, playerID *string) (dtos.TrackInMappackDto, error) {
+	emptyTrack := dtos.TrackInMappackDto{}
+
+	trackInDb, err := t.trackRepository.GetByUID(trackId)
+	if err != nil {
+		return emptyTrack, err
+	}
+
+	records, err := t.recordRepository.GetByTrackId(trackInDb.ID)
+	if err != nil {
+		return emptyTrack, err
+	}
+
+	mappackTrack, err := t.trackRepository.GetTrackInMappackInfo(mappackId, trackInDb.ID)
+	if err != nil {
+		return emptyTrack, err
+	}
+
+	trackTimeGoals, err := t.recordRepository.GetTrackTimeGoalsTimes(mappackId, trackInDb.ID)
+	if err != nil {
+		return emptyTrack, err
+	}
+
+	var playerAchievements map[int]*models.PlayerTimeGoalAchievement
+	if playerID != nil && *playerID != "" {
+		achievements, err := t.achievementService.GetPlayerAchievementsByTrack(*playerID, mappackId, trackInDb.ID)
 		if err == nil {
 			playerAchievements = make(map[int]*models.PlayerTimeGoalAchievement)
 			for _, ach := range achievements {

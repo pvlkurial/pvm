@@ -13,12 +13,19 @@ interface TrackCardGoalsProps {
   enrichedTimeGoals: EnrichedTimeGoal[];
   achievedCount: number;
   totalCount: number;
+  /**
+   * Renders the goals as a fixed-height segmented bar rather than one chip per
+   * goal. Chips wrap, so on a card that shows its details permanently a mappack
+   * with several goals would grow the footer until it covered the whole card.
+   */
+  compact?: boolean;
 }
 
 export function TrackCardGoals({
   enrichedTimeGoals,
   achievedCount,
   totalCount,
+  compact = false,
 }: TrackCardGoalsProps) {
   if (enrichedTimeGoals.length === 0) {
     return (
@@ -28,19 +35,68 @@ export function TrackCardGoals({
     );
   }
 
-  return (
-    <div className="flex flex-col gap-1.5">
-      <div className="flex items-center justify-between">
-        <span className="text-[10px] text-white/40 uppercase tracking-wider">
-          Timegoals {achievedCount}/{totalCount}
-        </span>
+  const summary = (
+    <div className="flex items-center justify-between">
+      <span className="text-[10px] text-white/40 uppercase tracking-wider">
+        Timegoals {achievedCount}/{totalCount}
+      </span>
+      {!compact && (
         <div className="flex-1 h-1 ml-2 bg-white/10 rounded-full overflow-hidden">
           <div
             className="h-full bg-green-400 transition-all duration-500"
             style={{ width: `${(achievedCount / totalCount) * 100}%` }}
           />
         </div>
+      )}
+    </div>
+  );
+
+  if (compact) {
+    return (
+      <div className="flex flex-col gap-1 pb-1.5">
+        {summary}
+        {/* One segment per goal, so the height never changes with goal count. */}
+        <div className="flex gap-0.5">
+          {enrichedTimeGoals.map((timegoal) => (
+            <div
+              key={timegoal.time_goal_id}
+              // The bar itself is only a few pixels tall, so the padding here
+              // exists to give the hover a usable target.
+              className="group/seg relative flex-1 py-1 cursor-default"
+            >
+              <div
+                className={`h-1.5 rounded-sm transition-colors ${
+                  timegoal.is_achieved ? "bg-green-400" : "bg-white/15"
+                }`}
+              />
+              <div
+                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-0.5 px-2 pt-0.5 pb-1
+                           bg-black/85 rounded whitespace-nowrap z-50
+                           flex flex-col items-center gap-0.5
+                           opacity-0 group-hover/seg:opacity-100 pointer-events-none
+                           transition-opacity duration-200"
+              >
+                <span
+                  className={`text-[10px] uppercase tracking-wide leading-none ${
+                    timegoal.is_achieved ? "text-green-300" : "text-white/70"
+                  }`}
+                >
+                  {timegoal.name}
+                </span>
+                <span className="text-[10px] font-mono text-white/60 leading-none">
+                  {millisecondsToTimeString(timegoal.time)}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-1.5">
+      {summary}
 
       <div className="flex gap-0.5 flex-wrap">
         {enrichedTimeGoals.map((timegoal) => {
@@ -51,17 +107,20 @@ export function TrackCardGoals({
               className={`
                 group/goal relative flex items-center gap-1 pb-1 pt-1 px-1.5 py-px rounded text-[10px] font-medium
                 transition-all duration-200 mb-1
-                ${isAchieved
-                  ? "bg-green-500/30 text-green-300 border border-green-400/50"
-                  : "bg-white/5 text-white/50 border border-white/10"
+                ${
+                  isAchieved
+                    ? "bg-green-500/30 text-green-300 border border-green-400/50"
+                    : "bg-white/5 text-white/50 border border-white/10"
                 }
               `}
             >
               <span className="uppercase tracking-wide">{timegoal.name}</span>
-              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1
+              <div
+                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 px-2 py-1
                               bg-black/80 text-white text-[10px] rounded whitespace-nowrap z-50
                               opacity-0 group-hover/goal:opacity-100 pointer-events-none
-                              transition-opacity duration-200">
+                              transition-opacity duration-200"
+              >
                 <div className="flex flex-col items-center gap-0.5">
                   <span className="font-mono text-white/70">
                     {millisecondsToTimeString(timegoal.time)}
@@ -70,8 +129,10 @@ export function TrackCardGoals({
                     ×{timegoal.multiplier.toFixed(1)}
                   </span>
                 </div>
-                <div className="absolute top-full left-1/2 -translate-x-1/2
-                                border-4 border-transparent border-t-black/90" />
+                <div
+                  className="absolute top-full left-1/2 -translate-x-1/2
+                                border-4 border-transparent border-t-black/90"
+                />
               </div>
             </div>
           );

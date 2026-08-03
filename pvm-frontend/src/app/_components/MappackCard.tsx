@@ -5,27 +5,20 @@ import MapStyleIcon from "./MapStyleIcon";
 
 interface Props {
   mappack: Mappack;
-  width: number;
-  isClone?: boolean;
-  isDragging: React.MutableRefObject<boolean>;
 }
 
-export default function MappackCard({
-  mappack,
-  width,
-  isClone,
-  isDragging,
-}: Props) {
+export default function MappackCard({ mappack }: Props) {
   return (
     <Link
       href={`/mappacks/${mappack.id}`}
       className="mp-card"
-      style={{ width }}
-      tabIndex={isClone ? -1 : 0}
+      // Set on the card so both the hover bar and the NEW tag inherit it.
+      style={
+        mappack.accentColor
+          ? ({ "--mp-accent": mappack.accentColor } as React.CSSProperties)
+          : undefined
+      }
       draggable={false}
-      onClick={(e) => {
-        if (isDragging.current) e.preventDefault();
-      }}
     >
       <div className="mp-inner">
         <div
@@ -34,16 +27,17 @@ export default function MappackCard({
         />
         <div className="mp-grad" />
         <div className="mp-accent" />
-        {(mappack as Mappack & { mapStyleName?: string }).mapStyleName && (
+        {mappack.mapStyleName && (
           <MapStyleIcon
-            styleKey={
-              (mappack as Mappack & { mapStyleName?: string }).mapStyleName!
-            }
+            styleKey={mappack.mapStyleName}
             className="mp-style-icon"
           />
         )}
         <div className="mp-text">
-          <p className="mp-name">{mappack.name}</p>
+          <p className="mp-name">
+            {mappack.name}
+            {mappack.isNew && <span className="mp-new">New</span>}
+          </p>
           {mappack.MappackTrack?.length > 0 && (
             <p className="mp-count">{mappack.MappackTrack.length} tracks</p>
           )}

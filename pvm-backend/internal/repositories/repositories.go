@@ -8,6 +8,7 @@ type Repositories struct {
 	RecordRepository      RecordRepository
 	TrackRepository       TrackRepository
 	AchievementRepository AchievementRepository
+	PermissionRepository  PermissionRepository
 }
 
 func NewRepositories(db *gorm.DB) *Repositories {
@@ -17,7 +18,9 @@ func NewRepositories(db *gorm.DB) *Repositories {
 	recordRepository := NewRecordRepository(db)
 	trackRepository := NewTrackRepository(db)
 	achievementRepository := NewAchievementRepository(db)
+	permissionRepository := NewPermissionRepository(db)
 
 	return &Repositories{MappackRepository: mappackRepository, PlayerRepository: playerRepository,
-		RecordRepository: recordRepository, TrackRepository: trackRepository, AchievementRepository: achievementRepository}
+		RecordRepository: recordRepository, TrackRepository: trackRepository, AchievementRepository: achievementRepository,
+		PermissionRepository: permissionRepository}
 }

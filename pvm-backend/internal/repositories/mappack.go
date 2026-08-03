@@ -11,6 +11,8 @@ type MappackRepository interface {
 	GetById(id string) (models.Mappack, error)
 	GetByIdAll(id string) (models.Mappack, error)
 	GetAll() ([]models.Mappack, error)
+	GetAllByType(mappackType string) ([]models.Mappack, error)
+	GetAllUnfiltered() ([]models.Mappack, error)
 	CreateMappackTimeGoal(timegoal *models.TimeGoal) error
 	GetAllMappackTimeGoals(mappackId string) ([]models.TimeGoal, error)
 	RemoveTimeGoalFromMappack(id string) (models.TimeGoal, error)
@@ -31,6 +33,11 @@ type MappackRepository interface {
 	DeleteTier(id int) error
 	DeleteRank(id int) error
 }
+
+// The database collates in C, so a plain "name ASC" is byte order and puts every
+// uppercase-initial name ahead of every lowercase one. Fold the case to get an
+// ordering that reads as alphabetical.
+const alphabeticalByName = "LOWER(name) ASC"
 
 type mappackRepository struct {
 	db *gorm.DB
@@ -100,8 +107,27 @@ func (t *mappackRepository) GetByIdAll(id string) (models.Mappack, error) {
 }
 
 func (t *mappackRepository) GetAll() ([]models.Mappack, error) {
+	return t.GetAllByType(models.MappackTypePVM)
+}
+
+// GetAllByType returns the active mappacks of a single type, so each type can be
+// fetched independently rather than filtered client-side. Featured entries lead,
+// and the rest are alphabetical.
+func (t *mappackRepository) GetAllByType(mappackType string) ([]models.Mappack, error) {
 	mappacks := []models.Mappack{}
-	err := t.db.Where("is_active = ?", true).Find(&mappacks).Error
+	err := t.db.Where("is_active = ?", true).
+		Where(`"type" = ?`, mappackType).
+		Order("featured DESC").
+		Order(alphabeticalByName).
+		Find(&mappacks).Error
+	return mappacks, err
+}
+
+// GetAllUnfiltered returns every mappack regardless of type or active flag, for
+// admin surfaces such as permission management.
+func (t *mappackRepository) GetAllUnfiltered() ([]models.Mappack, error) {
+	mappacks := []models.Mappack{}
+	err := t.db.Order("featured DESC").Order(alphabeticalByName).Find(&mappacks).Error
 	return mappacks, err
 }
 
@@ -128,7 +154,17 @@ func (t *mappackRepository) UpdateMappackTimeGoals(timegoals *[]models.TimeGoal)
 }
 
 func (t *mappackRepository) Update(mappack *models.Mappack) error {
-	return t.db.Session(&gorm.Session{FullSaveAssociations: true}).Save(mappack).Error
+	// Save writes every column, so CreatedAt would be clobbered with the zero time
+	// and MapStyle would be upserted from an empty struct.
+	omit := []string{"CreatedAt", "MapStyle"}
+
+	// A mappack with no map style would be written as '' rather than NULL, which
+	// violates fk_mappacks_map_style. Leave the column untouched instead.
+	if mappack.MapStyleName == "" {
+		omit = append(omit, "MapStyleName")
+	}
+
+	return t.db.Session(&gorm.Session{FullSaveAssociations: true}).Omit(omit...).Save(mappack).Error
 }
 
 func (r *mappackRepository) DeleteTimeGoalsNotIn(mappackID string, keepIDs []int) error {

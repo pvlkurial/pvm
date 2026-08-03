@@ -4,6 +4,7 @@ import { FaSync } from "react-icons/fa";
 import { trackService } from "@/services/track.service";
 import { useCooldown } from "@/hooks/useCooldown";
 import { formatSecondsToMMSS } from "@/utils/time.utils";
+import { ADMIN_BUTTON } from "@/constants/button-styles";
 
 interface UpdateRecordsButtonProps {
   trackId: string;
@@ -62,12 +63,10 @@ export function UpdateRecordsButton({
         onPress={handleUpdate}
         isLoading={isLoading}
         isDisabled={isOnCooldown}
-        color="primary"
-        variant="flat"
         startContent={
           !isLoading && <FaSync className={isOnCooldown ? "" : "w-4 h-4"} />
         }
-        className="bg-blue-500/20 text-blue-400 border border-blue-500/50 hover:bg-blue-500/30"
+        className={ADMIN_BUTTON}
       >
         {isOnCooldown
           ? `${formatSecondsToMMSS(secondsLeft)}`
