@@ -70,19 +70,20 @@ export function TrackCardGoals({
                 }`}
               />
               <div
-                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-0.5 px-2 py-1
+                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-0.5 px-2 pt-0.5 pb-1
                            bg-black/85 rounded whitespace-nowrap z-50
+                           flex flex-col items-center gap-0.5
                            opacity-0 group-hover/seg:opacity-100 pointer-events-none
                            transition-opacity duration-200"
               >
                 <span
-                  className={`text-[10px] uppercase tracking-wide ${
+                  className={`text-[10px] uppercase tracking-wide leading-none ${
                     timegoal.is_achieved ? "text-green-300" : "text-white/70"
                   }`}
                 >
                   {timegoal.name}
                 </span>
-                <span className="text-[10px] font-mono text-white/60 ml-1.5">
+                <span className="text-[10px] font-mono text-white/60 leading-none">
                   {millisecondsToTimeString(timegoal.time)}
                 </span>
               </div>
