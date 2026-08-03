@@ -3,6 +3,7 @@ import { MappackTrack, TimeGoal } from "@/types/mappack.types";
 import { millisecondsToTimeString } from "@/utils/time.utils";
 import { groupTracksByTier, sortTiersByPoints } from "@/utils/mappack.utils";
 import { CollapsibleTrackItem } from "./CollapsibleTrackItem";
+import { SectionHeading } from "@/app/_components/SectionHeading";
 
 interface TrackTimesTabProps {
   tracks: MappackTrack[];
@@ -48,10 +49,7 @@ export function TrackTimesTab({
 
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-[auto_1fr] items-center gap-2">
-        <p className="text-xl font-ruigslay">Track Time Goals</p>
-        <div className="flex-1 h-[5px] bg-neutral-300"></div>
-      </div>
+      <SectionHeading>Track Time Goals</SectionHeading>
 
       {tracks.length === 0 && (
         <p className="text-gray-400 italic text-center py-8">

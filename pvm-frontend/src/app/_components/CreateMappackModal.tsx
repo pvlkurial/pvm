@@ -25,6 +25,14 @@ import { MAP_STYLES } from "@/constants/map-styles";
 import { MAPPACK_TYPES, DEFAULT_MAPPACK_TYPE } from "@/constants/mappack-types";
 import { MappackType } from "@/types/mappack.types";
 import { ADMIN_BUTTON, ADMIN_BUTTON_PRIMARY, ADMIN_BUTTON_DANGER } from "@/constants/button-styles";
+import {
+  MODAL_AUTOCOMPLETE_CLASSNAMES,
+  MODAL_CLASSNAMES,
+  MODAL_INPUT_CLASSNAMES,
+  MODAL_SELECT_CLASSNAMES,
+  MODAL_SWITCH_CLASSNAMES,
+} from "@/constants/modal-styles";
+import { SectionHeading } from "@/app/_components/SectionHeading";
 
 interface TimeGoal {
   name: string;
@@ -103,13 +111,7 @@ export default function CreateMappackModal() {
         placement="top-center"
         onOpenChange={onOpenChange}
         size="2xl"
-        classNames={{
-          base: "bg-neutral-800",
-          header: "bg-neutral-800 text-white",
-          body: "bg-neutral-800 text-white",
-          footer: "bg-neutral-800",
-          closeButton: "text-white hover:bg-neutral-800",
-        }}
+        classNames={MODAL_CLASSNAMES}
       >
         <ModalContent>
           {(onClose) => (
@@ -118,21 +120,14 @@ export default function CreateMappackModal() {
                 Create Mappack
               </ModalHeader>
               <ModalBody>
-                <div className="grid grid-cols-[auto_1fr] items-center gap-2">
-                  <p className="text-xl font-ruigslay">Mappack Info</p>
-                  <div className="flex-1 h-[5px] bg-neutral-300" />
-                </div>
+                <SectionHeading>Mappack Info</SectionHeading>
                 <Input
                   label="Mappack Name"
                   placeholder="Fullspeed PVM"
                   variant="bordered"
                   value={name}
                   onValueChange={setName}
-                  classNames={{
-                    input: "text-white",
-                    inputWrapper:
-                      "border-gray-700 data-[hover=true]:border-gray-600 group-data-[focus=true]:bg-neutral-900 group-data-[focus=true]:border-white",
-                  }}
+                  classNames={MODAL_INPUT_CLASSNAMES}
                 />
                 <Textarea
                   label="Description"
@@ -140,11 +135,7 @@ export default function CreateMappackModal() {
                   variant="bordered"
                   value={description}
                   onValueChange={setDescription}
-                  classNames={{
-                    input: "text-white",
-                    inputWrapper:
-                      "border-gray-700 data-[hover=true]:border-gray-600 group-data-[focus=true]:bg-neutral-900 group-data-[focus=true]:border-white",
-                  }}
+                  classNames={MODAL_INPUT_CLASSNAMES}
                 />
                 <Input
                   label="Thumbnail URL"
@@ -152,11 +143,7 @@ export default function CreateMappackModal() {
                   variant="bordered"
                   value={thumbnailURL}
                   onValueChange={setThumbnailURL}
-                  classNames={{
-                    input: "text-white",
-                    inputWrapper:
-                      "border-gray-700 data-[hover=true]:border-gray-600 group-data-[focus=true]:bg-neutral-900 group-data-[focus=true]:border-white",
-                  }}
+                  classNames={MODAL_INPUT_CLASSNAMES}
                 />
                 <Select
                   label="Type"
@@ -168,14 +155,7 @@ export default function CreateMappackModal() {
                       | undefined;
                     if (value) setType(value);
                   }}
-                  classNames={{
-                    listboxWrapper: "bg-neutral-800",
-                    popoverContent: "bg-neutral-800",
-                    label: "text-white",
-                    value: "text-white",
-                    trigger:
-                      "border-gray-700 data-[hover=true]:border-gray-600 data-[open=true]:bg-neutral-900 data-[open=true]:border-white",
-                  }}
+                  classNames={MODAL_SELECT_CLASSNAMES}
                 >
                   {MAPPACK_TYPES.map((mappackType) => (
                     <SelectItem key={mappackType.key}>
@@ -192,19 +172,8 @@ export default function CreateMappackModal() {
                     const match = MAP_STYLES.find((s) => s.key === key);
                     setMapStyleName(match?.label ?? null);
                   }}
-                  classNames={{
-                    base: "text-white",
-                    selectorButton: "text-white",
-                    listboxWrapper: "bg-neutral-800",
-                    popoverContent: "bg-neutral-800",
-                  }}
-                  inputProps={{
-                    classNames: {
-                      input: "text-white",
-                      inputWrapper:
-                        "border-gray-700 data-[hover=true]:border-gray-600 group-data-[focus=true]:bg-neutral-900 group-data-[focus=true]:border-white",
-                    },
-                  }}
+                  classNames={MODAL_AUTOCOMPLETE_CLASSNAMES}
+                  inputProps={{ classNames: MODAL_INPUT_CLASSNAMES }}
                 >
                   {(mapStyle) => (
                     <AutocompleteItem key={mapStyle.key}>
@@ -216,9 +185,7 @@ export default function CreateMappackModal() {
                 <Switch
                   isSelected={featured}
                   onValueChange={setFeatured}
-                  classNames={{
-                    wrapper: "group-data-[selected=true]:bg-white bg-neutral-600",
-                  }}
+                  classNames={MODAL_SWITCH_CLASSNAMES}
                 >
                   <span className="text-white">
                     Featured
@@ -231,9 +198,7 @@ export default function CreateMappackModal() {
                 <Switch
                   isSelected={isNew}
                   onValueChange={setIsNew}
-                  classNames={{
-                    wrapper: "group-data-[selected=true]:bg-white bg-neutral-600",
-                  }}
+                  classNames={MODAL_SWITCH_CLASSNAMES}
                 >
                   <span className="text-white">
                     New
@@ -243,10 +208,7 @@ export default function CreateMappackModal() {
                   </span>
                 </Switch>
 
-                <div className="grid grid-cols-[auto_1fr] items-center gap-2 mt-4">
-                  <p className="text-xl font-ruigslay">Time Goals</p>
-                  <div className="flex-1 h-[5px] bg-neutral-300" />
-                </div>
+                <SectionHeading className="mt-4">Time Goals</SectionHeading>
 
                 <div className="flex gap-2 items-center justify-between">
                   <Input
@@ -255,11 +217,7 @@ export default function CreateMappackModal() {
                     variant="bordered"
                     value={currentGoalName}
                     onValueChange={setCurrentGoalName}
-                    classNames={{
-                      input: "text-white",
-                      inputWrapper:
-                        "border-gray-700 data-[hover=true]:border-gray-600 group-data-[focus=true]:bg-neutral-900 group-data-[focus=true]:border-white",
-                    }}
+                    classNames={MODAL_INPUT_CLASSNAMES}
                   />
                   <NumberInput
                     label="Difficulty"
@@ -268,11 +226,7 @@ export default function CreateMappackModal() {
                     value={currentGoalDifficulty}
                     onValueChange={setCurrentGoalDifficulty}
                     min={1}
-                    classNames={{
-                      input: "text-white",
-                      inputWrapper:
-                        "border-gray-700 data-[hover=true]:border-gray-600 group-data-[focus=true]:bg-neutral-900 group-data-[focus=true]:border-white",
-                    }}
+                    classNames={MODAL_INPUT_CLASSNAMES}
                   />
                   <Button className={ADMIN_BUTTON} onPress={handleAddTimeGoal}>
                     Add

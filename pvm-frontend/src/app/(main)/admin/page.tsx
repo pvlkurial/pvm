@@ -8,6 +8,7 @@ import { Mappack } from "@/types/mappack.types";
 import { hasAtLeastRole } from "@/types/auth";
 import { AdminUserRow } from "@/app/_components/admin/AdminUserRow";
 import { PlayerRoleSearch } from "@/app/_components/admin/PlayerRoleSearch";
+import { SectionHeading } from "@/app/_components/SectionHeading";
 
 export default function AdminPanelPage() {
   const { user, isAuthenticated, isLoading: isAuthLoading } = useAuth();
@@ -65,10 +66,7 @@ export default function AdminPanelPage() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
-      <div className="grid grid-cols-[auto_1fr] items-center gap-2">
-        <p className="text-3xl font-ruigslay text-white">Admin Management</p>
-        <div className="flex-1 h-[5px] bg-neutral-300" />
-      </div>
+      <SectionHeading>Admin Management</SectionHeading>
 
       <p className="text-neutral-400 text-sm">
         Superadmins manage every mappack. Admins can only edit the mappacks
@@ -81,10 +79,7 @@ export default function AdminPanelPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-[auto_1fr] items-center gap-2 pt-2">
-        <p className="text-xl font-ruigslay text-white">Assign a Role</p>
-        <div className="flex-1 h-[5px] bg-neutral-300" />
-      </div>
+      <SectionHeading className="pt-2">Assign a Role</SectionHeading>
 
       <PlayerRoleSearch
         currentUserId={user?.id}
@@ -92,10 +87,7 @@ export default function AdminPanelPage() {
         onError={setError}
       />
 
-      <div className="grid grid-cols-[auto_1fr] items-center gap-2 pt-2">
-        <p className="text-xl font-ruigslay text-white">Users with Accounts</p>
-        <div className="flex-1 h-[5px] bg-neutral-300" />
-      </div>
+      <SectionHeading className="pt-2">Users with Accounts</SectionHeading>
 
       <div className="space-y-3">
         {users.map((adminUser) => (

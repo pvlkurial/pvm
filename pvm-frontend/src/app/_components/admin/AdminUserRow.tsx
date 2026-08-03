@@ -5,6 +5,9 @@ import { adminService } from "@/services/admin.service";
 import { AdminUser, Role } from "@/types/auth";
 import { Mappack } from "@/types/mappack.types";
 import { ADMIN_BUTTON, ADMIN_BUTTON_PRIMARY } from "@/constants/button-styles";
+import {
+  MODAL_SELECT_CLASSNAMES,
+} from "@/constants/modal-styles";
 
 const ROLES: { key: Role; label: string }[] = [
   { key: "user", label: "User" },
@@ -104,11 +107,7 @@ export function AdminUserRow({
             const value = Array.from(keys as Set<string>)[0] as Role;
             if (value) handleRoleChange(value);
           }}
-          classNames={{
-            listboxWrapper: "bg-neutral-800",
-            popoverContent: "bg-neutral-800",
-            value: "text-white",
-          }}
+          classNames={MODAL_SELECT_CLASSNAMES}
         >
           {ROLES.map((role) => (
             <SelectItem key={role.key}>{role.label}</SelectItem>

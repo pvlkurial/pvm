@@ -10,6 +10,12 @@ import { Mappack, MappackType } from "@/types/mappack.types";
 import { MAP_STYLES } from "@/constants/map-styles";
 import { MAPPACK_TYPES, DEFAULT_MAPPACK_TYPE } from "@/constants/mappack-types";
 import { ColorPicker } from "@/utils/colorPicker";
+import {
+  MODAL_AUTOCOMPLETE_CLASSNAMES,
+  MODAL_SELECT_CLASSNAMES,
+  MODAL_SWITCH_CLASSNAMES,
+} from "@/constants/modal-styles";
+import { SectionHeading } from "@/app/_components/SectionHeading";
 
 interface BasicInfoTabProps {
   editData: Mappack;
@@ -24,10 +30,7 @@ export function BasicInfoTab({
 }: BasicInfoTabProps) {
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-[auto_1fr] items-center gap-2">
-        <p className="text-xl font-ruigslay">Mappack Info</p>
-        <div className="flex-1 h-[5px] bg-neutral-300"></div>
-      </div>
+      <SectionHeading>Mappack Info</SectionHeading>
       <Input
         label="Name"
         variant="bordered"
@@ -50,13 +53,7 @@ export function BasicInfoTab({
           const value = Array.from(keys as Set<string>)[0] as MappackType;
           if (value) onUpdate({ type: value });
         }}
-        classNames={{
-          ...inputClassNames,
-          listboxWrapper: "bg-neutral-800",
-          popoverContent: "bg-neutral-800",
-          label: "text-white",
-          value: "text-white",
-        }}
+        classNames={MODAL_SELECT_CLASSNAMES}
       >
         {MAPPACK_TYPES.map((type) => (
           <SelectItem key={type.key}>{type.label}</SelectItem>
@@ -88,12 +85,7 @@ export function BasicInfoTab({
           const match = MAP_STYLES.find((s) => s.key === key);
           onUpdate({ mapStyleName: match?.label ?? "" });
         }}
-        classNames={{
-          base: "text-white",
-          selectorButton: "text-white",
-          listboxWrapper: "bg-neutral-800",
-          popoverContent: "bg-neutral-800",
-        }}
+        classNames={MODAL_AUTOCOMPLETE_CLASSNAMES}
         inputProps={{ classNames: inputClassNames }}
       >
         {(style) => (
@@ -101,10 +93,7 @@ export function BasicInfoTab({
         )}
       </Autocomplete>
 
-      <div className="grid grid-cols-[auto_1fr] items-center gap-2 pt-2">
-        <p className="text-xl font-ruigslay">Links</p>
-        <div className="flex-1 h-[5px] bg-neutral-300"></div>
-      </div>
+      <SectionHeading className="pt-2">Links</SectionHeading>
       <Input
         label="Sheet URL"
         variant="bordered"
@@ -127,10 +116,7 @@ export function BasicInfoTab({
         classNames={inputClassNames}
       />
 
-      <div className="grid grid-cols-[auto_1fr] items-center gap-2 pt-2">
-        <p className="text-xl font-ruigslay">Appearance</p>
-        <div className="flex-1 h-[5px] bg-neutral-300"></div>
-      </div>
+      <SectionHeading className="pt-2">Appearance</SectionHeading>
       <div className="flex items-center gap-3">
         <ColorPicker
           label="Accent Color"
@@ -142,9 +128,7 @@ export function BasicInfoTab({
       <Switch
         isSelected={editData.isActive}
         onValueChange={(checked) => onUpdate({ isActive: checked })}
-        classNames={{
-          wrapper: "group-data-[selected=true]:bg-white bg-neutral-600",
-        }}
+        classNames={MODAL_SWITCH_CLASSNAMES}
       >
         <span className="text-white">Active</span>
       </Switch>
@@ -152,9 +136,7 @@ export function BasicInfoTab({
       <Switch
         isSelected={editData.featured ?? false}
         onValueChange={(checked) => onUpdate({ featured: checked })}
-        classNames={{
-          wrapper: "group-data-[selected=true]:bg-white bg-neutral-600",
-        }}
+        classNames={MODAL_SWITCH_CLASSNAMES}
       >
         <span className="text-white">
           Featured
@@ -167,9 +149,7 @@ export function BasicInfoTab({
       <Switch
         isSelected={editData.isNew ?? false}
         onValueChange={(checked) => onUpdate({ isNew: checked })}
-        classNames={{
-          wrapper: "group-data-[selected=true]:bg-white bg-neutral-600",
-        }}
+        classNames={MODAL_SWITCH_CLASSNAMES}
       >
         <span className="text-white">
           New

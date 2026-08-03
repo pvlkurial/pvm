@@ -12,7 +12,10 @@ import { useAddTrackForm } from "@/hooks/useAddTrackForm";
 import { trackService } from "@/services/track.service";
 import { TrackIdInput } from "../add-track/TrackIdInput";
 import { TimeGoalsInput } from "../add-track/TimeGoalsInput";
-import { MODAL_INPUT_CLASSNAMES } from "@/constants/modal-styles";
+import {
+  MODAL_INPUT_CLASSNAMES,
+  MODAL_CLASSNAMES,
+} from "@/constants/modal-styles";
 import { ADMIN_BUTTON, ADMIN_BUTTON_PRIMARY } from "@/constants/button-styles";
 
 interface AddTrackModalProps {
@@ -87,20 +90,13 @@ export default function AddTrackModal({
         onOpenChange={onOpenChange}
         size="4xl"
         scrollBehavior="inside"
-        classNames={{
-          base: "bg-neutral-900",
-          header: "border-b border-white/10",
-          body: "py-6",
-          footer: "border-t border-white/10",
-        }}
+        classNames={MODAL_CLASSNAMES}
       >
         <ModalContent>
           {(onClose) => (
             <>
-              <ModalHeader className="flex flex-col gap-1">
-                <h2 className="text-2xl font-bold text-white">
-                  Add Track to Mappack
-                </h2>
+              <ModalHeader className="flex flex-col gap-1 text-4xl font-ruigslay items-center">
+                Add Track to Mappack
               </ModalHeader>
               <ModalBody className="gap-6">
                 <TrackIdInput

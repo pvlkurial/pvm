@@ -7,6 +7,9 @@ import { Mappack, MappackTrack, MappackTier } from "@/types/mappack.types";
 import { MappackProgressBar } from "./mappack-page/MappackProgressBar";
 import { TierSortButton } from "./TierSortButton";
 import InfoButton from "./InfoButton";
+import {
+  MODAL_SWITCH_CLASSNAMES,
+} from "@/constants/modal-styles";
 
 interface MappackContentProps {
   mappack: Mappack;
@@ -78,9 +81,7 @@ export function MappackContent({
           isSelected={alwaysShowTrackDetails}
           onValueChange={handleToggleTrackDetails}
           size="sm"
-          classNames={{
-            wrapper: "group-data-[selected=true]:bg-white bg-neutral-600",
-          }}
+          classNames={MODAL_SWITCH_CLASSNAMES}
         >
           <span className="text-label">Details</span>
         </Switch>

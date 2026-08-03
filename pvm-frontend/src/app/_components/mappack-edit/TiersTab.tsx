@@ -3,6 +3,10 @@ import { MappackTier, MappackTrack } from "@/types/mappack.types";
 import { ColorPicker } from "@/utils/colorPicker";
 import { FormattedText } from "@/utils/textConverter";
 import { ADMIN_BUTTON, ADMIN_BUTTON_DANGER } from "@/constants/button-styles";
+import { SectionHeading } from "@/app/_components/SectionHeading";
+import {
+  MODAL_SELECT_CLASSNAMES,
+} from "@/constants/modal-styles";
 
 interface TiersTabProps {
   tiers: MappackTier[];
@@ -44,10 +48,7 @@ export function TiersTab({
     <div className="space-y-8">
       {/* ── Available Tiers ── */}
       <div>
-        <div className="grid grid-cols-[auto_1fr] items-center gap-2 mb-4">
-          <p className="text-xl font-ruigslay">Available Tiers</p>
-          <div className="flex-1 h-[5px] bg-neutral-300" />
-        </div>
+        <SectionHeading className="mb-4">Available Tiers</SectionHeading>
 
         <div className="space-y-3">
           {tiers.map((tier, index) => (
@@ -99,10 +100,7 @@ export function TiersTab({
 
       {/* ── Track Tier Assignment ── */}
       <div>
-        <div className="grid grid-cols-[auto_2fr] items-center gap-2 mb-4">
-          <p className="text-xl font-ruigslay">Track Tier Assignment</p>
-          <div className="flex-1 h-[5px] bg-neutral-300" />
-        </div>
+        <SectionHeading className="mb-4">Track Tier Assignment</SectionHeading>
 
         {savedTiers.length === 0 ? (
           <p className="text-sm text-gray-400 italic mt-2">
@@ -163,15 +161,7 @@ export function TiersTab({
                           key !== undefined ? parseInt(key) : null,
                         );
                       }}
-                      classNames={{
-                        ...inputClassNames,
-                        listboxWrapper: "bg-neutral-800",
-                        popoverContent: "bg-neutral-800",
-                        label: "text-white",
-                        value: "text-white",
-                        innerWrapper: "text-white",
-                        trigger: "text-white cursor-pointer",
-                      }}
+                      classNames={MODAL_SELECT_CLASSNAMES}
                     >
                       {savedTiers.map((tier) => (
                         <SelectItem

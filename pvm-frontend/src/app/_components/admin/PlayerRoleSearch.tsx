@@ -4,6 +4,10 @@ import { Chip, Input, Select, SelectItem, Spinner } from "@heroui/react";
 import { adminService } from "@/services/admin.service";
 import { PlayerWithRole, Role } from "@/types/auth";
 import { ROLE_LABELS } from "@/constants/roles";
+import {
+  MODAL_INPUT_CLASSNAMES,
+  MODAL_SELECT_CLASSNAMES,
+} from "@/constants/modal-styles";
 
 const ROLES: Role[] = ["user", "admin", "superadmin"];
 
@@ -88,11 +92,7 @@ export function PlayerRoleSearch({
           variant="bordered"
           value={query}
           onValueChange={setQuery}
-          classNames={{
-            input: "text-white",
-            inputWrapper:
-              "border-gray-700 data-[hover=true]:border-gray-600 group-data-[focus=true]:bg-neutral-900 group-data-[focus=true]:border-white",
-          }}
+          classNames={MODAL_INPUT_CLASSNAMES}
         />
         {isSearching && <Spinner size="sm" />}
       </div>
@@ -135,11 +135,7 @@ export function PlayerRoleSearch({
                 const value = Array.from(keys as Set<string>)[0] as Role;
                 if (value) handleRoleChange(player, value);
               }}
-              classNames={{
-                listboxWrapper: "bg-neutral-800",
-                popoverContent: "bg-neutral-800",
-                value: "text-white",
-              }}
+              classNames={MODAL_SELECT_CLASSNAMES}
             >
               {ROLES.map((role) => (
                 <SelectItem key={role}>{ROLE_LABELS[role]}</SelectItem>
