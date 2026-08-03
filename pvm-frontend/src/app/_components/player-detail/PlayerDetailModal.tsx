@@ -109,43 +109,28 @@ export default function PlayerDetailModal({
               {/* ─── Divider ──────────────────────────────────────── */}
               <div className="h-px bg-white/[0.06]" />
 
-              {/* ─── Tracks toolbar ───────────────────────────────── */}
-              <div className="flex items-center justify-between px-6">
-                <span className="text-[10px] tracking-widest uppercase text-white/35 text-label">
-                  Tracks
-                </span>
-
-                {/* Segmented control: both options visible, active one marked. */}
-                <div
-                  role="group"
-                  aria-label="Track view"
-                  className="flex items-center gap-1 p-1 bg-white/[0.04] border border-white/10 rounded-lg"
+              {/* ─── View toggle ──────────────────────────────────── */}
+              <div className="flex justify-end px-6 gap-3" role="group">
+                <button
+                  onClick={() => setIsListView(true)}
+                  aria-pressed={isListView}
+                  title="List view"
+                  className={`cursor-pointer transition-colors ${
+                    isListView ? "text-white" : "text-white/30 hover:text-white/60"
+                  }`}
                 >
-                  <button
-                    onClick={() => setIsListView(true)}
-                    aria-pressed={isListView}
-                    title="List view"
-                    className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors cursor-pointer ${
-                      isListView
-                        ? "bg-white/15 text-white"
-                        : "text-white/45 hover:text-white/80 hover:bg-white/5"
-                    }`}
-                  >
-                    <IoList className="w-4 h-4" />
-                  </button>
-                  <button
-                    onClick={() => setIsListView(false)}
-                    aria-pressed={!isListView}
-                    title="Tile view"
-                    className={`w-8 h-8 flex items-center justify-center rounded-md transition-colors cursor-pointer ${
-                      !isListView
-                        ? "bg-white/15 text-white"
-                        : "text-white/45 hover:text-white/80 hover:bg-white/5"
-                    }`}
-                  >
-                    <IoGrid className="w-4 h-4" />
-                  </button>
-                </div>
+                  <IoList className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => setIsListView(false)}
+                  aria-pressed={!isListView}
+                  title="Tile view"
+                  className={`cursor-pointer transition-colors ${
+                    !isListView ? "text-white" : "text-white/30 hover:text-white/60"
+                  }`}
+                >
+                  <IoGrid className="w-5 h-5" />
+                </button>
               </div>
 
               {/* ─── Tracks ───────────────────────────────────────── */}
@@ -162,11 +147,7 @@ export default function PlayerDetailModal({
                         data-tier={tierName}
                         className="flex flex-col gap-3 scroll-mt-4"
                       >
-                        <TierHeading
-                          tierName={tierName}
-                          tier={tierData.tier}
-                          trackCount={tierData.tracks.length}
-                        />
+                        <TierHeading tierName={tierName} tier={tierData.tier} />
 
                         {isListView ? (
                           <div className="flex flex-col gap-2">

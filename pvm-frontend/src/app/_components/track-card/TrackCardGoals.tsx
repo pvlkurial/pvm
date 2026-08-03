@@ -53,20 +53,40 @@ export function TrackCardGoals({
 
   if (compact) {
     return (
-      <div className="flex flex-col gap-1 pb-1">
+      <div className="flex flex-col gap-1 pb-3">
         {summary}
         {/* One segment per goal, so the height never changes with goal count. */}
         <div className="flex gap-0.5">
           {enrichedTimeGoals.map((timegoal) => (
             <div
               key={timegoal.time_goal_id}
-              title={`${timegoal.name} — ${millisecondsToTimeString(
-                timegoal.time,
-              )} (×${timegoal.multiplier.toFixed(1)})`}
-              className={`h-1.5 flex-1 rounded-sm transition-colors ${
-                timegoal.is_achieved ? "bg-green-400" : "bg-white/15"
-              }`}
-            />
+              // The bar itself is only a few pixels tall, so the padding here
+              // exists to give the hover a usable target.
+              className="group/seg relative flex-1 py-1 cursor-default"
+            >
+              <div
+                className={`h-1.5 rounded-sm transition-colors ${
+                  timegoal.is_achieved ? "bg-green-400" : "bg-white/15"
+                }`}
+              />
+              <div
+                className="absolute bottom-full left-1/2 -translate-x-1/2 mb-0.5 px-2 py-1
+                           bg-black/85 rounded whitespace-nowrap z-50
+                           opacity-0 group-hover/seg:opacity-100 pointer-events-none
+                           transition-opacity duration-200"
+              >
+                <span
+                  className={`text-[10px] uppercase tracking-wide ${
+                    timegoal.is_achieved ? "text-green-300" : "text-white/70"
+                  }`}
+                >
+                  {timegoal.name}
+                </span>
+                <span className="text-[10px] font-mono text-white/60 ml-1.5">
+                  {millisecondsToTimeString(timegoal.time)}
+                </span>
+              </div>
+            </div>
           ))}
         </div>
       </div>

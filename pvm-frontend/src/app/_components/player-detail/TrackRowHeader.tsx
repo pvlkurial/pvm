@@ -8,7 +8,7 @@ interface TrackRowHeaderProps {
 export function TrackRowHeader({ withComparison }: TrackRowHeaderProps) {
   return (
     <div
-      className="hidden md:grid items-center gap-4 px-3 pb-1 text-[10px] uppercase tracking-widest text-white/30"
+      className="hidden md:grid items-center gap-4 px-3 pb-1 text-xs text-white/40"
       style={{ gridTemplateColumns: trackRowColumns(withComparison) }}
     >
       <span />
