@@ -1,6 +1,14 @@
-import { Autocomplete, AutocompleteItem, Input, Switch } from "@heroui/react";
-import { Mappack } from "@/types/mappack.types";
+import {
+  Autocomplete,
+  AutocompleteItem,
+  Input,
+  Select,
+  SelectItem,
+  Switch,
+} from "@heroui/react";
+import { Mappack, MappackType } from "@/types/mappack.types";
 import { MAP_STYLES } from "@/constants/map-styles";
+import { MAPPACK_TYPES, DEFAULT_MAPPACK_TYPE } from "@/constants/mappack-types";
 import { ColorPicker } from "@/utils/colorPicker";
 
 interface BasicInfoTabProps {
@@ -34,6 +42,26 @@ export function BasicInfoTab({
         onValueChange={(value) => onUpdate({ description: value })}
         classNames={inputClassNames}
       />
+      <Select
+        label="Type"
+        variant="bordered"
+        selectedKeys={new Set([editData.type || DEFAULT_MAPPACK_TYPE])}
+        onSelectionChange={(keys) => {
+          const value = Array.from(keys as Set<string>)[0] as MappackType;
+          if (value) onUpdate({ type: value });
+        }}
+        classNames={{
+          ...inputClassNames,
+          listboxWrapper: "bg-neutral-800",
+          popoverContent: "bg-neutral-800",
+          label: "text-white",
+          value: "text-white",
+        }}
+      >
+        {MAPPACK_TYPES.map((type) => (
+          <SelectItem key={type.key}>{type.label}</SelectItem>
+        ))}
+      </Select>
       <Input
         label="Organization"
         variant="bordered"

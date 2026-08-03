@@ -58,6 +58,8 @@ export interface MappackTrack {
   orderPosition?: number;
 }
 
+export type MappackType = "pvm" | "campaign" | "other";
+
 export interface Mappack {
   id: string;
   name: string;
@@ -74,7 +76,7 @@ export interface Mappack {
   discordurl: string;
   websiteurl: string;
   sheeturl: string;
-  type: string;
+  type: MappackType;
 }
 
 export interface Track {

@@ -111,10 +111,16 @@ func (t *MappackController) Update(c *gin.Context) {
 	mappack := models.Mappack{}
 	err := c.ShouldBind(&mappack)
 	if err != nil {
-		fmt.Printf("Error occured while binding Mappack during creation: %s", err)
-		c.String(http.StatusInternalServerError, "Internal Server Error")
+		fmt.Printf("Error occured while binding Mappack during update: %s\n", err)
+		c.String(http.StatusBadRequest, "Invalid mappack payload: %s", err)
+		return
 	}
-	t.mappackService.Update(&mappack)
+
+	if err := t.mappackService.Update(&mappack); err != nil {
+		fmt.Printf("Error occured while updating a Mappack: %s\n", err)
+		c.String(http.StatusInternalServerError, "Failed to update mappack: %s", err)
+		return
+	}
 
 	go func() {
 		log.Printf("Auto-recalculating achievements for mappack %s", mappack.ID)
@@ -124,6 +130,7 @@ func (t *MappackController) Update(c *gin.Context) {
 		}
 	}()
 
+	c.String(http.StatusOK, "Update Succesful")
 }
 
 func (t *MappackController) UpdateMappackTimeGoals(c *gin.Context) {

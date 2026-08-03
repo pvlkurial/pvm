@@ -11,6 +11,7 @@ type MappackRepository interface {
 	GetById(id string) (models.Mappack, error)
 	GetByIdAll(id string) (models.Mappack, error)
 	GetAll() ([]models.Mappack, error)
+	GetAllUnfiltered() ([]models.Mappack, error)
 	CreateMappackTimeGoal(timegoal *models.TimeGoal) error
 	GetAllMappackTimeGoals(mappackId string) ([]models.TimeGoal, error)
 	RemoveTimeGoalFromMappack(id string) (models.TimeGoal, error)
@@ -101,7 +102,17 @@ func (t *mappackRepository) GetByIdAll(id string) (models.Mappack, error) {
 
 func (t *mappackRepository) GetAll() ([]models.Mappack, error) {
 	mappacks := []models.Mappack{}
-	err := t.db.Where("is_active = ?", true).Find(&mappacks).Error
+	err := t.db.Where("is_active = ?", true).
+		Where(`"type" = ?`, models.MappackTypePVM).
+		Find(&mappacks).Error
+	return mappacks, err
+}
+
+// GetAllUnfiltered returns every mappack regardless of type or active flag, for
+// admin surfaces such as permission management.
+func (t *mappackRepository) GetAllUnfiltered() ([]models.Mappack, error) {
+	mappacks := []models.Mappack{}
+	err := t.db.Order("name ASC").Find(&mappacks).Error
 	return mappacks, err
 }
 
@@ -128,7 +139,17 @@ func (t *mappackRepository) UpdateMappackTimeGoals(timegoals *[]models.TimeGoal)
 }
 
 func (t *mappackRepository) Update(mappack *models.Mappack) error {
-	return t.db.Session(&gorm.Session{FullSaveAssociations: true}).Save(mappack).Error
+	// Save writes every column, so CreatedAt would be clobbered with the zero time
+	// and MapStyle would be upserted from an empty struct.
+	omit := []string{"CreatedAt", "MapStyle"}
+
+	// A mappack with no map style would be written as '' rather than NULL, which
+	// violates fk_mappacks_map_style. Leave the column untouched instead.
+	if mappack.MapStyleName == "" {
+		omit = append(omit, "MapStyleName")
+	}
+
+	return t.db.Session(&gorm.Session{FullSaveAssociations: true}).Omit(omit...).Save(mappack).Error
 }
 
 func (r *mappackRepository) DeleteTimeGoalsNotIn(mappackID string, keepIDs []int) error {

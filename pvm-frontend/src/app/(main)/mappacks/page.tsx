@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Mappack } from "@/types/mappack.types";
-import { useAuth } from "@/contexts/AuthContext";
+import { usePermissions } from "@/hooks/usePermissions";
 import { useCarousel, CarouselItem } from "@/hooks/useCarousel";
 import MappackCard from "@/app/_components/MappackCard";
 import AddMappackCard from "@/app/_components/add-edit-buttons/AddMappackCard";
@@ -17,8 +17,8 @@ type Item =
 
 export default function MapppacksPage() {
   const [mappacks, setMappacks] = useState<Mappack[]>([]);
-  const { user } = useAuth();
-  const isAdmin = user?.role === "admin";
+  // Only superadmins may create mappacks; admins are scoped to their grants.
+  const { canCreateMappack } = usePermissions();
 
   useEffect(() => {
     document.body.style.overflow = "hidden";
@@ -36,7 +36,7 @@ export default function MapppacksPage() {
 
   const items: Item[] = [
     ...mappacks.map((m) => ({ kind: "mappack" as const, data: m, id: m.id })),
-    ...(isAdmin ? [{ kind: "add" as const, id: "__add__" }] : []),
+    ...(canCreateMappack ? [{ kind: "add" as const, id: "__add__" }] : []),
   ];
 
   const {

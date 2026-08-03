@@ -159,6 +159,16 @@ func (s *AuthService) ValidateJWT(tokenString string) (*models.User, error) {
 
 	return nil, fmt.Errorf("invalid token")
 }
+// GetUserByID loads the current persisted user. Callers use this rather than the
+// JWT claims so role changes take effect immediately instead of at token expiry.
+func (s *AuthService) GetUserByID(id string) (*models.User, error) {
+	user := models.User{}
+	if err := s.db.Where("id = ?", id).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 func (s *AuthService) GetClientID() string {
 	return s.ClientID
 }

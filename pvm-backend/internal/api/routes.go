@@ -4,6 +4,7 @@ import (
 	"example/pvm-backend/internal/clients"
 	"example/pvm-backend/internal/controllers"
 	"example/pvm-backend/internal/middleware"
+	"example/pvm-backend/internal/models"
 	"example/pvm-backend/internal/repositories"
 	"example/pvm-backend/internal/services"
 	"example/pvm-backend/internal/workers"
@@ -48,7 +49,24 @@ func (r *Routes) InitRoutes() {
 	authorized.Use(middleware.AuthMiddleware(&services.AuthService))
 	{
 		authorized.GET("/auth/me", controllers.AuthController.Me)
+		authorized.GET("/auth/me/permissions", controllers.AdminController.GetMyPermissions)
 		authorized.POST("/tracks/:track_id/records/:player_id/fetch", controllers.RecordController.FetchPlayersRecordsForTrack)
+	}
+
+	// Superadmin panel. Note these handlers are registered on the group itself, so
+	// the middleware below actually applies to them.
+	superAdmin := r.Group("/admin")
+	superAdmin.Use(
+		middleware.AuthMiddleware(&services.AuthService),
+		middleware.RequireRole(models.RoleSuperAdmin),
+	)
+	{
+		superAdmin.GET("/users", controllers.AdminController.ListUsers)
+		superAdmin.PATCH("/users/:user_id/role", controllers.AdminController.UpdateUserRole)
+		superAdmin.GET("/users/:user_id/permissions", controllers.AdminController.GetUserPermissions)
+		superAdmin.PUT("/users/:user_id/permissions", controllers.AdminController.SetUserPermissions)
+		superAdmin.GET("/mappacks", controllers.AdminController.ListManageableMappacks)
+		superAdmin.GET("/players", controllers.AdminController.SearchPlayers)
 	}
 	r.GET("/tmx/search", controllers.TmxController.SearchTracks)
 
@@ -116,6 +134,7 @@ func (r *Routes) InitRoutes() {
 	r.GET("/tracks/:track_id/records", controllers.RecordController.GetByTrackId)
 
 	r.GET("mappacks/:mappack_id/tracks/:track_id", controllers.RecordController.GetTrackWithRecords)
+	r.GET("mappacks/:mappack_id/tracks/uid/:track_uid", controllers.RecordController.GetUIDTrackWithRecords)
 
 	r.GET("/mappacks/:mappack_id/leaderboard", controllers.AchievementController.GetMappackLeaderboard)
 	r.GET("/mappacks/:mappack_id/players/:player_id/achievements", controllers.AchievementController.GetPlayerAchievements)

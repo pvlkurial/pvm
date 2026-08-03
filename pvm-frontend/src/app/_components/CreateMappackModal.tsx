@@ -3,6 +3,8 @@ import {
   AutocompleteItem,
   Button,
   NumberInput,
+  Select,
+  SelectItem,
   Textarea,
 } from "@heroui/react";
 import { useRouter } from "next/navigation";
@@ -19,6 +21,8 @@ import { useState } from "react";
 import axios from "axios";
 import { API_BASE } from "@/constants/miscellaneous";
 import { MAP_STYLES } from "@/constants/map-styles";
+import { MAPPACK_TYPES, DEFAULT_MAPPACK_TYPE } from "@/constants/mappack-types";
+import { MappackType } from "@/types/mappack.types";
 
 interface TimeGoal {
   name: string;
@@ -31,6 +35,7 @@ export default function CreateMappackModal() {
   const [description, setDescription] = useState("");
   const [mapStyleName, setMapStyleName] = useState<string | null>(null);
   const [thumbnailURL, setThumbnailURL] = useState("");
+  const [type, setType] = useState<MappackType>(DEFAULT_MAPPACK_TYPE);
   const [timeGoals, setTimeGoals] = useState<TimeGoal[]>([]);
   const [currentGoalName, setCurrentGoalName] = useState("");
   const [currentGoalDifficulty, setCurrentGoalDifficulty] = useState(1);
@@ -63,6 +68,7 @@ export default function CreateMappackModal() {
         description,
         thumbnailURL,
         isActive: true,
+        type,
         ...(mapStyleName ? { mapStyleName } : { mapStyleName: "Tech" }),
       });
 
@@ -146,6 +152,31 @@ export default function CreateMappackModal() {
                       "border-gray-700 data-[hover=true]:border-gray-600 group-data-[focus=true]:bg-neutral-900 group-data-[focus=true]:border-white",
                   }}
                 />
+                <Select
+                  label="Type"
+                  variant="bordered"
+                  selectedKeys={new Set([type])}
+                  onSelectionChange={(keys) => {
+                    const value = Array.from(keys as Set<string>)[0] as
+                      | MappackType
+                      | undefined;
+                    if (value) setType(value);
+                  }}
+                  classNames={{
+                    listboxWrapper: "bg-neutral-800",
+                    popoverContent: "bg-neutral-800",
+                    label: "text-white",
+                    value: "text-white",
+                    trigger:
+                      "border-gray-700 data-[hover=true]:border-gray-600 data-[open=true]:bg-neutral-900 data-[open=true]:border-white",
+                  }}
+                >
+                  {MAPPACK_TYPES.map((mappackType) => (
+                    <SelectItem key={mappackType.key}>
+                      {mappackType.label}
+                    </SelectItem>
+                  ))}
+                </Select>
                 <Autocomplete
                   defaultItems={MAP_STYLES}
                   label="Map Style"

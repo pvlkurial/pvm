@@ -1,9 +1,11 @@
 "use client";
 import { useAuth } from "@/contexts/AuthContext";
+import { Role, hasAtLeastRole } from "@/types/auth";
 import { ReactNode } from "react";
 
 interface RequireRoleProps {
-  role: "user" | "admin";
+  /** Minimum role required. A superadmin satisfies "admin", but not the reverse. */
+  role: Role;
   children: ReactNode;
   fallback?: ReactNode;
 }
@@ -15,17 +17,9 @@ export default function RequireRole({
 }: RequireRoleProps) {
   const { user, isAuthenticated } = useAuth();
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || !hasAtLeastRole(user?.role, role)) {
     return <>{fallback}</>;
   }
 
-  if (user?.role === "admin") {
-    return <>{children}</>;
-  }
-
-  if (user?.role === role) {
-    return <>{children}</>;
-  }
-
-  return <>{fallback}</>;
+  return <>{children}</>;
 }

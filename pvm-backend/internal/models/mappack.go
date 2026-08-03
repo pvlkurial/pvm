@@ -2,6 +2,13 @@ package models
 
 import "time"
 
+// Mappack types, stored in Mappack.Type.
+const (
+	MappackTypePVM      = "pvm"
+	MappackTypeCampaign = "campaign"
+	MappackTypeOther    = "other"
+)
+
 type Mappack struct {
 	ID           string `gorm:"primaryKey" json:"id"`
 	MappackTrack []*MappackTrack
@@ -21,5 +28,5 @@ type Mappack struct {
 	DiscordURL   string        `json:"discordurl"`
 	SheetURL     string        `json:"sheeturl"`
 	WebsiteURL   string        `json:"websiteurl"`
-	Type         string        `json:"type"`
+	Type         string        `gorm:"default:pvm" json:"type"`
 }

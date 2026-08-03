@@ -21,16 +21,35 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const savedAuth = authService.loadAuth();
 
-    if (savedAuth) {
-      setState({
-        user: savedAuth.user,
-        token: savedAuth.token,
-        isAuthenticated: true,
-        isLoading: false,
-      });
-    } else {
+    if (!savedAuth) {
       setState((prev) => ({ ...prev, isLoading: false }));
+      return;
     }
+
+    setState({
+      user: savedAuth.user,
+      token: savedAuth.token,
+      isAuthenticated: true,
+      isLoading: false,
+    });
+
+    // The cached role is a snapshot from login time, so re-check it against the
+    // server: a promotion or demotion should show up without logging out.
+    let cancelled = false;
+    authService
+      .getCurrentUser(savedAuth.token)
+      .then((freshUser) => {
+        if (cancelled) return;
+        authService.updateCachedUser(freshUser);
+        setState((prev) => ({ ...prev, user: freshUser }));
+      })
+      .catch(() => {
+        // Offline or an expired token; keep the cached user rather than logging out.
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   useEffect(() => {

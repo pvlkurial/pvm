@@ -1,7 +1,7 @@
 import { Button, Popover, PopoverContent, PopoverTrigger } from "@heroui/react";
 import AddTrackModal from "@/app/_components/add-edit-buttons/AddTrackModal";
 import { EditMappackModal } from "@/app/_components/add-edit-buttons/EditMappackModal";
-import RequireRole from "@/app/_components/RequireRole";
+import RequireMappackPermission from "@/app/_components/RequireMappackPermission";
 import { Mappack, MappackTier, MappackTrack } from "@/types/mappack.types";
 import { FaDiscord, FaGlobe, FaTable } from "react-icons/fa6";
 
@@ -147,19 +147,19 @@ export function MappackSidebar({
                 })}
               </div>
 
-              <RequireRole role="admin">
+              <RequireMappackPermission mappackId={mappack.id}>
                 <div className="flex justify-center mt-3">
                   <AddTrackModal
                     timegoals={mappack.timeGoals}
                     mappackId={mappack.id}
                   />
                 </div>
-              </RequireRole>
+              </RequireMappackPermission>
             </div>
           </>
         )}
 
-        <RequireRole role="admin">
+        <RequireMappackPermission mappackId={mappack.id}>
           <hr className="border-white/10" />
           <div className="flex justify-center">
             <Button onPress={onEditClick} size="sm" variant="flat">
@@ -172,7 +172,7 @@ export function MappackSidebar({
               onSave={onEditSave}
             />
           </div>
-        </RequireRole>
+        </RequireMappackPermission>
       </div>
     </div>
   );
