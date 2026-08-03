@@ -12,11 +12,10 @@ const AVAILABLE_STYLES = [
   { key: "fullspeed", file: "fullspeed.svg", label: "Fullspeed" },
   { key: "dirt", file: "dirt.svg", label: "Dirt" },
   { key: "ice", file: "ice.svg", label: "Ice" },
-];
-
-const COMING_SOON_STYLES = [
   { key: "mixed", file: "mixed.svg", label: "Mixed" },
 ];
+
+const COMING_SOON_STYLES: { key: string; file: string; label: string }[] = [];
 
 export default function Home() {
   const router = useRouter();
@@ -28,10 +27,6 @@ export default function Home() {
         <HeroPanel />
 
         <div className="relative z-10">
-          <p className="text-neutral-500 text-xs tracking-[0.25em] uppercase mb-5">
-            Trackmania · PVM Tracking Platform
-          </p>
-
           <h1
             className="font-ruigslay leading-none mb-10"
             style={{ fontSize: "clamp(60px, 11vw, 120px)" }}
@@ -49,10 +44,6 @@ export default function Home() {
               vs Map
             </span>
           </h1>
-
-          <p className="text-neutral-400 text-base max-w-sm mb-10 leading-relaxed">
-            Set records, earn points, and work your way through every tier.
-          </p>
 
           <div className="flex gap-3 flex-wrap items-center">
             {!isAuthenticated ? (
@@ -100,28 +91,32 @@ export default function Home() {
               </div>
             ))}
 
-            <div className="w-px h-8 bg-neutral-800 self-center" />
+            {COMING_SOON_STYLES.length > 0 && (
+              <>
+                <div className="w-px h-8 bg-neutral-800 self-center" />
 
-            {COMING_SOON_STYLES.map((s) => (
-              <div
-                key={s.key}
-                className="flex flex-col items-center gap-1.5 group relative"
-              >
-                <Image
-                  src={`/map-styles/${s.file}`}
-                  alt={s.label}
-                  width={32}
-                  height={32}
-                  className="opacity-15"
-                />
-                <span className="text-neutral-700 text-[10px] tracking-widest uppercase">
-                  {s.label}
-                </span>
-                <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] text-neutral-600 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                  in the future?
-                </span>
-              </div>
-            ))}
+                {COMING_SOON_STYLES.map((s) => (
+                  <div
+                    key={s.key}
+                    className="flex flex-col items-center gap-1.5 group relative"
+                  >
+                    <Image
+                      src={`/map-styles/${s.file}`}
+                      alt={s.label}
+                      width={32}
+                      height={32}
+                      className="opacity-15"
+                    />
+                    <span className="text-neutral-700 text-[10px] tracking-widest uppercase">
+                      {s.label}
+                    </span>
+                    <span className="absolute -top-6 left-1/2 -translate-x-1/2 text-[9px] text-neutral-600 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      in the future?
+                    </span>
+                  </div>
+                ))}
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -179,37 +174,6 @@ export default function Home() {
 
       <div className="border-t border-neutral-800 max-w-5xl mx-auto w-full px-6" />
       <ContributorsSection />
-
-      <section className="max-w-5xl mx-auto w-full px-6 py-16">
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-8">
-          <div>
-            <h2
-              className="font-ruigslay text-white mb-3"
-              style={{ fontSize: "clamp(38px, 6vw, 68px)", lineHeight: 1 }}
-            >
-              Ready to run it?
-            </h2>
-          </div>
-
-          {!isAuthenticated ? (
-            <Button
-              size="lg"
-              className="bg-white text-black font-semibold px-8 shrink-0"
-              onPress={login}
-            >
-              Get Started
-            </Button>
-          ) : (
-            <Button
-              size="lg"
-              className="bg-white text-black font-semibold px-8 shrink-0"
-              onPress={() => router.push("/mappacks")}
-            >
-              Pick a PVM
-            </Button>
-          )}
-        </div>
-      </section>
 
       <p className="text-neutral-700 text-xs tracking-widest uppercase text-label ml-6 mb-6">
         Not affiliated with Nadeo
