@@ -43,6 +43,7 @@ export default function MapppacksPage() {
   return (
     <div className="mp-page">
       <MappackGrid
+        label="PVM"
         mappacks={mappacks}
         showAddCard={canCreateMappack}
         isLoading={loading}
@@ -51,6 +52,7 @@ export default function MapppacksPage() {
 
       {campaigns.length > 0 && (
         <MappackGrid
+          label="Campaign"
           mappacks={campaigns}
           isLoading={loading}
           emptyMessage="no campaigns yet"

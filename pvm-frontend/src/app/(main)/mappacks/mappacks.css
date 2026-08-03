@@ -13,6 +13,27 @@
     border-top: 1px solid rgb(255 255 255 / 0.07);
   }
 
+  .mp-section-head {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 18px;
+  }
+  .mp-section-label {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 0.75);
+    white-space: nowrap;
+    margin: 0;
+  }
+  .mp-section-rule {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, rgb(255 255 255 / 0.2), transparent);
+  }
+
   .mp-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(clamp(240px, 26vw, 320px), 1fr));
@@ -40,7 +61,6 @@
   .mp-card:hover,
   .mp-card:focus-visible {
     transform: translateY(-4px);
-    border-color: var(--mp-accent, rgb(255 255 255 / 0.28));
     box-shadow: 0 14px 34px rgb(0 0 0 / 0.6);
   }
   .mp-card:focus-visible {
