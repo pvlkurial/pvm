@@ -53,7 +53,7 @@ export function TrackCardGoals({
 
   if (compact) {
     return (
-      <div className="flex flex-col gap-1 pb-3">
+      <div className="flex flex-col gap-1 pb-1.5">
         {summary}
         {/* One segment per goal, so the height never changes with goal count. */}
         <div className="flex gap-0.5">
