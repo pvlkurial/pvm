@@ -1,107 +1,72 @@
 @layer components {
-
-
-  /* navbar ~65px + hr 1px + footer ~73px */
   .mp-page {
-    height: calc(100vh - 140px);
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 36px 28px 72px;
     display: flex;
     flex-direction: column;
-    overflow: hidden;
   }
 
-  /* Sections split the page evenly, so a row is full-bleed when it is alone. */
-  .mp-section {
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-    min-height: 0;
-  }
   .mp-section + .mp-section {
+    margin-top: 36px;
+    padding-top: 36px;
     border-top: 1px solid rgb(255 255 255 / 0.07);
   }
 
-  .mp-viewport {
-    position: relative;
-    width: 100%;
-    flex: 1;
-    min-height: 0;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    user-select: none;
+  .mp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(clamp(240px, 26vw, 320px), 1fr));
+    gap: 20px;
   }
-
-
-  .mp-track {
-    display: flex;
-    flex: 1;
-    min-height: 0;
-    cursor: grab;
-    /* padding-left is set inline from the measured row height: skewX(-10deg)
-       shifts the first card's bottom-left corner left by height * tan(10deg),
-       and the padding pushes the track right to compensate. */
-  }
-  .mp-track:active {
-    cursor: grabbing;
-  }
-  .mp-track-transitioning {
-    transition: transform 0.45s cubic-bezier(0.77, 0, 0.175, 1);
-  }
-
 
   .mp-card,
-  .mp-add-wrap {
+  .mp-add {
     position: relative;
-    flex-shrink: 0;
-    height: 100%;
-  }
-  .mp-card {
-    z-index: 2;
+    display: block;
+    aspect-ratio: 16 / 10;
+    border-radius: 12px;
+    overflow: hidden;
     text-decoration: none;
     color: inherit;
+    border: 1px solid rgb(255 255 255 / 0.08);
+    transition:
+      transform 0.3s ease,
+      border-color 0.3s ease,
+      box-shadow 0.3s ease;
   }
-  .mp-card:hover {
-    z-index: 10;
-  }
-  .mp-add-wrap {
-    z-index: 2;
-  }
-
-
-  .mp-inner,
-  .mp-add-inner {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: -20px;
-    transform: skewX(-10deg);
-    overflow: hidden;
-    border-right: 1px solid rgb(255 255 255 / 0.07);
-    transition: box-shadow 0.3s ease;
-  }
-  .mp-inner {
+  .mp-card {
     background: #080b10;
   }
-  .mp-card:hover .mp-inner {
-    box-shadow: 8px 0 40px rgb(0 0 0 / 0.7);
+  .mp-card:hover,
+  .mp-card:focus-visible {
+    transform: translateY(-4px);
+    border-color: var(--mp-accent, rgb(255 255 255 / 0.28));
+    box-shadow: 0 14px 34px rgb(0 0 0 / 0.6);
+  }
+  .mp-card:focus-visible {
+    outline: none;
   }
 
+  .mp-inner {
+    position: absolute;
+    inset: 0;
+  }
 
   .mp-img {
     position: absolute;
     inset: 0;
     background-size: cover;
     background-position: center;
-    filter: brightness(0.6);
+    filter: brightness(0.62);
     pointer-events: none;
-    transition: filter 0.35s ease, transform 0.35s ease;
+    transition:
+      filter 0.35s ease,
+      transform 0.35s ease;
   }
   .mp-card:hover .mp-img {
-    filter: brightness(0.82);
-    transform: scale(1.04);
+    filter: brightness(0.85);
+    transform: scale(1.05);
   }
-
 
   .mp-grad {
     position: absolute;
@@ -109,15 +74,13 @@
     background: linear-gradient(
       to top,
       rgb(0 0 0 / 0.95) 0%,
-      rgb(0 0 0 / 0.3) 40%,
-      transparent 68%
+      rgb(0 0 0 / 0.35) 45%,
+      transparent 72%
     );
     pointer-events: none;
   }
 
-
-  /* Sweeps across the bottom of the card on hover, in the mappack's own accent
-     colour. Falls back to white for mappacks that have none set. */
+  /* Sweeps across the bottom on hover, in the mappack's accent colour. */
   .mp-accent {
     position: absolute;
     bottom: 0;
@@ -130,42 +93,40 @@
     transform-origin: left center;
     transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
   }
-  .mp-card:hover .mp-accent {
+  .mp-card:hover .mp-accent,
+  .mp-card:focus-visible .mp-accent {
     transform: scaleX(1);
   }
-  @media (prefers-reduced-motion: reduce) {
-    .mp-accent {
-      transition: none;
-    }
-  }
-
 
   .mp-text {
     position: absolute;
     bottom: 0;
     left: 0;
     right: 0;
-    padding: 28px 36px;
+    padding: 18px 20px;
     z-index: 2;
-    transform: skewX(10deg);
     pointer-events: none;
   }
   .mp-name {
-    font-size: 20px;
+    font-size: 17px;
     font-weight: 700;
     letter-spacing: 0.03em;
     text-transform: uppercase;
     color: #fff;
-    line-height: 1.1;
+    line-height: 1.15;
     margin: 0;
   }
-  /* Sits inline after the name, skewed back the other way like .mp-dot so it
-     reads as a tag pinned to the card's slant. Picks up the mappack's accent
-     colour where one is set. */
+  .mp-count {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: rgb(255 255 255 / 0.4);
+    margin: 6px 0 0;
+  }
+
   .mp-new {
     display: inline-block;
     vertical-align: middle;
-    margin-left: 10px;
+    margin-left: 9px;
     padding: 3px 8px 2px;
     font-size: 9px;
     font-weight: 700;
@@ -174,7 +135,7 @@
     line-height: 1;
     color: #06080c;
     background: var(--mp-accent, #fff);
-    transform: skewX(-12deg);
+    border-radius: 3px;
     box-shadow: 0 0 14px var(--mp-accent, rgb(255 255 255 / 0.5));
     animation: mp-new-pulse 2.4s ease-in-out infinite;
   }
@@ -187,44 +148,30 @@
       opacity: 0.72;
     }
   }
-  @media (prefers-reduced-motion: reduce) {
-    .mp-new {
-      animation: none;
-    }
-  }
-
-  .mp-count {
-    font-size: 11px;
-    letter-spacing: 0.15em;
-    color: rgb(255 255 255 / 0.35);
-    margin: 6px 0 0;
-  }
-
 
   .mp-style-icon {
     position: absolute;
-    top: 20px;
-    right: 52px;
+    top: 14px;
+    right: 14px;
     z-index: 3;
-    transform: skewX(10deg);
     pointer-events: all;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
   }
   .mp-style-svg {
-    width: 68px;
-    height: 68px;
-    opacity: 0.18;
+    width: 52px;
+    height: 52px;
+    opacity: 0.2;
     display: block;
     transition: opacity 0.3s;
   }
   .mp-card:hover .mp-style-svg {
-    opacity: 0.4;
+    opacity: 0.45;
   }
   .mp-style-icon:hover .mp-style-svg {
-    opacity: 0.6;
+    opacity: 0.65;
   }
   .mp-style-label {
     font-size: 10px;
@@ -236,108 +183,61 @@
     transition: color 0.25s;
   }
   .mp-style-icon:hover .mp-style-label {
-    color: rgb(255 255 255 / 0.55);
+    color: rgb(255 255 255 / 0.6);
   }
 
-
-  .mp-add-inner {
+  .mp-add {
     background: transparent;
-    border: 1px dashed rgb(255 255 255 / 0.12);
+    border-style: dashed;
+    border-color: rgb(255 255 255 / 0.14);
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: border-color 0.25s, background 0.25s;
   }
-  .mp-add-wrap:hover .mp-add-inner {
-    border-color: rgb(255 255 255 / 0.28);
+  .mp-add:hover,
+  .mp-add:focus-visible {
+    border-color: rgb(255 255 255 / 0.3);
     background: rgb(255 255 255 / 0.03);
+    outline: none;
   }
   .mp-add-content {
-    transform: skewX(10deg);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     pointer-events: none;
     user-select: none;
-    color: rgb(255 255 255 / 0.25);
+    color: rgb(255 255 255 / 0.28);
     font-size: 11px;
     letter-spacing: 0.2em;
     text-transform: uppercase;
     transition: color 0.25s;
   }
-  .mp-add-wrap:hover .mp-add-content {
-    color: rgb(255 255 255 / 0.5);
+  .mp-add:hover .mp-add-content {
+    color: rgb(255 255 255 / 0.55);
   }
   .mp-add-icon {
-    font-size: 32px;
+    font-size: 30px;
     line-height: 1;
     font-weight: 200;
   }
 
-  .mp-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 50;
-    background: rgb(0 0 0 / 0.5);
-    border: 1px solid rgb(255 255 255 / 0.1);
-    color: #fff;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    clip-path: polygon(10% 0%, 100% 0%, 90% 100%, 0% 100%);
-    opacity: 0.5;
-    transition: opacity 0.2s, background 0.2s;
-    backdrop-filter: blur(4px);
-  }
-  .mp-arrow:hover {
-    opacity: 1;
-    background: rgb(0 0 0 / 0.75);
-  }
-  .mp-arrow svg {
-    width: 16px;
-    height: 16px;
-  }
-  @media (max-width: 639px) {
-    .mp-arrow { display: none; }
-  }
-
-
-  .mp-dots {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    padding: 14px 0;
-    flex-shrink: 0;
-  }
-  .mp-dot {
-    height: 6px;
-    width: 32px;
-    background: rgb(255 255 255 / 0.15);
-    border: none;
-    cursor: pointer;
-    transform: skewX(-12deg);
-    padding: 0;
-    transition: width 0.3s ease, background 0.3s ease;
-  }
-  .mp-dot.is-active {
-    width: 64px;
-    background: rgb(255 255 255 / 0.6);
-  }
-
-
   .mp-empty {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    padding: 48px 0;
+    text-align: center;
     color: rgb(255 255 255 / 0.2);
     font-size: 13px;
     letter-spacing: 0.15em;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mp-card,
+    .mp-img,
+    .mp-accent,
+    .mp-new {
+      transition: none;
+      animation: none;
+    }
   }
 }
