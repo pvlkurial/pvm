@@ -84,6 +84,18 @@ func (t *MappackController) CreateMappackTimeGoal(c *gin.Context) {
 	}
 }
 
+// GetAllCampaigns serves campaigns on their own endpoint so they never mix into
+// the pvm listing.
+func (t *MappackController) GetAllCampaigns(c *gin.Context) {
+	result, err := t.mappackService.GetAllCampaigns()
+	if err != nil {
+		fmt.Printf("Error occured while getting Campaigns: %s\n", err)
+		c.String(http.StatusInternalServerError, "Internal Server Error")
+		return
+	}
+	c.JSON(http.StatusOK, result)
+}
+
 func (t *MappackController) GetAllMappackTimeGoals(c *gin.Context) {
 	mappackId := c.Param("mappack_id")
 	result, err := t.mappackService.GetAllMappackTimeGoals(mappackId)

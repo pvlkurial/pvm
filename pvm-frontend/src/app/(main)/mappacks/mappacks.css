@@ -1,11 +1,61 @@
 @layer components {
 
 
+  /* navbar ~65px + hr 1px + footer ~73px */
+  .mp-page {
+    height: calc(100vh - 140px);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Sections split the page evenly, so a row is full-bleed when it is alone. */
+  .mp-section {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+  }
+  .mp-section + .mp-section {
+    border-top: 1px solid rgb(255 255 255 / 0.07);
+  }
+
+  .mp-section-head {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 28px 10px;
+    flex-shrink: 0;
+  }
+  .mp-section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 0.55);
+    white-space: nowrap;
+  }
+  .mp-section-rule {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(
+      to right,
+      rgb(255 255 255 / 0.18),
+      transparent
+    );
+  }
+  .mp-section-count {
+    font-size: 10px;
+    letter-spacing: 0.2em;
+    color: rgb(255 255 255 / 0.25);
+    font-variant-numeric: tabular-nums;
+  }
+
   .mp-viewport {
     position: relative;
     width: 100%;
-    /* navbar ~65px + hr 1px + footer ~73px */
-    height: calc(100vh - 140px);
+    flex: 1;
+    min-height: 0;
     overflow: hidden;
     display: flex;
     flex-direction: column;
@@ -18,10 +68,9 @@
     flex: 1;
     min-height: 0;
     cursor: grab;
-    /* Offset so the first card's skewed bottom-left corner isn't clipped.
-       skewX(-10deg) shifts the bottom-left by height * tan(10deg) to the left.
-       padding-left pushes the whole track right to compensate. */
-    padding-left: calc((100vh - 140px) * tan(10deg));
+    /* padding-left is set inline from the measured row height: skewX(-10deg)
+       shifts the first card's bottom-left corner left by height * tan(10deg),
+       and the padding pushes the track right to compensate. */
   }
   .mp-track:active {
     cursor: grabbing;

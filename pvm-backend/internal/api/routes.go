@@ -125,6 +125,7 @@ func (r *Routes) InitRoutes() {
 	//r.DELETE("/mappacks/:mappack_id/timegoals/:timegoal_id", controllers.MappackController.RemoveTimeGoalFromMappack)
 
 	r.GET("/mappacks", controllers.MappackController.GetAll)
+	r.GET("/campaigns", controllers.MappackController.GetAllCampaigns)
 	r.GET("/mappacks/:mappack_id", controllers.MappackController.GetById)
 
 	r.GET("/mappacks/:mappack_id/tracks", controllers.TrackController.GetByMappackId)

@@ -11,6 +11,7 @@ type MappackRepository interface {
 	GetById(id string) (models.Mappack, error)
 	GetByIdAll(id string) (models.Mappack, error)
 	GetAll() ([]models.Mappack, error)
+	GetAllByType(mappackType string) ([]models.Mappack, error)
 	GetAllUnfiltered() ([]models.Mappack, error)
 	CreateMappackTimeGoal(timegoal *models.TimeGoal) error
 	GetAllMappackTimeGoals(mappackId string) ([]models.TimeGoal, error)
@@ -101,9 +102,16 @@ func (t *mappackRepository) GetByIdAll(id string) (models.Mappack, error) {
 }
 
 func (t *mappackRepository) GetAll() ([]models.Mappack, error) {
+	return t.GetAllByType(models.MappackTypePVM)
+}
+
+// GetAllByType returns the active mappacks of a single type, so each type can be
+// fetched independently rather than filtered client-side.
+func (t *mappackRepository) GetAllByType(mappackType string) ([]models.Mappack, error) {
 	mappacks := []models.Mappack{}
 	err := t.db.Where("is_active = ?", true).
-		Where(`"type" = ?`, models.MappackTypePVM).
+		Where(`"type" = ?`, mappackType).
+		Order("name ASC").
 		Find(&mappacks).Error
 	return mappacks, err
 }

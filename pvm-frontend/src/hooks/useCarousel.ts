@@ -13,11 +13,25 @@ export type TrackItem<T extends CarouselItem> = T & {
   cloneKey: string;
 };
 
-export function useCarousel<T extends CarouselItem>(items: T[]) {
+export type CarouselOptions = {
+  /**
+   * Whether arrow keys drive this carousel. With more than one carousel on a
+   * page they would otherwise all move together.
+   */
+  keyboardEnabled?: boolean;
+};
+
+export function useCarousel<T extends CarouselItem>(
+  items: T[],
+  options: CarouselOptions = {},
+) {
+  const { keyboardEnabled = true } = options;
+
   const [visible, setVisible] = useState(4);
   const [pos, setPos] = useState(4);
   const [transitioning, setTransitioning] = useState(false);
   const [cardWidth, setCardWidth] = useState(0);
+  const [viewportHeight, setViewportHeight] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
 
   const viewportRef = useRef<HTMLDivElement>(null);
@@ -37,6 +51,7 @@ export function useCarousel<T extends CarouselItem>(items: T[]) {
       const v = w < SM_BREAKPOINT ? 2 : 4;
       setVisible(v);
       setCardWidth(w / v);
+      setViewportHeight(viewportRef.current.offsetHeight);
       setPos((p) => {
         if (total === 0) return v;
         const realIdx = Math.max(
@@ -47,8 +62,17 @@ export function useCarousel<T extends CarouselItem>(items: T[]) {
       });
     };
     measure();
+
+    // A window resize is not the only thing that changes these dimensions: a
+    // sibling section appearing after its fetch resolves resizes this one too.
+    const observer = new ResizeObserver(measure);
+    if (viewportRef.current) observer.observe(viewportRef.current);
+
     window.addEventListener("resize", measure);
-    return () => window.removeEventListener("resize", measure);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener("resize", measure);
+    };
   }, [total]);
 
   const clonedTrack: TrackItem<T>[] = needsCarousel
@@ -93,13 +117,15 @@ export function useCarousel<T extends CarouselItem>(items: T[]) {
   const next = useCallback(() => go(1), [go]);
 
   useEffect(() => {
+    if (!keyboardEnabled) return;
+
     const handler = (e: KeyboardEvent) => {
       if (e.key === "ArrowLeft") prev();
       if (e.key === "ArrowRight") next();
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [prev, next]);
+  }, [prev, next, keyboardEnabled]);
 
   const getClientX = (e: MouseEvent | TouchEvent) => {
     if ("touches" in e)
@@ -176,6 +202,7 @@ export function useCarousel<T extends CarouselItem>(items: T[]) {
     viewportRef,
     clonedTrack,
     effectiveCardWidth,
+    viewportHeight,
     transitioning,
     translateX,
     onTransitionEnd,
