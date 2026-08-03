@@ -10,6 +10,26 @@ interface ModalPlayerStatsProps {
   playerName: string;
   ranks: MappackRank[];
   accentColor?: string;
+  /** Completed tracks, shown alongside points and rank. */
+  completionCurrent?: number;
+  completionTotal?: number;
+}
+
+function StatTile({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex-1 min-w-[110px] rounded-lg bg-white/[0.04] border border-white/[0.06] px-4 py-3">
+      <p className="text-[10px] tracking-widest uppercase text-white/35 mb-1 text-label">
+        {label}
+      </p>
+      {children}
+    </div>
+  );
 }
 
 export function ModalPlayerStats({
@@ -18,6 +38,8 @@ export function ModalPlayerStats({
   playerName,
   ranks,
   accentColor,
+  completionCurrent,
+  completionTotal,
 }: ModalPlayerStatsProps) {
   const { stats, loading, error } = usePlayerStats(mappackId, playerId);
 
@@ -44,34 +66,16 @@ export function ModalPlayerStats({
   const color = playerRank?.color ?? accentColor ?? "#ffffff";
 
   return (
-    <div className="flex flex-col gap-3">
-      {/* Player name — full width */}
-      <div>
-        <p className="text-[10px] tracking-widest uppercase text-white/30 mb-0.5 text-label">
-          Player
-        </p>
-        <h2 className="text-4xl font-bold leading-tight truncate text-label">
-          {playerName}
-        </h2>
-      </div>
-
-      {/* Points — full width */}
-      <p className="text-5xl font-ruigslay tracking-wide font-bold text-white leading-none">
-        {entry.total_points.toLocaleString()} PTS
-      </p>
-
-      {/* Leaderboard rank + RankDisplay inline */}
-      <div className="flex items-center gap-6">
-        <div>
-          <p className="text-[10px] tracking-widest uppercase text-white/30 mb-0.5 text-label">
-            Leaderboard Rank
+    <div className="flex flex-col gap-4">
+      {/* Name is the single headline; the rank badge sits beside it. */}
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0">
+          <p className="text-[10px] tracking-widest uppercase text-white/35 mb-1 text-label">
+            Player
           </p>
-          <p
-            className="text-6xl font-ruigslay font-bold leading-none tracking-widest"
-            style={{ color }}
-          >
-            #{rank}
-          </p>
+          <h2 className="text-3xl font-bold leading-tight truncate text-label">
+            {playerName}
+          </h2>
         </div>
 
         {playerRank && (
@@ -82,6 +86,33 @@ export function ModalPlayerStats({
               currentPoints={entry.total_points}
             />
           </div>
+        )}
+      </div>
+
+      {/* Equal-weight tiles so no single figure dominates the modal. */}
+      <div className="flex flex-wrap gap-2">
+        <StatTile label="Points">
+          <p className="text-2xl font-ruigslay font-bold text-white leading-none">
+            {entry.total_points.toLocaleString()}
+          </p>
+        </StatTile>
+
+        <StatTile label="Leaderboard Rank">
+          <p
+            className="text-2xl font-ruigslay font-bold leading-none"
+            style={{ color }}
+          >
+            #{rank}
+          </p>
+        </StatTile>
+
+        {completionTotal !== undefined && completionTotal > 0 && (
+          <StatTile label="Goals Completed">
+            <p className="text-2xl font-ruigslay font-bold text-white leading-none">
+              {completionCurrent}
+              <span className="text-white/35">/{completionTotal}</span>
+            </p>
+          </StatTile>
         )}
       </div>
     </div>

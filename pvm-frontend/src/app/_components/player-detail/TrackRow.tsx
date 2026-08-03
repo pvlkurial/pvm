@@ -8,6 +8,7 @@ import {
 import { FormattedText } from "@/utils/textConverter";
 import { millisecondsToTimeString } from "@/utils/time.utils";
 import { Image } from "@heroui/react";
+import { trackRowColumns } from "./trackRowLayout";
 
 interface TrackRowProps {
   track: MappackTrack;
@@ -100,8 +101,12 @@ export function TrackRow({
         </div>
       </div>
 
-      <div className="hidden md:flex items-center gap-4">
-        <div className="relative w-16 h-16 rounded overflow-hidden flex-shrink-0">
+      {/* Labels live in TrackRowHeader, once per tier, so rows stay scannable. */}
+      <div
+        className="hidden md:grid items-center gap-4"
+        style={{ gridTemplateColumns: trackRowColumns(!!loggedInMappack) }}
+      >
+        <div className="relative w-16 h-16 rounded overflow-hidden">
           <Image
             src={track.track.thumbnailUrl}
             alt={track.track.name}
@@ -109,57 +114,51 @@ export function TrackRow({
           />
         </div>
 
-        <div className="flex-1 min-w-0">
+        <div className="min-w-0">
           <FormattedText
             text={track.track.name}
             className="text-white font-semibold truncate block"
           />
         </div>
 
-        <div className="text-center min-w-[100px]">
-          <p className="text-xs text-white/50 uppercase">Goal</p>
-          <p className="text-sm font-semibold text-white">
-            {bestGoal ? bestGoal.name : "-"}
-          </p>
-        </div>
+        <p className="text-center text-sm font-semibold text-white truncate">
+          {bestGoal ? bestGoal.name : <span className="text-white/25">—</span>}
+        </p>
 
-        <div className="text-center min-w-[120px]">
-          <p className="text-xs text-white/50 uppercase">Time</p>
-          <p className="text-sm font-mono text-white">
-            {playerTime ? millisecondsToTimeString(playerTime) : "-"}
-          </p>
-        </div>
+        <p className="text-center text-sm font-mono text-white">
+          {playerTime ? (
+            millisecondsToTimeString(playerTime)
+          ) : (
+            <span className="text-white/25">—</span>
+          )}
+        </p>
+
         {loggedInMappack && (
-          <div className="text-center min-w-[120px]">
-            <p className="text-xs text-white/50 uppercase">Δ Time</p>
-            <p
-              className={`text-sm font-mono ${
-                timeDelta ? timeDelta.color : "text-white/30"
-              }`}
-            >
-              {timeDelta ? timeDelta.formatted : "-"}
-            </p>
-          </div>
+          <p
+            className={`text-center text-sm font-mono ${
+              timeDelta ? timeDelta.color : "text-white/25"
+            }`}
+          >
+            {timeDelta ? timeDelta.formatted : "—"}
+          </p>
         )}
 
-        <div className="text-center min-w-[80px]">
-          <p className="text-xs text-white/50 uppercase">Points</p>
-          <p className="text-sm font-bold text-green-400">
-            {points > 0 ? points : "-"}
-          </p>
-        </div>
+        <p
+          className={`text-center text-sm font-bold ${
+            points > 0 ? "text-green-400" : "text-white/25"
+          }`}
+        >
+          {points > 0 ? points : "—"}
+        </p>
 
         {loggedInMappack && (
-          <div className="text-center min-w-[80px]">
-            <p className="text-xs text-white/50 uppercase">Δ Pts</p>
-            <p
-              className={`text-sm font-bold ${
-                pointsDelta ? pointsDelta.color : "text-white/30"
-              }`}
-            >
-              {pointsDelta ? pointsDelta.formatted : "-"}
-            </p>
-          </div>
+          <p
+            className={`text-center text-sm font-bold ${
+              pointsDelta ? pointsDelta.color : "text-white/25"
+            }`}
+          >
+            {pointsDelta ? pointsDelta.formatted : "—"}
+          </p>
         )}
       </div>
     </div>

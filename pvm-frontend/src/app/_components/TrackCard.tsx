@@ -103,6 +103,7 @@ export default function TrackCard({
   className={`
     absolute -bottom-1 left-0 right-0 z-10
     transition-transform duration-300 ease-in-out pt-2 p-1.5
+    max-h-[55%] overflow-hidden
     ${
       alwaysShowDetails
         ? "translate-y-0"
@@ -136,6 +137,7 @@ export default function TrackCard({
             enrichedTimeGoals={enrichedTimeGoals}
             achievedCount={achievedCount}
             totalCount={totalCount}
+            compact={alwaysShowDetails}
           />
         </div>
       </CardFooter>
