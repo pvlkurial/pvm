@@ -110,7 +110,6 @@ export default function MappackPage({
           mappackId={mappackId}
           playerId={user.id}
           totalTracks={mappack.MappackTrack.length}
-          totalTimeGoals={mappack.timeGoals.length}
           ranks={mappack.mappackRanks}
         />
       )}

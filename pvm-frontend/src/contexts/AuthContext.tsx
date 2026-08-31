@@ -1,7 +1,7 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { AuthState } from "@/types/auth";
-import { authService } from "@/services/authService";
+import { authService, AuthRequestError } from "@/services/authService";
 
 interface AuthContextType extends AuthState {
   login: () => Promise<void>;
@@ -18,6 +18,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     isLoading: true,
   });
 
+  const clearSession = () => {
+    authService.logout();
+    setState({
+      user: null,
+      token: null,
+      isAuthenticated: false,
+      isLoading: false,
+    });
+  };
+
   useEffect(() => {
     const savedAuth = authService.loadAuth();
 
@@ -33,19 +43,46 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       isLoading: false,
     });
 
-    // The cached role is a snapshot from login time, so re-check it against the
-    // server: a promotion or demotion should show up without logging out.
     let cancelled = false;
-    authService
-      .getCurrentUser(savedAuth.token)
-      .then((freshUser) => {
+
+    const sync = async () => {
+      let token = savedAuth.token;
+
+      // Slide the session forward well before it lapses, so an active user is
+      // never dropped mid-visit and forced to sign in again.
+      if (authService.shouldRefreshToken(token)) {
+        try {
+          token = await authService.refreshToken(token);
+          if (cancelled) return;
+          authService.saveToken(token);
+          setState((prev) => ({ ...prev, token }));
+        } catch (error) {
+          if (error instanceof AuthRequestError && error.status === 401) {
+            if (!cancelled) clearSession();
+            return;
+          }
+          // Network fault: carry on with the existing token.
+        }
+      }
+
+      // The cached role is a snapshot from login time, so re-check it against
+      // the server: a promotion or demotion should show up without logging out.
+      try {
+        const freshUser = await authService.getCurrentUser(token);
         if (cancelled) return;
         authService.updateCachedUser(freshUser);
         setState((prev) => ({ ...prev, user: freshUser }));
-      })
-      .catch(() => {
-        // Offline or an expired token; keep the cached user rather than logging out.
-      });
+      } catch (error) {
+        // A rejected token means the session is genuinely over, so end it rather
+        // than leaving a signed-in shell whose every request fails. A network
+        // fault keeps the cached user.
+        if (error instanceof AuthRequestError && error.status === 401) {
+          if (!cancelled) clearSession();
+        }
+      }
+    };
+
+    sync();
 
     return () => {
       cancelled = true;
@@ -60,6 +97,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           user: savedAuth.user,
           token: savedAuth.token,
           isAuthenticated: true,
+          isLoading: false,
+        });
+      } else {
+        // Signed out elsewhere, or the token was rejected mid-session.
+        setState({
+          user: null,
+          token: null,
+          isAuthenticated: false,
           isLoading: false,
         });
       }

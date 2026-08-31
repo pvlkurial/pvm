@@ -96,6 +96,7 @@ export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
       mappack_id: editData.id,
       points: 0,
       color: "#ffffff",
+      orderPosition: editData.mappackTiers.length,
     };
     setEditData({
       ...editData,
@@ -260,6 +261,18 @@ export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
     });
   };
 
+  const updateTrackTmxId = (trackId: string, tmxID: string) => {
+    if (!editData) return;
+    setEditData({
+      ...editData,
+      MappackTrack: editData.MappackTrack.map((t) =>
+        t.track_id === trackId
+          ? { ...t, track: { ...t.track, tmxID } }
+          : t,
+      ),
+    });
+  };
+
   const updateMapStyle = (trackId: string, mapStyle: string) => {
     if (!editData) return;
     setEditData({
@@ -304,6 +317,7 @@ export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
     assignTierToTrack,
     updateTrackTime,
     updateMapStyle,
+    updateTrackTmxId,
     updateOrderPosition,
     removeTrackFromState,
   };

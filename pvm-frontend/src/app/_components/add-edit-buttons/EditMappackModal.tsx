@@ -13,6 +13,7 @@ import { useState } from "react";
 import { Mappack } from "@/types/mappack.types";
 import { useEditMappack } from "@/hooks/useEditMappack";
 import { mappackEditService } from "@/services/mappack-edit.service";
+import { trackService } from "@/services/track.service";
 import { ConfirmDialog } from "../ConfirmDialog";
 import { BasicInfoTab } from "../mappack-edit/BasicInfoTab";
 import { TimeGoalsTab } from "../mappack-edit/TimeGoalsTab";
@@ -68,6 +69,7 @@ export function EditMappackModal({
     updateTrackTime,
     updateMapStyle,
     updateOrderPosition,
+    updateTrackTmxId,
     removeTrackFromState,
   } = useEditMappack(mappack, isOpen);
 
@@ -79,6 +81,38 @@ export function EditMappackModal({
     setIsSaving(true);
     try {
       await mappackEditService.updateMappack(editData);
+
+      // Tracks are their own records, not part of the mappack payload, so any
+      // edited TMX id is persisted separately. Only changed ones are sent.
+      const changedTmxIds = editData.MappackTrack.filter((edited) => {
+        const original = mappack?.MappackTrack.find(
+          (t) => t.track_id === edited.track_id,
+        );
+        return (
+          original && (original.track.tmxID ?? "") !== (edited.track.tmxID ?? "")
+        );
+      });
+
+      try {
+        await Promise.all(
+          changedTmxIds.map((t) =>
+            trackService.updateTmxId(t.track_id, t.track.tmxID ?? ""),
+          ),
+        );
+      } catch (error) {
+        // The mappack is already saved at this point, so say so rather than
+        // reporting the whole save as failed. The modal stays open so the TMX
+        // edit is not lost.
+        console.error("Error updating TMX ID:", error);
+        onSave();
+        alert(
+          `Mappack saved, but the TMX ID could not be updated: ${
+            error instanceof Error ? error.message : "Unknown error"
+          }`,
+        );
+        return;
+      }
+
       onSave();
       onClose();
     } catch (error) {
@@ -245,6 +279,7 @@ export function EditMappackModal({
                       onUpdateTrackTime={updateTrackTime}
                       onUpdateMapStyle={updateMapStyle}
                       onUpdateOrderPosition={updateOrderPosition}
+                      onUpdateTmxId={updateTrackTmxId}
                       onDeleteTrack={handleDeleteTrack}
                       inputClassNames={MODAL_INPUT_CLASSNAMES}
                     />

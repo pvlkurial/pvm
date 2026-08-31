@@ -126,3 +126,41 @@ body {
 @utility section {
   @apply py-8 sm:py-12;
 }
+
+/* Leaderboard rank cosmetics. These live here rather than in a styled-jsx block
+   because styled-jsx renames scoped keyframes, which the inline `animation`
+   property set from the rank editor cannot resolve. */
+@keyframes rank-shine {
+  0% {
+    transform: translateX(-100%) translateY(-100%) rotate(45deg);
+  }
+  100% {
+    transform: translateX(100%) translateY(100%) rotate(45deg);
+  }
+}
+.animate-rank-shine {
+  animation: rank-shine 3s infinite;
+}
+
+@keyframes rank-shimmer {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+.animate-rank-shimmer {
+  animation: rank-shimmer 2s ease-in-out infinite;
+}
+
+@keyframes rank-holographic {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}

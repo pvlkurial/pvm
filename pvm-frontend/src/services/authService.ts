@@ -1,6 +1,29 @@
 import { AuthResponse, Role, User } from "@/types/auth";
 import { API_BASE } from "@/constants/miscellaneous";
 
+/** Error carrying the HTTP status, so callers can tell 401 from a network fault. */
+export class AuthRequestError extends Error {
+  status: number;
+  constructor(message: string, status: number) {
+    super(message);
+    this.status = status;
+  }
+}
+
+/** Reads `exp` out of a JWT payload without verifying it. Returns ms, or null. */
+function readTokenExpiry(token: string): number | null {
+  try {
+    const payload = token.split(".")[1];
+    if (!payload) return null;
+    const decoded = JSON.parse(
+      atob(payload.replace(/-/g, "+").replace(/_/g, "/")),
+    );
+    return typeof decoded.exp === "number" ? decoded.exp * 1000 : null;
+  } catch {
+    return null;
+  }
+}
+
 export const authService = {
   async getAuthUrl(): Promise<string> {
     const response = await fetch(`${API_BASE}/auth/login`);
@@ -35,10 +58,43 @@ export const authService = {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to get user");
+      throw new AuthRequestError("Failed to get user", response.status);
     }
 
     return response.json();
+  },
+
+  /** Trades a still-valid token for a fresh one, extending the session. */
+  async refreshToken(token: string): Promise<string> {
+    const response = await fetch(`${API_BASE}/auth/refresh`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!response.ok) {
+      throw new AuthRequestError("Failed to refresh token", response.status);
+    }
+
+    const data = await response.json();
+    return data.token;
+  },
+
+  isTokenExpired(token: string): boolean {
+    const expiry = readTokenExpiry(token);
+    // A token we cannot read is left alone; the server is the real authority.
+    return expiry !== null && expiry <= Date.now();
+  },
+
+  /** True once the token is past half its life, so it can slide forward early. */
+  shouldRefreshToken(token: string): boolean {
+    const expiry = readTokenExpiry(token);
+    if (expiry === null) return false;
+    const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+    return expiry - Date.now() < SEVEN_DAYS / 2;
+  },
+
+  saveToken(token: string): void {
+    localStorage.setItem("auth_token", token);
   },
 
   saveAuth(authData: AuthResponse): void {
@@ -62,6 +118,13 @@ export const authService = {
     const role = localStorage.getItem("user_role");
 
     if (token && user_id && name && role) {
+      // An expired token would otherwise leave the UI looking signed in while
+      // every authenticated request quietly fails.
+      if (this.isTokenExpired(token)) {
+        this.logout();
+        return null;
+      }
+
       return {
         token,
         user: {

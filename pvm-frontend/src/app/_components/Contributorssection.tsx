@@ -8,7 +8,7 @@ interface Contributor {
 
 const TIER_1: Contributor[] = [{ name: "You, the player" }];
 
-const TIER_2: Contributor[] = [{ name: "Loso" }, { name: "Aidan" }];
+const TIER_2: Contributor[] = [{ name: "Loso" }, { name: "Aidan" }, { name: "MrSafi" }];
 
 const TIER_3: Contributor[] = [
   { name: "Zimzalabim" },

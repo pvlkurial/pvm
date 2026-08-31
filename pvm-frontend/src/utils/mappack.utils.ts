@@ -25,6 +25,12 @@ export function groupTracksByTier(tracks: MappackTrack[]) {
   return grouped;
 }
 
+/**
+ * Orders tiers by their manual position first, falling back to points for tiers
+ * that share a position (which is the case for every tier until one is given an
+ * explicit order). The direction flips both keys, so the sort toggle still
+ * reverses the whole list.
+ */
 export function sortTiersByPoints(
   tracksByTier: Record<
     string,
@@ -32,11 +38,24 @@ export function sortTiersByPoints(
   >,
   order: "asc" | "desc" = "asc",
 ) {
+  const direction = order === "asc" ? 1 : -1;
+
   return Object.keys(tracksByTier).sort((a, b) => {
-    const pointsA = tracksByTier[a].tier?.points || 0;
-    const pointsB = tracksByTier[b].tier?.points || 0;
-    return order === "asc" ? pointsA - pointsB : pointsB - pointsA;
+    const tierA = tracksByTier[a].tier;
+    const tierB = tracksByTier[b].tier;
+
+    const positionDelta =
+      (tierA?.orderPosition ?? 0) - (tierB?.orderPosition ?? 0);
+    if (positionDelta !== 0) return positionDelta * direction;
+
+    return ((tierA?.points ?? 0) - (tierB?.points ?? 0)) * direction;
   });
+}
+
+/** Same precedence as sortTiersByPoints, for a plain list of tiers. */
+export function compareTiers(a: MappackTier, b: MappackTier): number {
+  const positionDelta = (a.orderPosition ?? 0) - (b.orderPosition ?? 0);
+  return positionDelta !== 0 ? positionDelta : a.points - b.points;
 }
 
 export function getPlayerRank(

@@ -57,11 +57,16 @@ func (t *mappackRepository) GetById(id string) (models.Mappack, error) {
 		Preload("TimeGoals", func(db *gorm.DB) *gorm.DB {
 			return db.Order("multiplier ASC")
 		}).
-		Preload("MappackTier", "is_hidden = ?", false).
+		Preload("MappackTier", func(db *gorm.DB) *gorm.DB {
+			return db.Where("is_hidden = ?", false).
+				Order("order_position ASC").
+				Order("points ASC")
+		}).
 		Preload("MappackRank").
 		Preload("MappackTrack", func(db *gorm.DB) *gorm.DB {
 			return db.Joins("LEFT JOIN mappack_tiers ON mappack_tiers.id = mappack_tracks.tier_id").
 				Where("mappack_tiers.is_hidden = ? OR mappack_tracks.tier_id IS NULL", false).
+				Order("mappack_tiers.order_position ASC").
 				Order("mappack_tiers.points ASC").
 				Order("mappack_tiers.name ASC").
 				Order("mappack_tracks.order_position ASC")
@@ -85,10 +90,13 @@ func (t *mappackRepository) GetByIdAll(id string) (models.Mappack, error) {
 		Preload("TimeGoals", func(db *gorm.DB) *gorm.DB {
 			return db.Order("multiplier ASC")
 		}).
-		Preload("MappackTier").
+		Preload("MappackTier", func(db *gorm.DB) *gorm.DB {
+			return db.Order("order_position ASC").Order("points ASC")
+		}).
 		Preload("MappackRank").
 		Preload("MappackTrack", func(db *gorm.DB) *gorm.DB {
 			return db.Joins("LEFT JOIN mappack_tiers ON mappack_tiers.id = mappack_tracks.tier_id").
+				Order("mappack_tiers.order_position ASC").
 				Order("mappack_tiers.points ASC").
 				Order("mappack_tiers.name ASC").
 				Order("mappack_tracks.order_position ASC")

@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { millisecondsToTimeString } from "@/utils/time.utils";
 import { TimeGoalCard } from "./TimeGoalCard";
 import { Card, CardBody } from "@heroui/react";
@@ -43,11 +44,17 @@ export function TrackTimeGoals({
         </div>
 
         {sortedTimeGoals.length > 0 ? (
+          // One goal per row on phones. The column count depends on how many
+          // goals there are, so it rides in on a custom property: an inline
+          // grid-template-columns would apply at every width and squeeze the
+          // cards into slivers on a narrow screen.
           <div
-            className="grid gap-2"
-            style={{
-              gridTemplateColumns: `repeat(${Math.min(sortedTimeGoals.length, 6)}, minmax(0, 1fr))`,
-            }}
+            className="grid gap-2 grid-cols-1 sm:grid-cols-2 md:[grid-template-columns:repeat(var(--goal-columns),minmax(0,1fr))]"
+            style={
+              {
+                "--goal-columns": Math.min(sortedTimeGoals.length, 6),
+              } as CSSProperties
+            }
           >
             {sortedTimeGoals.map((goal, index) => (
               <TimeGoalCard

@@ -1,4 +1,5 @@
 import { Track } from "@/types/mappack.types";
+import { authenticatedFetch } from "./api";
 import axios from "axios";
 import { API_BASE } from "@/constants/miscellaneous";
 
@@ -65,5 +66,28 @@ export const trackService = {
   // FETCH TRACKS RIGHT AFTER ADDING A NEW TRACK
   fetchRecords: async (trackId: string): Promise<void> => {
     await axios.post(`${API_BASE}/tracks/${trackId}/records`);
+  },
+
+  /** Updates the Trackmania Exchange id for a track. */
+  updateTmxId: async (trackId: string, tmxID: string): Promise<void> => {
+    const response = await authenticatedFetch(`/tracks/${trackId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ tmxID }),
+    });
+
+    if (!response.ok) {
+      let message = "";
+      try {
+        message = (await response.json()).error ?? "";
+      } catch {
+        // Not our JSON error shape, so this is the server's own response —
+        // most likely the route is missing because the backend predates it.
+      }
+      throw new Error(
+        message
+          ? `${message} (HTTP ${response.status})`
+          : `the server returned HTTP ${response.status} for PATCH /tracks/${trackId}`,
+      );
+    }
   },
 };

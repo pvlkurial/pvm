@@ -24,6 +24,7 @@ type TrackRepository interface {
 	GetMappacksForTrack(trackID string) ([]string, error)
 	GetTrackTimeGoals(mappackID, trackID string) ([]models.TimeGoalMappackTrack, error)
 	GetTracksInMappack(mappackID string) ([]models.MappackTrack, error)
+	UpdateTmxID(trackID string, tmxID string) error
 }
 
 type trackRepository struct {
@@ -133,4 +134,19 @@ func (t *trackRepository) GetTracksInMappack(mappackID string) ([]models.Mappack
 	var tracks []models.MappackTrack
 	err := t.db.Where("mappack_id = ?", mappackID).Find(&tracks).Error
 	return tracks, err
+}
+
+// UpdateTmxID updates only the Trackmania Exchange id, leaving the rest of the
+// track record — which is synced from Nadeo — untouched.
+func (t *trackRepository) UpdateTmxID(trackID string, tmxID string) error {
+	result := t.db.Model(&models.Track{}).
+		Where("id = ?", trackID).
+		Update("tmx_id", tmxID)
+	if result.Error != nil {
+		return result.Error
+	}
+	if result.RowsAffected == 0 {
+		return gorm.ErrRecordNotFound
+	}
+	return nil
 }

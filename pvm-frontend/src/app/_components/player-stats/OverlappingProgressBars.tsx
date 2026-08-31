@@ -3,8 +3,6 @@ import { motion } from "framer-motion";
 interface OverlappingProgressBarsProps {
   completionCurrent: number;
   completionTotal: number;
-  achievementsCurrent: number;
-  achievementsTotal: number;
 }
 
 export function OverlappingProgressBars({

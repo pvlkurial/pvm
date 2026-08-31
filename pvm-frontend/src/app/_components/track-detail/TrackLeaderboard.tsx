@@ -12,8 +12,8 @@ interface TimeGoal {
 }
 
 interface TrackLeaderboardProps {
-  records: Record[];
-  timeGoals: TimeGoal[];
+  records?: Record[] | null;
+  timeGoals?: TimeGoal[] | null;
   trackId: string;
   mappackId: string;
 }

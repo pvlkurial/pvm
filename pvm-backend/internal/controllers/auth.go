@@ -104,6 +104,37 @@ func (c *AuthController) Me(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, user)
 }
 
+// Refresh issues a new token for an already-authenticated caller, so an active
+// session slides forward instead of expiring out from under the user. The
+// middleware re-reads the user from the database, so the new token also picks up
+// any role change.
+func (c *AuthController) Refresh(ctx *gin.Context) {
+	value, exists := ctx.Get("user")
+	if !exists {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "Not authenticated"})
+		return
+	}
+
+	user, ok := value.(*models.User)
+	if !ok {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Invalid session"})
+		return
+	}
+
+	token, err := c.authService.GenerateJWT(user)
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to issue token"})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"token":   token,
+		"user_id": user.ID,
+		"name":    user.Name,
+		"role":    user.Role,
+	})
+}
+
 func (c *AuthController) PluginLogin(ctx *gin.Context) {
 	var req struct {
 		Token string `json:"token" binding:"required"`

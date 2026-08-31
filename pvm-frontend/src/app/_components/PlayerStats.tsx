@@ -1,4 +1,3 @@
-import { Card, CardBody, Divider } from "@heroui/react";
 import { usePlayerStats } from "@/hooks/usePlayerStats";
 import { OverlappingProgressBars } from "./player-stats/OverlappingProgressBars";
 import { RankDisplay } from "./player-stats/RankDisplay";
@@ -9,30 +8,43 @@ interface PlayerStatsProps {
   mappackId: string;
   playerId: string;
   totalTracks: number;
-  totalTimeGoals: number;
   ranks: MappackRank[];
+}
+
+function StatsFrame({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="sticky top-4 p-6 space-y-6">
+      <div className="space-y-2">
+        <h3 className="text-2xl font-ruigslay font-bold text-white">
+          My Stats
+        </h3>
+        <div className="h-px bg-white/10" />
+      </div>
+      {children}
+    </div>
+  );
 }
 
 export function PlayerStats({
   mappackId,
   playerId,
   totalTracks,
-  totalTimeGoals,
   ranks,
 }: PlayerStatsProps) {
   const { stats, loading, error } = usePlayerStats(mappackId, playerId);
 
   if (loading) {
     return (
-      <Card className="bg-neutral-800 sticky top-4">
-        <CardBody className="p-6">
-          <div className="animate-pulse space-y-4">
-            <div className="h-8 bg-white/10 rounded" />
-            <div className="h-4 bg-white/10 rounded" />
-            <div className="h-4 bg-white/10 rounded" />
+      <StatsFrame>
+        <div className="animate-pulse space-y-3">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="h-16 bg-white/5 rounded-lg" />
+            <div className="h-16 bg-white/5 rounded-lg" />
           </div>
-        </CardBody>
-      </Card>
+          <div className="h-24 bg-white/5 rounded-lg" />
+          <div className="h-3 bg-white/5 rounded-full" />
+        </div>
+      </StatsFrame>
     );
   }
 
@@ -52,48 +64,32 @@ export function PlayerStats({
     : sortedRanks[0];
 
   return (
-    <div className="bg-black-0 sticky top-4">
-      <div className="p-6 space-y-6">
-        <div className="space-y-2">
-          <div className="flex items-center justify-center gap-2">
-            <h3 className="text-3xl font-ruigslay font-bold text-white ">
-              My Stats
-            </h3>
-          </div>
-          <Divider className="bg-white/50" />
-
-          <div className="flex items-center justify-between">
-            <span className="text-lg font-semibold text-white">
-              <p className="text-5xl font-bold text-white font-ruigslay">
-                {entry.total_points.toLocaleString()} PTS
-              </p>
-              <div className="flex items-center gap-3">
-                <div></div>
-              </div>
-            </span>
-            <span className="px-3 py-1 text-sm text-label">RANK #{rank}</span>
-          </div>
-        </div>
-        <Divider className="bg-white/10" />
-
-        {playerRank && (
-          <>
-            <RankDisplay
-              rank={playerRank}
-              nextRank={nextRank}
-              currentPoints={entry.total_points}
-            />
-            <Divider className="bg-white/10" />
-          </>
-        )}
-
-        <OverlappingProgressBars
-          completionCurrent={entry.best_achievements_count}
-          completionTotal={totalTracks}
-          achievementsCurrent={0}
-          achievementsTotal={0}
-        />
+    <StatsFrame>
+      {/* Points lead, with the leaderboard rank sitting on the same baseline.
+          Sized responsively because this column is only a sixth of the grid. */}
+      <div className="flex items-end justify-between gap-2">
+        <p className="font-ruigslay font-bold text-white leading-none text-4xl xl:text-5xl">
+          {entry.total_points.toLocaleString()}
+          <span className="text-xl xl:text-2xl text-white/40 ml-1.5">PTS</span>
+        </p>
+        <span className="text-sm text-label text-white/60 shrink-0 whitespace-nowrap">
+          RANK #{rank}
+        </span>
       </div>
-    </div>
+
+      {/* RankDisplay brings its own label and next-rank progress. */}
+      {playerRank && (
+        <RankDisplay
+          rank={playerRank}
+          nextRank={nextRank}
+          currentPoints={entry.total_points}
+        />
+      )}
+
+      <OverlappingProgressBars
+        completionCurrent={entry.best_achievements_count}
+        completionTotal={totalTracks}
+      />
+    </StatsFrame>
   );
 }

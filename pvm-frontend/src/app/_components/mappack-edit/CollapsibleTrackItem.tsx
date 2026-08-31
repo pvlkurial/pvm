@@ -17,6 +17,7 @@ interface CollapsibleTrackItemProps {
   onMapStyleChange: (trackId: string, value: string) => void;
   onDelete: (trackId: string, trackName: string) => void;
   onOrderPositionChange: (trackId: string, value: number) => void;
+  onTmxIdChange: (trackId: string, value: string) => void;
   inputClassNames: any;
 }
 
@@ -28,6 +29,7 @@ export function CollapsibleTrackItem({
   onMapStyleChange,
   onDelete,
   onOrderPositionChange,
+  onTmxIdChange,
   inputClassNames,
 }: CollapsibleTrackItemProps) {
   const [isOpen, setIsOpen] = useState(false);
@@ -81,6 +83,15 @@ export function CollapsibleTrackItem({
             variant="bordered"
             value={track.mapStyle || ""}
             onValueChange={(value) => onMapStyleChange(track.track_id, value)}
+            classNames={inputClassNames}
+          />
+
+          <Input
+            label="TMX ID"
+            placeholder="123456"
+            variant="bordered"
+            value={track.track.tmxID ?? ""}
+            onValueChange={(value) => onTmxIdChange(track.track_id, value)}
             classNames={inputClassNames}
           />
 

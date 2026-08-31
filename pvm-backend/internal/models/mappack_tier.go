@@ -8,4 +8,6 @@ type MappackTier struct {
 	Color     string `json:"color"`
 	IsHidden  bool   `json:"is_hidden"`
 	Threshold int    `json:"threshold"`
+	// OrderPosition is a manual ordering that takes precedence over points.
+	OrderPosition int `gorm:"default:0" json:"orderPosition"`
 }

@@ -1,5 +1,9 @@
 import axios from "axios";
-import { Mappack, PlayerLeaderboardEntry } from "@/types/mappack.types";
+import {
+  Mappack,
+  PlayerLeaderboardEntry,
+  LeaderboardEntry,
+} from "@/types/mappack.types";
 import { API_BASE } from "@/constants/miscellaneous";
 
 export const mappackService = {
@@ -14,6 +18,20 @@ export const mappackService = {
     const response = await axios.get<Mappack>(url);
     return response.data;
   },
+  getLeaderboard: async (
+    mappackId: string,
+    limit: number,
+    offset: number,
+  ): Promise<LeaderboardEntry[]> => {
+    const response = await fetch(
+      `${API_BASE}/mappacks/${mappackId}/leaderboard?limit=${limit}&offset=${offset}`,
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to load leaderboard: ${response.statusText}`);
+    }
+    return response.json();
+  },
+
   getPlayerLeaderboardEntry: async (
     mappackId: string,
     playerId: string,

@@ -12,13 +12,13 @@ interface TimeGoal {
 }
 
 interface RecordsTableProps {
-  records: Record[];
-  timeGoals?: TimeGoal[];
+  records?: Record[] | null;
+  timeGoals?: TimeGoal[] | null;
   loggedInPlayerId?: string;
 }
 
 export default function RecordsTable({
-  records,
+  records = [],
   timeGoals = [],
   loggedInPlayerId,
 }: RecordsTableProps) {
@@ -26,7 +26,7 @@ export default function RecordsTable({
   const recordsPerPage = 10;
 
   const sortedRecords = useMemo(() => {
-    return [...records].sort((a, b) => a.score - b.score);
+    return [...(records ?? [])].sort((a, b) => a.score - b.score);
   }, [records]);
 
   const loggedInRecord = useMemo(() => {

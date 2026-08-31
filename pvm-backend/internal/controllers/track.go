@@ -1,14 +1,17 @@
 package controllers
 
 import (
+	"errors"
 	"example/pvm-backend/internal/clients"
 	"example/pvm-backend/internal/models"
 	"example/pvm-backend/internal/services"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type TrackController struct {
@@ -173,4 +176,39 @@ func (t *TrackController) UpdateTimeGoalsForTrack(c *gin.Context) {
 	} else {
 		c.String(http.StatusOK, "Update Succesful")
 	}
+}
+
+type updateTrackRequest struct {
+	TmxID *string `json:"tmxID"`
+}
+
+// UpdateTrack patches editable track fields. Only the TMX id is editable today;
+// everything else on a track comes from Nadeo and would be overwritten by the
+// next sync.
+func (t *TrackController) UpdateTrack(c *gin.Context) {
+	trackID := c.Param("track_id")
+
+	var request updateTrackRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid payload: " + err.Error()})
+		return
+	}
+
+	if request.TmxID == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Nothing to update"})
+		return
+	}
+
+	tmxID := strings.TrimSpace(*request.TmxID)
+	if err := t.trackService.UpdateTmxID(trackID, tmxID); err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			c.JSON(http.StatusNotFound, gin.H{"error": "No such track"})
+			return
+		}
+		fmt.Printf("Error updating track %s: %s\n", trackID, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update track"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"track_id": trackID, "tmxID": tmxID})
 }

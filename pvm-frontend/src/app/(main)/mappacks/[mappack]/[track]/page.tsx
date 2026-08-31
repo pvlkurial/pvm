@@ -48,7 +48,7 @@ export default function TrackPage({
         <div className="flex items-center gap-2">
           <BackButton href={`/mappacks/${mappack}`} />
           <TrackmaniaIoButton mapUID={track.mapUid} />
-          <TmxButton tmxId={track.tmxId} />
+          <TmxButton tmxId={track.tmxId ?? track.tmxID} />
         </div>
 
         <div className="flex items-center gap-2">

@@ -35,7 +35,7 @@ export function TimeGoalsInput({
             value={timeGoalValues[timegoal.id!] || ""}
             onValueChange={(value) => onTimeGoalChange(timegoal.id!, value)}
             classNames={inputClassNames}
-            description="Format: MM:SS:mmm"
+            description="Format: M:SS:mmm or M:SS.mmm"
           />
         ))}
     </div>

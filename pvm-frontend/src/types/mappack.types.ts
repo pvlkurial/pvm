@@ -10,6 +10,10 @@ export interface MappackTier {
   name: string;
   points: number;
   color: string;
+  /** Manual ordering, applied before points wherever tiers are listed. */
+  orderPosition?: number;
+  is_hidden?: boolean;
+  threshold?: number;
 }
 
 export interface MappackRank {
@@ -87,7 +91,10 @@ export interface Track {
   id: string;
   mapId: string;
   mapUid: string;
-  tmxID: number;
+  /** From the mappack endpoint (models.Track). */
+  tmxID: string;
+  /** From the track detail endpoint, which uses a DTO with different casing. */
+  tmxId?: string;
   name: string;
   author: string;
   authorName: string;
@@ -109,7 +116,8 @@ export interface Track {
   time: number;
   tier: MappackTier;
   updatedAt: string;
-  records: Record[];
+  /** Omitted by the API when the track has no records. */
+  records?: Record[];
   timegoals: Array<{
     name: string;
     time: number;

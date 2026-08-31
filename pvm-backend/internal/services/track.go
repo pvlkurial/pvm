@@ -24,6 +24,7 @@ type TrackService interface {
 	UpdateTimeGoalsForTrack(timegoals *[]models.TimeGoalMappackTrack) error
 	GetByUID(uid string) (models.Track, error)
 	SavePlayerMappackTrack(mappackId string, trackId string, playerId string, achievedTime int) error
+	UpdateTmxID(trackID string, tmxID string) error
 }
 
 type trackService struct {
@@ -119,4 +120,8 @@ func (t *trackService) SavePlayerMappackTrack(mappackId string, trackId string, 
 		AchievedTimeGoal: achievedTimeGoal,
 	}
 	return t.trackRepository.SavePlayerMappackTrack(&playerMappackTrack)
+}
+
+func (t *trackService) UpdateTmxID(trackID string, tmxID string) error {
+	return t.trackRepository.UpdateTmxID(trackID, tmxID)
 }

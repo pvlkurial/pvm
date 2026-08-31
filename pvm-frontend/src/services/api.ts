@@ -2,6 +2,16 @@ import { authService } from "./authService";
 
 import { API_BASE } from "@/constants/miscellaneous";
 
+/**
+ * Clears the session and lets the app know. Used when the server rejects our
+ * token — otherwise the UI keeps looking signed in while every authenticated
+ * request quietly fails, and only a manual logout recovers.
+ */
+function handleRejectedToken() {
+  authService.logout();
+  window.dispatchEvent(new Event("auth-changed"));
+}
+
 export async function authenticatedFetch(
   url: string,
   options: RequestInit = {},
@@ -12,7 +22,7 @@ export async function authenticatedFetch(
     throw new Error("Not authenticated");
   }
 
-  return fetch(`${API_BASE}${url}`, {
+  const response = await fetch(`${API_BASE}${url}`, {
     ...options,
     headers: {
       ...options.headers,
@@ -20,6 +30,12 @@ export async function authenticatedFetch(
       "Content-Type": "application/json",
     },
   });
+
+  if (response.status === 401) {
+    handleRejectedToken();
+  }
+
+  return response;
 }
 
 export async function fetchUserAchievements(
