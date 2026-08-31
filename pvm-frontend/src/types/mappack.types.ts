@@ -87,7 +87,10 @@ export interface Track {
   id: string;
   mapId: string;
   mapUid: string;
-  tmxID: number;
+  /** From the mappack endpoint (models.Track). */
+  tmxID: string;
+  /** From the track detail endpoint, which uses a DTO with different casing. */
+  tmxId?: string;
   name: string;
   author: string;
   authorName: string;

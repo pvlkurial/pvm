@@ -69,6 +69,17 @@ func (r *Routes) InitRoutes() {
 		superAdmin.GET("/mappacks", controllers.AdminController.ListManageableMappacks)
 		superAdmin.GET("/players", controllers.AdminController.SearchPlayers)
 	}
+	// Admin actions added since the auth rework are registered on their group so
+	// the middleware applies, unlike the legacy adminAccess block below.
+	adminAuthorized := r.Group("/")
+	adminAuthorized.Use(
+		middleware.AuthMiddleware(&services.AuthService),
+		middleware.RequireRole(models.RoleAdmin),
+	)
+	{
+		adminAuthorized.PATCH("/tracks/:track_id", controllers.TrackController.UpdateTrack)
+	}
+
 	r.GET("/tmx/search", controllers.TmxController.SearchTracks)
 
 	adminAccess := r.Group("/")
