@@ -76,13 +76,18 @@ export const trackService = {
     });
 
     if (!response.ok) {
-      let message = response.statusText;
+      let message = "";
       try {
-        message = (await response.json()).error ?? message;
+        message = (await response.json()).error ?? "";
       } catch {
-        // Non-JSON error body; fall back to the status text.
+        // Not our JSON error shape, so this is the server's own response —
+        // most likely the route is missing because the backend predates it.
       }
-      throw new Error(`Failed to update TMX ID: ${message}`);
+      throw new Error(
+        message
+          ? `${message} (HTTP ${response.status})`
+          : `the server returned HTTP ${response.status} for PATCH /tracks/${trackId}`,
+      );
     }
   },
 };

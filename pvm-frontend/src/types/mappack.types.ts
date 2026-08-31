@@ -10,6 +10,10 @@ export interface MappackTier {
   name: string;
   points: number;
   color: string;
+  /** Manual ordering, applied before points wherever tiers are listed. */
+  orderPosition?: number;
+  is_hidden?: boolean;
+  threshold?: number;
 }
 
 export interface MappackRank {

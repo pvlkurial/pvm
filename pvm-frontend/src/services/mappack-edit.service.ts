@@ -31,6 +31,11 @@ export const mappackEditService = {
         mappack_id: mappack.id,
         points: tier.points,
         color: tier.color,
+        orderPosition: tier.orderPosition ?? 0,
+        // Sent back verbatim: the mappack save writes every tier column, so
+        // omitting these would reset hidden tiers and their thresholds.
+        is_hidden: tier.is_hidden ?? false,
+        threshold: tier.threshold ?? 0,
       })),
       mappackRanks: mappack.mappackRanks.map((rank) => ({
         id: rank.id,

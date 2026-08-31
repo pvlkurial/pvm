@@ -4,6 +4,7 @@ import { ColorPicker } from "@/utils/colorPicker";
 import { FormattedText } from "@/utils/textConverter";
 import { ADMIN_BUTTON, ADMIN_BUTTON_DANGER } from "@/constants/button-styles";
 import { SectionHeading } from "@/app/_components/SectionHeading";
+import { compareTiers } from "@/utils/mappack.utils";
 import { MODAL_SELECT_CLASSNAMES } from "@/constants/modal-styles";
 
 interface TiersTabProps {
@@ -29,12 +30,12 @@ export function TiersTab({
   onAssignTier,
   inputClassNames,
 }: TiersTabProps) {
-  // Ascending by points, matching how tiers are ordered everywhere else.
+  // Manual order first, then points — the same precedence used everywhere else.
   // The original index rides along because onUpdateTier addresses the unsorted
   // array — sorting without it would write edits to the wrong tier.
   const orderedTiers = tiers
     .map((tier, index) => ({ tier, index }))
-    .sort((a, b) => a.tier.points - b.tier.points);
+    .sort((a, b) => compareTiers(a.tier, b.tier));
 
   const savedTiers = orderedTiers
     .map(({ tier }) => tier)
@@ -87,6 +88,17 @@ export function TiersTab({
                   onUpdateTier(index, "points", parseInt(value) || 0)
                 }
                 className="w-24 shrink-0"
+                classNames={inputClassNames}
+              />
+              <Input
+                label="Order"
+                type="number"
+                variant="bordered"
+                value={(tier.orderPosition ?? 0).toString()}
+                onValueChange={(value) =>
+                  onUpdateTier(index, "orderPosition", parseInt(value) || 0)
+                }
+                className="w-20 shrink-0"
                 classNames={inputClassNames}
               />
               <div className="shrink-0">

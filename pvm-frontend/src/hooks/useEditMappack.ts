@@ -96,6 +96,7 @@ export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
       mappack_id: editData.id,
       points: 0,
       color: "#ffffff",
+      orderPosition: editData.mappackTiers.length,
     };
     setEditData({
       ...editData,

@@ -93,11 +93,26 @@ export function EditMappackModal({
         );
       });
 
-      await Promise.all(
-        changedTmxIds.map((t) =>
-          trackService.updateTmxId(t.track_id, t.track.tmxID ?? ""),
-        ),
-      );
+      try {
+        await Promise.all(
+          changedTmxIds.map((t) =>
+            trackService.updateTmxId(t.track_id, t.track.tmxID ?? ""),
+          ),
+        );
+      } catch (error) {
+        // The mappack is already saved at this point, so say so rather than
+        // reporting the whole save as failed. The modal stays open so the TMX
+        // edit is not lost.
+        console.error("Error updating TMX ID:", error);
+        onSave();
+        alert(
+          `Mappack saved, but the TMX ID could not be updated: ${
+            error instanceof Error ? error.message : "Unknown error"
+          }`,
+        );
+        return;
+      }
+
       onSave();
       onClose();
     } catch (error) {
