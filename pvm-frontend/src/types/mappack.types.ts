@@ -109,7 +109,8 @@ export interface Track {
   time: number;
   tier: MappackTier;
   updatedAt: string;
-  records: Record[];
+  /** Omitted by the API when the track has no records. */
+  records?: Record[];
   timegoals: Array<{
     name: string;
     time: number;

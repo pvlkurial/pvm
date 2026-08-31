@@ -2,7 +2,7 @@ import { useState, useMemo } from "react";
 import { Record } from "@/types/mappack.types";
 
 export function useRecordsPagination(
-  records: Record[],
+  records: Record[] = [],
   itemsPerPage: number = 20,
 ) {
   const [page, setPage] = useState(1);

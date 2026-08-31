@@ -50,6 +50,7 @@ func (r *Routes) InitRoutes() {
 	{
 		authorized.GET("/auth/me", controllers.AuthController.Me)
 		authorized.GET("/auth/me/permissions", controllers.AdminController.GetMyPermissions)
+		authorized.POST("/auth/refresh", controllers.AuthController.Refresh)
 		authorized.POST("/tracks/:track_id/records/:player_id/fetch", controllers.RecordController.FetchPlayersRecordsForTrack)
 	}
 
