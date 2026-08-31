@@ -3,6 +3,7 @@ import { RankDisplay } from "../player-stats/RankDisplay";
 import { getPlayerRank } from "@/utils/mappack.utils";
 import { MappackRank } from "@/types/mappack.types";
 import { usePlayerStats } from "@/hooks/usePlayerStats";
+import { StatTile } from "../player-stats/StatTile";
 
 interface ModalPlayerStatsProps {
   mappackId: string;
@@ -10,23 +11,6 @@ interface ModalPlayerStatsProps {
   playerName: string;
   ranks: MappackRank[];
   accentColor?: string;
-}
-
-function StatTile({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="flex-1 min-w-[110px] rounded-lg bg-white/[0.04] border border-white/[0.06] px-4 py-3">
-      <p className="text-[10px] tracking-widest uppercase text-white/35 mb-1 text-label">
-        {label}
-      </p>
-      {children}
-    </div>
-  );
 }
 
 export function ModalPlayerStats({
@@ -73,13 +57,13 @@ export function ModalPlayerStats({
 
       {/* Equal-weight tiles so no single figure dominates the modal. */}
       <div className="flex flex-wrap gap-2">
-        <StatTile label="Points">
+        <StatTile label="Points" className="flex-1 min-w-[110px]">
           <p className="text-2xl font-ruigslay font-bold text-white leading-none">
             {entry.total_points.toLocaleString()}
           </p>
         </StatTile>
 
-        <StatTile label="Leaderboard Rank">
+        <StatTile label="Leaderboard Rank" className="flex-1 min-w-[110px]">
           <p
             className="text-2xl font-ruigslay font-bold leading-none"
             style={{ color }}
