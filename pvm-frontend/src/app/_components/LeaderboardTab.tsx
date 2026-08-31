@@ -7,6 +7,10 @@ import PlayerDetailModal from "./player-detail/PlayerDetailModal";
 import PlayerSearch from "./PlayerSearch";
 import { LeaderboardPlayerCard } from "./leaderboard/LeaderboardPlayerCard";
 import { LeaderboardRankHeader } from "./leaderboard/LeaderboardRankHeader";
+import {
+  LeaderboardPodium,
+  PodiumPlace,
+} from "./leaderboard/LeaderboardPodium";
 
 interface LeaderboardTabProps {
   mappackId: string;
@@ -15,6 +19,7 @@ interface LeaderboardTabProps {
 }
 
 const ITEMS_PER_PAGE = 100;
+const PODIUM_SIZE = 3;
 
 /**
  * Unlike the shared getPlayerRank, a player below every threshold is bucketed
@@ -71,15 +76,30 @@ export default function LeaderboardTab({
     fetchLeaderboard(0, false);
   }, [mappackId]);
 
+  // The API returns entries ordered by points, so the leading slice is the
+  // global top three. They get the podium and are left out of the groups below
+  // rather than appearing twice.
+  const podium: PodiumPlace[] = useMemo(() => {
+    if (leaderboard.length < PODIUM_SIZE) return [];
+    return leaderboard.slice(0, PODIUM_SIZE).map((entry, index) => ({
+      entry,
+      rank: getBucketRank(entry.total_points, mappackRanks),
+      position: index + 1,
+    }));
+  }, [leaderboard, mappackRanks]);
+
   // Groups in descending rank order, each carrying the running position so the
-  // numbering stays continuous across group boundaries.
+  // numbering stays continuous across group boundaries and picks up where the
+  // podium left off.
   const groups = useMemo(() => {
+    const remaining = podium.length > 0 ? leaderboard.slice(PODIUM_SIZE) : leaderboard;
+
     const byRank = new Map<
       string,
       { rank: MappackRank; players: LeaderboardEntry[] }
     >();
 
-    for (const entry of leaderboard) {
+    for (const entry of remaining) {
       const rank = getBucketRank(entry.total_points, mappackRanks);
       if (!rank) continue;
       const existing = byRank.get(rank.name);
@@ -90,7 +110,7 @@ export default function LeaderboardTab({
       }
     }
 
-    let position = 1;
+    let position = podium.length + 1;
     return [...byRank.values()]
       .sort((a, b) => b.rank.pointsNeeded - a.rank.pointsNeeded)
       .map((group) => {
@@ -98,7 +118,7 @@ export default function LeaderboardTab({
         position += group.players.length;
         return { ...group, startPosition };
       });
-  }, [leaderboard, mappackRanks]);
+  }, [leaderboard, mappackRanks, podium]);
 
   const handlePlayerClick = (playerId: string, playerName: string) =>
     setSelectedPlayer({ playerId, playerName });
@@ -130,10 +150,14 @@ export default function LeaderboardTab({
         />
       </div>
 
+      {podium.length > 0 && (
+        <LeaderboardPodium places={podium} onSelect={handlePlayerClick} />
+      )}
+
       <div className="flex flex-col gap-10">
         {groups.map(({ rank, players, startPosition }) => (
           <div key={rank.name}>
-            <LeaderboardRankHeader rank={rank} playerCount={players.length} />
+            <LeaderboardRankHeader rank={rank} />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {players.map((entry, index) => (

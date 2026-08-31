@@ -83,8 +83,8 @@ export function LeaderboardPlayerCard({
 
       {/* Position leads, so the list reads top-down like a ranking. */}
       <span
-        className={`relative z-10 font-ruigslay text-sm tabular-nums shrink-0 w-8 text-center ${
-          inverted ? "text-black/40" : "text-white/25"
+        className={`relative z-10 font-ruigslay text-2xl leading-none tabular-nums shrink-0 w-10 text-center ${
+          inverted ? "text-black/50" : "text-white/35"
         }`}
       >
         {position}

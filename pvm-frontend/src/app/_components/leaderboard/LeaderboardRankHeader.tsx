@@ -5,12 +5,10 @@ import { glowOpacity, headingShadow } from "@/utils/rank-style.utils";
 
 interface LeaderboardRankHeaderProps {
   rank: MappackRank;
-  playerCount: number;
 }
 
 export function LeaderboardRankHeader({
   rank,
-  playerCount,
 }: LeaderboardRankHeaderProps) {
   const color = rank.color || "#6b7280";
 
@@ -35,23 +33,6 @@ export function LeaderboardRankHeader({
         {rank.symbolsAround} {rank.name.toUpperCase()} {rank.symbolsAround}
       </h2>
 
-      <div className="flex items-center gap-3 mt-2 w-full max-w-xs">
-        <div
-          className="flex-1 h-px"
-          style={{
-            background: `linear-gradient(to right, transparent, ${color}40)`,
-          }}
-        />
-        <span className="text-[10px] tracking-widest uppercase text-white/25 tabular-nums">
-          {playerCount}
-        </span>
-        <div
-          className="flex-1 h-px"
-          style={{
-            background: `linear-gradient(to left, transparent, ${color}40)`,
-          }}
-        />
-      </div>
     </div>
   );
 }
