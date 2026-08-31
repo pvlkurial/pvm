@@ -14,7 +14,7 @@ interface PlayerStatsProps {
 
 function StatsFrame({ children }: { children: React.ReactNode }) {
   return (
-    <div className="sticky top-4 p-6 space-y-4">
+    <div className="sticky top-4 p-6 space-y-6">
       <div className="space-y-2">
         <h3 className="text-2xl font-ruigslay font-bold text-white">
           My Stats
@@ -38,7 +38,7 @@ export function PlayerStats({
     return (
       <StatsFrame>
         <div className="animate-pulse space-y-3">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-2 gap-4">
             <div className="h-16 bg-white/5 rounded-lg" />
             <div className="h-16 bg-white/5 rounded-lg" />
           </div>
@@ -67,7 +67,7 @@ export function PlayerStats({
   return (
     <StatsFrame>
       {/* Points and rank carry equal weight rather than one dwarfing the other. */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-2 gap-4">
         <StatTile label="Points">
           <p className="text-2xl font-ruigslay font-bold text-white leading-none">
             {entry.total_points.toLocaleString()}
@@ -86,13 +86,11 @@ export function PlayerStats({
 
       {/* RankDisplay brings its own label and next-rank progress. */}
       {playerRank && (
-        <div className="rounded-lg bg-white/[0.04] border border-white/[0.06] px-4 py-3">
-          <RankDisplay
-            rank={playerRank}
-            nextRank={nextRank}
-            currentPoints={entry.total_points}
-          />
-        </div>
+        <RankDisplay
+          rank={playerRank}
+          nextRank={nextRank}
+          currentPoints={entry.total_points}
+        />
       )}
 
       <OverlappingProgressBars

@@ -56,7 +56,7 @@ export function ModalPlayerStats({
       </div>
 
       {/* Equal-weight tiles so no single figure dominates the modal. */}
-      <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-6">
         <StatTile label="Points" className="flex-1 min-w-[110px]">
           <p className="text-2xl font-ruigslay font-bold text-white leading-none">
             {entry.total_points.toLocaleString()}
@@ -72,10 +72,9 @@ export function ModalPlayerStats({
           </p>
         </StatTile>
 
-        {/* RankDisplay brings its own label and next-rank progress, so it sits
-            in the tile directly rather than inside StatTile. */}
+        {/* RankDisplay brings its own label and next-rank progress. */}
         {playerRank && (
-          <div className="flex-1 min-w-[180px] rounded-lg bg-white/[0.04] border border-white/[0.06] px-4 py-3">
+          <div className="flex-1 min-w-[180px]">
             <RankDisplay
               rank={playerRank}
               nextRank={nextRank}
