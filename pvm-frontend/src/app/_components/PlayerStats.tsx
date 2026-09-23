@@ -67,14 +67,14 @@ export function PlayerStats({
     <StatsFrame>
       {/* Points lead, with the leaderboard rank sitting on the same baseline.
           Sized responsively because this column is only a sixth of the grid. */}
+      <span className="text-sm text-label text-white/60 shrink-0 whitespace-nowrap">
+        RANK #{rank}
+      </span>
       <div className="flex items-end justify-between gap-2">
         <p className="font-ruigslay font-bold text-white leading-none text-4xl xl:text-5xl">
           {entry.total_points.toLocaleString()}
           <span className="text-xl xl:text-2xl text-white/40 ml-1.5">PTS</span>
         </p>
-        <span className="text-sm text-label text-white/60 shrink-0 whitespace-nowrap">
-          RANK #{rank}
-        </span>
       </div>
 
       {/* RankDisplay brings its own label and next-rank progress. */}
