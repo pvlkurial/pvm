@@ -32,8 +32,8 @@ export default function TrackPage({
   }
 
   return (
-    // 80% of wide screens, but never narrower than the original 90rem.
-    <div className="mx-auto w-full max-w-[max(90rem,80vw)] px-4 py-8">
+    // 70% of wide screens; the 80rem floor keeps smaller screens roomy.
+    <div className="mx-auto w-full max-w-[max(80rem,70vw)] px-4 py-8">
       <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <BackButton href={`/mappacks/${mappack}`} />
@@ -67,6 +67,7 @@ export default function TrackPage({
           <TrackInfoCard
             name={track.name}
             authorName={track.author}
+            dominantColor={track.dominantColor}
           />
           <TrackStatsGrid
             tier={track.tier}
