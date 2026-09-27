@@ -11,4 +11,7 @@ export const mappackCache = {
   key: (mappackId: string, playerId?: string) => `${mappackId}:${playerId ?? ""}`,
   get: (key: string) => cache.get(key),
   set: (key: string, mappack: Mappack) => cache.set(key, mappack),
+  /** The mappack's display name, if any copy of it is cached. */
+  findName: (mappackId: string) =>
+    [...cache.values()].find((mappack) => mappack.id === mappackId)?.name,
 };

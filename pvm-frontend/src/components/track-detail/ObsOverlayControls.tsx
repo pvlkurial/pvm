@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { FiMonitor, FiCheck, FiBarChart2 } from "react-icons/fi";
+import { LuChartColumn, LuCheck, LuMonitor } from "react-icons/lu";
 import { Track } from "@/types/mappack.types";
 import { useAuth } from "@/contexts/AuthContext";
 import { getGoalsWithWorldRecord } from "@/utils/track.utils";
@@ -79,7 +79,6 @@ function AccentPicker({
 interface OverlayPopoverProps {
   title: string;
   icon: React.ReactNode;
-  triggerLabel: string;
   isCopied: boolean;
   onCopy: () => void;
   copyLabel: string;
@@ -93,7 +92,6 @@ interface OverlayPopoverProps {
 function OverlayPopover({
   title,
   icon,
-  triggerLabel,
   isCopied,
   onCopy,
   copyLabel,
@@ -105,13 +103,10 @@ function OverlayPopover({
   return (
     <Popover open={open} onOpenChange={onOpenChange}>
       <PopoverTrigger asChild>
-        <button
-          type="button"
-          aria-label={triggerLabel}
-          className="cursor-pointer text-faint transition-colors hover:text-muted-foreground"
-        >
-          {icon}
-        </button>
+        <Button variant="outline" size="sm">
+          {isCopied ? <LuCheck className="size-3.5" /> : icon}
+          {title}
+        </Button>
       </PopoverTrigger>
 
       <PopoverContent className="w-64">
@@ -124,7 +119,7 @@ function OverlayPopover({
 
           <Button size="sm" variant="outline" className="w-full" onClick={onCopy}>
             {copyLabel}
-            {isCopied && <FiCheck className="size-3.5" />}
+            {isCopied && <LuCheck className="size-3.5" />}
           </Button>
 
           <p className="text-center text-small text-faint">
@@ -188,11 +183,10 @@ export function ObsOverlayControls({ track, mappackId }: ObsOverlayControlsProps
     );
 
   return (
-    <div className="flex items-center gap-1.5">
+    <div className="flex flex-wrap items-center gap-2">
       <OverlayPopover
-        title="OBS Overlay"
-        icon={<FiMonitor size={14} />}
-        triggerLabel="Generate OBS overlay"
+        title="OBS overlay"
+        icon={<LuMonitor className="size-3.5" />}
         isCopied={copied === "overlay"}
         onCopy={handleCopyOverlay}
         copyLabel="Copy OBS URL"
@@ -256,11 +250,8 @@ export function ObsOverlayControls({ track, mappackId }: ObsOverlayControlsProps
       </OverlayPopover>
 
       <OverlayPopover
-        title="Stats Overlay"
-        icon={
-          copied === "stats" ? <FiCheck size={12} /> : <FiBarChart2 size={12} />
-        }
-        triggerLabel="Copy stats overlay URL"
+        title="Stats overlay"
+        icon={<LuChartColumn className="size-3.5" />}
         isCopied={copied === "stats"}
         onCopy={handleCopyStats}
         copyLabel="Copy Stats URL"

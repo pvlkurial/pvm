@@ -1,26 +1,32 @@
-import { IoDiamond } from "react-icons/io5";
-import { FaDatabase } from "react-icons/fa";
 import { MappackTier } from "@/types/mappack.types";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface StatCardProps {
-  icon: React.ReactNode;
   label: string;
   value: React.ReactNode;
   note: string;
-  tint?: string;
+  /**
+   * Shown as a dot beside the value. Tier colours are picked in the editor and
+   * can be too dark to read as text, so the value itself stays neutral.
+   */
+  swatch?: string;
 }
 
-function StatCard({ icon, label, value, note, tint }: StatCardProps) {
+function StatCard({ label, value, note, swatch }: StatCardProps) {
   return (
-    <Card style={tint ? { backgroundColor: `${tint}1a` } : undefined}>
-      <div className="absolute -right-6 -bottom-6 text-foreground/5 [&>svg]:size-36 [&>svg]:rotate-12">
-        {icon}
-      </div>
+    <Card>
       <CardContent>
-        <p className="eyebrow mb-3">{label}</p>
-        <p className="font-display text-display-m">{value}</p>
-        <p className="mt-1 text-small text-muted-foreground">{note}</p>
+        <p className="eyebrow">{label}</p>
+        <p className="mt-3 flex items-center gap-3 font-display text-display-m">
+          {swatch && (
+            <span
+              className="size-3 shrink-0 rounded-full"
+              style={{ backgroundColor: swatch }}
+            />
+          )}
+          {value}
+        </p>
+        <p className="mt-2 text-small text-muted-foreground">{note}</p>
       </CardContent>
     </Card>
   );
@@ -35,16 +41,14 @@ export function TrackStatsGrid({ tier, recordsCount }: TrackStatsGridProps) {
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       <StatCard
-        icon={<IoDiamond />}
-        label="Difficulty Tier"
+        label="Difficulty tier"
         value={tier?.name || "Unranked"}
         note={`${tier?.points || 0} points`}
-        tint={tier?.color}
+        swatch={tier?.color}
       />
       <StatCard
-        icon={<FaDatabase />}
-        label="Records Tracked"
-        value={recordsCount}
+        label="Records tracked"
+        value={recordsCount.toLocaleString()}
         note="Records might not be fully updated"
       />
     </div>

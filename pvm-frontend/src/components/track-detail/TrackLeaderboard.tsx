@@ -24,7 +24,7 @@ export function TrackLeaderboard({
   return (
     <Card>
       <CardContent>
-        <div className="mb-6 flex items-center gap-4">
+        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
           <h2 className="font-display text-display-m">Leaderboard</h2>
           <RequireMappackPermission mappackId={mappackId}>
             <UpdateRecordsButton

@@ -15,35 +15,30 @@ export function TimeGoalCard({ name, time, personalBest, multiplier }: TimeGoalC
   return (
     <div
       className={cn(
-        "rounded-xl border p-3 transition-transform duration-200 hover:scale-[1.02]",
-        isAchieved
-          ? "border-green-400/40 bg-green-400/[0.06]"
-          : "border-border-subtle bg-surface-2",
+        "rounded-xl border p-4",
+        isAchieved ? "border-green-400/40 bg-green-400/[0.06]" : "border-border-subtle bg-surface-2",
       )}
     >
-      <p className="mb-2 text-caption text-muted-foreground">
-        {name} | {multiplier}x
-      </p>
+      <div className="flex items-baseline justify-between gap-2 text-small">
+        <span className="truncate text-muted-foreground">{name}</span>
+        {multiplier !== undefined && <span className="text-faint">{multiplier}x</span>}
+      </div>
       <p
         className={cn(
-          "mb-2 tabular-nums text-xl leading-none",
+          "mt-2 text-xl leading-none tabular-nums",
           isAchieved ? "text-foreground" : "text-muted-foreground",
         )}
       >
         {millisecondsToTimeString(time)}
       </p>
-      {delta ? (
-        <p
-          className={cn(
-            "tabular-nums text-xs font-semibold",
-            delta.isAchieved ? "text-blue-400" : "text-red-400",
-          )}
-        >
-          {delta.formatted}
-        </p>
-      ) : (
-        <p className="text-xs text-faint">—</p>
-      )}
+      <p
+        className={cn(
+          "mt-2 text-small tabular-nums",
+          !delta ? "text-faint" : delta.isAchieved ? "text-green-400" : "text-red-400",
+        )}
+      >
+        {delta ? delta.formatted : "—"}
+      </p>
     </div>
   );
 }
