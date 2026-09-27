@@ -13,24 +13,11 @@ interface PlayerStatsProps {
   accentColor?: string;
 }
 
-/** Laid out like a mappack card: title, a colour strip, then the figures. */
-function StatsCard({
-  stripColor,
-  children,
-}: {
-  stripColor?: string;
-  children: React.ReactNode;
-}) {
+function StatsFrame({ children }: { children: React.ReactNode }) {
   return (
-    <aside className="sticky top-4 self-start p-4">
-      <div className="overflow-hidden rounded-2xl border border-border bg-surface-1">
-        <h3 className="px-5 pt-5 pb-4 font-display text-title">My Stats</h3>
-        <div
-          className="h-1.5"
-          style={{ backgroundColor: stripColor || "var(--pack-neutral)" }}
-        />
-        <div className="space-y-5 p-5">{children}</div>
-      </div>
+    <aside className="sticky top-4 space-y-6 self-start p-6">
+      <h3 className="font-display text-title">My Stats</h3>
+      {children}
     </aside>
   );
 }
@@ -46,13 +33,13 @@ export function PlayerStats({
 
   if (loading) {
     return (
-      <StatsCard stripColor={accentColor}>
+      <StatsFrame>
         <div className="animate-pulse space-y-4">
-          <div className="h-10 rounded-xl bg-surface-3" />
-          <div className="h-16 rounded-xl bg-surface-3" />
-          <div className="h-2 rounded-full bg-surface-3" />
+          <div className="h-10 rounded-xl bg-surface-1" />
+          <div className="h-16 rounded-xl bg-surface-1" />
+          <div className="h-2 rounded-full bg-surface-1" />
         </div>
-      </StatsCard>
+      </StatsFrame>
     );
   }
 
@@ -64,7 +51,7 @@ export function PlayerStats({
   const { current, next } = getRankProgress(entry.total_points, ranks);
 
   return (
-    <StatsCard stripColor={current?.color || accentColor}>
+    <StatsFrame>
       <div>
         <p className="eyebrow mb-2">Points</p>
         {/* Sized responsively because this column is only a sixth of the grid. */}
@@ -78,7 +65,7 @@ export function PlayerStats({
         <RankDisplay rank={current} nextRank={next} currentPoints={entry.total_points} />
       )}
 
-      <div className="space-y-2 border-t border-border-subtle pt-5">
+      <div className="space-y-2">
         <div className="flex items-baseline justify-between">
           <span className="eyebrow">Maps played</span>
           <span className="text-small tabular-nums text-muted-foreground">
@@ -91,6 +78,6 @@ export function PlayerStats({
           color={accentColor || undefined}
         />
       </div>
-    </StatsCard>
+    </StatsFrame>
   );
 }
