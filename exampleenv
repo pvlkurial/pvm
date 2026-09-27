@@ -14,3 +14,7 @@ JWT_SECRET=generate_random_32_char_string
 NEXT_PUBLIC_API_URL=http://localhost:8080
 
 WEBHOOK_URL=webhook_for_generating_image
+
+# Google (optional, public values). In CI these come from repository variables.
+NEXT_PUBLIC_GA_ID=
+NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION=

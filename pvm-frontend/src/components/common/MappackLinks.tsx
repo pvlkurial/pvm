@@ -8,6 +8,7 @@ interface MappackLinksProps {
   mappack: Mappack;
   /** "icon" is round icon-only buttons; "labelled" is pills with the link's name. */
   variant?: "icon" | "labelled";
+  size?: "icon" | "icon-sm";
   className?: string;
 }
 
@@ -20,7 +21,12 @@ function mappackLinks(mappack: Mappack) {
 }
 
 /** The mappack's spreadsheet, Discord and website, whichever are set. */
-export function MappackLinks({ mappack, variant = "icon", className }: MappackLinksProps) {
+export function MappackLinks({
+  mappack,
+  variant = "icon",
+  size = "icon",
+  className,
+}: MappackLinksProps) {
   const links = mappackLinks(mappack);
   if (links.length === 0) return null;
 
@@ -28,7 +34,7 @@ export function MappackLinks({ mappack, variant = "icon", className }: MappackLi
     <div className={cn("flex flex-wrap gap-2", className)}>
       {links.map((link) =>
         variant === "icon" ? (
-          <ExternalIconLink key={link.label} href={link.href} label={link.title}>
+          <ExternalIconLink key={link.label} href={link.href} label={link.title} size={size}>
             {link.icon}
           </ExternalIconLink>
         ) : (
