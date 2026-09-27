@@ -99,7 +99,7 @@ export function TrackCard({
           </span>
         </div>
 
-        <TrackCardGoals timeGoals={timeGoals} compact={alwaysShowDetails} />
+        <TrackCardGoals timeGoals={timeGoals} />
       </div>
     </div>
   );
