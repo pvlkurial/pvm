@@ -73,6 +73,31 @@ type updateRoleRequest struct {
 	Role string `json:"role"`
 }
 
+type updateSupporterRequest struct {
+	IsSupporter *bool `json:"is_supporter" binding:"required"`
+}
+
+// UpdateUserSupporter marks or unmarks a user as a Patreon supporter.
+func (t *AdminController) UpdateUserSupporter(c *gin.Context) {
+	userID := c.Param("user_id")
+
+	var request updateSupporterRequest
+	if err := c.ShouldBindJSON(&request); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid payload: " + err.Error()})
+		return
+	}
+
+	err := t.permissionService.SetUserSupporter(userID, *request.IsSupporter)
+	switch {
+	case err == nil:
+		c.JSON(http.StatusOK, gin.H{"user_id": userID, "is_supporter": *request.IsSupporter})
+	case errors.Is(err, gorm.ErrRecordNotFound):
+		c.JSON(http.StatusNotFound, gin.H{"error": "No such user"})
+	default:
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+	}
+}
+
 func (t *AdminController) UpdateUserRole(c *gin.Context) {
 	userID := c.Param("user_id")
 

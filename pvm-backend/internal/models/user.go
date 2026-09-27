@@ -24,11 +24,17 @@ func IsAssignableRole(role string) bool {
 }
 
 type User struct {
-	ID        string    `gorm:"primaryKey" json:"id"`
-	Name      string    `json:"name"`
-	Role      string    `gorm:"default:user" json:"role"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
+	ID   string `gorm:"primaryKey" json:"id"`
+	Name string `json:"name"`
+	Role string `gorm:"default:user" json:"role"`
+	// IsSupporter marks a Patreon supporter on the tier that unlocks refreshing
+	// your own records on demand. Set by a superadmin.
+	IsSupporter bool `gorm:"not null;default:false" json:"is_supporter"`
+	// LastRecordRefreshAt rate-limits on-demand record refreshes; see
+	// UserRepository.ClaimRecordRefresh.
+	LastRecordRefreshAt *time.Time `json:"-"`
+	CreatedAt           time.Time  `json:"created_at"`
+	UpdatedAt           time.Time  `json:"updated_at"`
 }
 
 // HasAtLeastRole reports whether the user meets or exceeds minRole in the
@@ -47,4 +53,10 @@ func (u *User) HasAtLeastRole(minRole string) bool {
 
 func (u *User) IsSuperAdmin() bool {
 	return u.Role == RoleSuperAdmin
+}
+
+// CanRefreshRecords reports whether the user may pull their own record for a
+// track from Nadeo on demand: superadmins and supporters.
+func (u *User) CanRefreshRecords() bool {
+	return u.IsSuperAdmin() || u.IsSupporter
 }

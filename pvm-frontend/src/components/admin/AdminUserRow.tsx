@@ -6,6 +6,7 @@ import { Mappack } from "@/types/mappack.types";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
+import { SwitchField } from "@/components/ui/switch";
 import { RoleSelect } from "./RoleSelect";
 
 interface AdminUserRowProps {
@@ -51,6 +52,12 @@ export function AdminUserRow({
   const handleRoleChange = (role: Role) =>
     runSave(() => adminService.setUserRole(user.id, role), "Failed to change role");
 
+  const handleSupporterChange = (isSupporter: boolean) =>
+    runSave(
+      () => adminService.setUserSupporter(user.id, isSupporter),
+      "Failed to change supporter status",
+    );
+
   const handleSavePermissions = () =>
     runSave(
       () => adminService.setUserPermissions(user.id, selected),
@@ -91,6 +98,15 @@ export function AdminUserRow({
           </Button>
         )}
       </div>
+
+      <SwitchField
+        label="Patreon supporter"
+        description="Can update their own records, once a minute"
+        checked={!!user.is_supporter}
+        onCheckedChange={handleSupporterChange}
+        disabled={isSaving}
+        className="px-4 pb-3"
+      />
 
       {isSelf && (
         <p className="px-4 pb-3 text-small text-faint">You cannot change your own role.</p>

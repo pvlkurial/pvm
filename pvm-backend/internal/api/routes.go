@@ -51,7 +51,8 @@ func (r *Routes) InitRoutes() {
 		authorized.GET("/auth/me", controllers.AuthController.Me)
 		authorized.GET("/auth/me/permissions", controllers.AdminController.GetMyPermissions)
 		authorized.POST("/auth/refresh", controllers.AuthController.Refresh)
-		authorized.POST("/tracks/:track_id/records/:player_id/fetch", controllers.RecordController.FetchPlayersRecordsForTrack)
+		// A user refreshing their own record: supporters and superadmins, rate-limited.
+		authorized.POST("/tracks/:track_id/records/refresh", controllers.RecordController.RefreshOwnRecord)
 		authorized.PATCH("/overlay", controllers.OverlayController.Update)
 	}
 
@@ -65,6 +66,7 @@ func (r *Routes) InitRoutes() {
 	{
 		superAdmin.GET("/users", controllers.AdminController.ListUsers)
 		superAdmin.PATCH("/users/:user_id/role", controllers.AdminController.UpdateUserRole)
+		superAdmin.PATCH("/users/:user_id/supporter", controllers.AdminController.UpdateUserSupporter)
 		superAdmin.GET("/users/:user_id/permissions", controllers.AdminController.GetUserPermissions)
 		superAdmin.PUT("/users/:user_id/permissions", controllers.AdminController.SetUserPermissions)
 		superAdmin.GET("/mappacks", controllers.AdminController.ListManageableMappacks)
