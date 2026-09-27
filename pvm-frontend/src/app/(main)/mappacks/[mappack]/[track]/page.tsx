@@ -12,7 +12,7 @@ import { TrackInfoCard } from "@/components/track-detail/TrackInfoCard";
 import { TrackStatsGrid } from "@/components/track-detail/TrackStatsGrid";
 import { TrackTimeGoals } from "@/components/track-detail/TrackTimeGoals";
 import { TrackLeaderboard } from "@/components/track-detail/TrackLeaderboard";
-import { ObsOverlayControls } from "@/components/track-detail/ObsOverlayControls";
+import { StatsOverlayControls } from "@/components/track-detail/StatsOverlayControls";
 import { OverlayPickButton } from "@/components/track-detail/OverlayPickButton";
 
 export default function TrackPage({
@@ -50,7 +50,7 @@ export default function TrackPage({
           >
             <FaMap />
           </ExternalIconLink>
-          <OverlayPickButton mappackId={mappack} trackId={track.id} />
+          <OverlayPickButton mappackId={mappack} track={track} />
         </div>
 
         <Breadcrumbs
@@ -90,7 +90,7 @@ export default function TrackPage({
       />
 
       <div className="mt-3">
-        <ObsOverlayControls track={track} mappackId={mappack} />
+        <StatsOverlayControls mappackId={mappack} />
       </div>
     </div>
   );
