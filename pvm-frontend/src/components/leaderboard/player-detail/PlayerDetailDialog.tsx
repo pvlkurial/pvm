@@ -9,7 +9,7 @@ import { calculateCompletionStats } from "@/utils/player.utils";
 import { cn } from "@/lib/utils";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Spinner } from "@/components/ui/spinner";
-import { ProgressBar } from "@/components/common/ProgressBar";
+import { CompletionBar } from "@/components/common/CompletionBar";
 import { TrackCard } from "@/components/track-card/TrackCard";
 import { ModalPlayerStats } from "./ModalPlayerStats";
 import { TierHeading } from "./TierHeading";
@@ -114,18 +114,8 @@ export function PlayerDetailDialog({
               />
             </div>
 
-            <div className="space-y-2 px-6">
-              <div className="flex items-baseline justify-between">
-                <span className="eyebrow">Completed</span>
-                <span className="font-mono text-mono-s text-muted-foreground">
-                  {completion.current}/{completion.total}
-                </span>
-              </div>
-              <ProgressBar
-                current={completion.current}
-                total={completion.total}
-                color={playerMappack.accentColor || undefined}
-              />
+            <div className="px-6">
+              <CompletionBar {...completion} />
             </div>
 
             <hr className="border-border-subtle" />

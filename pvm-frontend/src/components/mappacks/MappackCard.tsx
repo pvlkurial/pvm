@@ -27,12 +27,12 @@ export function MappackCard({ mappack }: { mappack: Mappack }) {
     <Link
       href={`/mappacks/${mappack.id}`}
       draggable={false}
-      className="group flex flex-col overflow-hidden rounded-xl border border-border bg-surface-1 outline-none transition-colors hover:border-muted-foreground/40 focus-visible:border-foreground"
+      className="group flex flex-col overflow-hidden rounded-xl border border-border bg-surface-1 outline-none transition-colors hover:border-muted-foreground/40 hover:delay-150 focus-visible:border-foreground"
     >
       <div className="relative aspect-[16/10] overflow-hidden border-b border-border-subtle">
         {mappack.thumbnailURL ? (
           <div
-            className="absolute inset-0 bg-cover bg-center brightness-[0.8] transition-[filter,transform] duration-300 group-hover:scale-105 group-hover:brightness-100"
+            className="absolute inset-0 bg-cover bg-center brightness-[0.8] transition-[filter,transform] duration-300 group-hover:scale-105 group-hover:brightness-100 group-hover:delay-150"
             style={{ backgroundImage: `url(${mappack.thumbnailURL})` }}
           />
         ) : (
@@ -43,13 +43,13 @@ export function MappackCard({ mappack }: { mappack: Mappack }) {
           <MapStyleIcon
             styleKey={mappack.mapStyleName}
             size={44}
-            className="absolute top-3.5 right-3.5 opacity-40 transition-opacity group-hover:opacity-70"
+            className="absolute top-3.5 right-3.5 opacity-40 transition-opacity group-hover:opacity-70 group-hover:delay-150"
           />
         )}
 
         {/* Sweeps across the bottom on hover, in the mappack's accent colour. */}
         <div
-          className="absolute inset-x-0 bottom-0 h-[3px] origin-left scale-x-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-100 group-focus-visible:scale-x-100 motion-reduce:transition-none"
+          className="absolute inset-x-0 bottom-0 h-[3px] origin-left scale-x-0 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-100 group-hover:delay-150 group-focus-visible:scale-x-100 motion-reduce:transition-none"
           style={{ backgroundColor: accentColor }}
         />
       </div>

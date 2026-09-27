@@ -54,14 +54,15 @@ export function PlayerStats({
 
   return (
     <StatsFrame>
-      {/* Points lead, with the leaderboard rank sitting on the same baseline.
-          Sized responsively because this column is only a sixth of the grid. */}
-      <div className="flex items-baseline justify-between gap-2">
-        <p className="font-display text-[40px] leading-none xl:text-display-m">
+      {/* Sized responsively because this column is only a sixth of the grid. */}
+      <div>
+        <p className="stat-figure text-3xl xl:text-4xl">
           {entry.total_points.toLocaleString()}
-          <span className="ml-1.5 font-mono text-mono-s text-faint">PTS</span>
+          <span className="ml-1.5 text-base text-faint xl:text-xl">PTS</span>
         </p>
-        <span className="eyebrow shrink-0 whitespace-nowrap">Rank #{rank}</span>
+        <p className="mt-2 text-small font-semibold tracking-wide text-muted-foreground uppercase">
+          Rank #{rank}
+        </p>
       </div>
 
       {current && (

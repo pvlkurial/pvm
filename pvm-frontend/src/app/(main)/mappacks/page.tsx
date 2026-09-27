@@ -37,7 +37,6 @@ export default function MappacksPage() {
   return (
     <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-16 px-7 pt-9 pb-18">
       <MappackGrid
-        eyebrow="01 — PVM"
         title="PvM"
         mappacks={mappacks}
         showAddCard={canCreateMappack}
@@ -47,7 +46,6 @@ export default function MappacksPage() {
 
       {campaigns.length > 0 && (
         <MappackGrid
-          eyebrow="02 — Campaign"
           title="Campaign"
           mappacks={campaigns}
           isLoading={loading}

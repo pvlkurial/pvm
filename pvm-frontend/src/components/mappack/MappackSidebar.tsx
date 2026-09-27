@@ -66,7 +66,7 @@ function MappackTitle({ mappack }: { mappack: Mappack }) {
 function SidebarSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <section className="border-t border-border pt-5">
-      <p className="eyebrow mb-3 text-center">{title}</p>
+      <p className="mb-3 text-center font-display text-2xl">{title}</p>
       {children}
     </section>
   );
@@ -136,17 +136,12 @@ export function MappackSidebar({
                 );
               })}
             </div>
-
-            <RequireMappackPermission mappackId={mappack.id}>
-              <div className="mt-3 flex justify-center">
-                <AddTrackDialog timegoals={mappack.timeGoals} mappackId={mappack.id} />
-              </div>
-            </RequireMappackPermission>
           </SidebarSection>
         )}
 
         <RequireMappackPermission mappackId={mappack.id}>
-          <div className="flex justify-center border-t border-border pt-5">
+          <div className="flex flex-col items-center gap-2 border-t border-border pt-5">
+            <AddTrackDialog timegoals={mappack.timeGoals} mappackId={mappack.id} />
             <Button variant="outline" size="sm" onClick={() => setIsEditOpen(true)}>
               Edit Mappack
             </Button>

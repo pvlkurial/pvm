@@ -4,7 +4,6 @@ import { MappackCard } from "./MappackCard";
 import { AddMappackCard } from "./AddMappackCard";
 
 interface MappackGridProps {
-  eyebrow: string;
   title: string;
   mappacks: Mappack[];
   /** Appends the create card at the end of the grid. */
@@ -14,7 +13,6 @@ interface MappackGridProps {
 }
 
 export function MappackGrid({
-  eyebrow,
   title,
   mappacks,
   showAddCard = false,
@@ -25,12 +23,7 @@ export function MappackGrid({
 
   return (
     <section>
-      <SectionHeading
-        size="lg"
-        eyebrow={eyebrow}
-        count={isLoading ? undefined : mappacks.length}
-        className="mb-8"
-      >
+      <SectionHeading size="lg" className="mb-8">
         {title}
       </SectionHeading>
 

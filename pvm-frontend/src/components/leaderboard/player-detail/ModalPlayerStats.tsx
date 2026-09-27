@@ -43,14 +43,14 @@ export function ModalPlayerStats({
       {/* Equal-weight tiles so no single figure dominates the dialog. */}
       <div className="flex flex-wrap gap-6">
         <StatTile label="Points" className="min-w-[110px] flex-1">
-          <p className="font-display text-3xl leading-none">
+          <p className="stat-figure text-3xl">
             {entry.total_points.toLocaleString()}
           </p>
         </StatTile>
 
         <StatTile label="Leaderboard Rank" className="min-w-[110px] flex-1">
           <p
-            className="font-display text-3xl leading-none"
+            className="stat-figure text-3xl"
             style={{ color: current?.color }}
           >
             #{rank}

@@ -5,7 +5,7 @@ import { calculateCompletionStats } from "@/utils/player.utils";
 import { useStoredState } from "@/hooks/useStoredState";
 import { SwitchField } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ProgressBar } from "@/components/common/ProgressBar";
+import { CompletionBar } from "@/components/common/CompletionBar";
 import { LeaderboardTab } from "@/components/leaderboard/LeaderboardTab";
 import { TrackFilter } from "./TrackFilter";
 import { TierSortButton, SortOrder } from "./TierSortButton";
@@ -25,26 +25,6 @@ interface MappackContentProps {
   onTabChange: (tab: MappackTab) => void;
   tierRefs: React.RefObject<{ [key: string]: HTMLDivElement | null }>;
   playerId?: string;
-}
-
-function CompletionProgress({ mappack }: { mappack: Mappack }) {
-  const { current, total } = calculateCompletionStats(mappack.MappackTrack);
-
-  return (
-    <div className="mb-8 space-y-2">
-      <div className="flex items-baseline justify-between">
-        <span className="eyebrow">Completed</span>
-        <span className="font-mono text-mono-s text-muted-foreground">
-          {current}/{total}
-        </span>
-      </div>
-      <ProgressBar
-        current={current}
-        total={total}
-        color={mappack.accentColor || undefined}
-      />
-    </div>
-  );
 }
 
 export function MappackContent({
@@ -87,13 +67,21 @@ export function MappackContent({
         value={selectedTab}
         onValueChange={(tab) => onTabChange(tab as MappackTab)}
       >
-        <TabsList variant="line" className="mb-6">
-          <TabsTrigger value="maps">Maps</TabsTrigger>
-          <TabsTrigger value="leaderboard">Leaderboard</TabsTrigger>
+        <TabsList className="mb-6">
+          <TabsTrigger value="maps" className="h-9 px-5">
+            Maps
+          </TabsTrigger>
+          <TabsTrigger value="leaderboard" className="h-9 px-5">
+            Leaderboard
+          </TabsTrigger>
         </TabsList>
 
         <TabsContent value="maps">
-          {playerId && <CompletionProgress mappack={mappack} />}
+          {playerId && (
+            <div className="mb-8">
+              <CompletionBar {...calculateCompletionStats(mappack.MappackTrack)} />
+            </div>
+          )}
           <div className="flex flex-col gap-8">
             {sortedTiers.map((tierName) => (
               <TierSection

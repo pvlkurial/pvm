@@ -10,7 +10,7 @@ export function TierHeading({ tierName, tier }: TierHeadingProps) {
   return (
     <h3 className="flex items-baseline gap-2">
       <span
-        className="font-display text-2xl uppercase"
+        className="text-lg font-bold tracking-wider uppercase"
         style={{ color: tier?.color ?? "var(--text-muted)" }}
       >
         {tierName}

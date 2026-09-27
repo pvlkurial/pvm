@@ -25,7 +25,7 @@ export function TierSection({
       className="scroll-mt-4 border-t border-border pt-4"
     >
       <h2
-        className="mb-4 text-center font-display text-display-m uppercase"
+        className="mb-4 text-center text-3xl font-bold tracking-wider uppercase"
         style={{ color: tierData.tier?.color || "#6b7280" }}
       >
         {tierName} Tier

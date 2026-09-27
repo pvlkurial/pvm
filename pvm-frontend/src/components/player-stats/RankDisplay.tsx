@@ -21,7 +21,7 @@ export function RankDisplay({ rank, nextRank, currentPoints }: RankDisplayProps)
       <div>
         <p className="eyebrow mb-2">Current rank</p>
         <p
-          className="font-display leading-none"
+          className="stat-figure"
           style={{ fontSize: rankNameFontSize(rank.name), color: rank.color }}
         >
           {rank.name}

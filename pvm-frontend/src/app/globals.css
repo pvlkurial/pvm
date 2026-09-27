@@ -125,6 +125,11 @@
   @apply font-mono text-label uppercase text-muted-foreground;
 }
 
+/* Big numbers and rank names: heavy and wide, unlike the condensed serif. */
+@utility stat-figure {
+  @apply font-sans font-bold tracking-tight tabular-nums leading-none;
+}
+
 @utility page-container {
   @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full;
 }
