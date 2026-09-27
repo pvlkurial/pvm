@@ -45,8 +45,10 @@ export function MappackContent({
     true,
     (raw) => raw === "true",
   );
-  // Once opened, the leaderboard stays mounted (just hidden) so switching tabs
-  // keeps the players already loaded instead of fetching them again.
+  // Both panels stay mounted once shown and are just hidden when inactive, so
+  // switching tabs keeps what they loaded: the leaderboard its players, the
+  // maps tab its thumbnails (Nadeo serves those no-cache, so a remount would
+  // request every one again).
   const [leaderboardOpened, setLeaderboardOpened] = useState(selectedTab === "leaderboard");
   if (selectedTab === "leaderboard" && !leaderboardOpened) {
     setLeaderboardOpened(true);
@@ -83,7 +85,7 @@ export function MappackContent({
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="maps">
+        <TabsContent value="maps" forceMount className="data-[state=inactive]:hidden">
           {playerId && (
             <div className="mb-8">
               <CompletionBar {...calculateCompletionStats(mappack.MappackTrack)} />
