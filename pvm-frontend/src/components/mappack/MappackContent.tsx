@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { Mappack, MappackTrack } from "@/types/mappack.types";
 import { TracksByTier } from "@/utils/mappack.utils";
 import { calculateCompletionStats } from "@/utils/player.utils";
@@ -44,6 +45,12 @@ export function MappackContent({
     true,
     (raw) => raw === "true",
   );
+  // Once opened, the leaderboard stays mounted (just hidden) so switching tabs
+  // keeps the players already loaded instead of fetching them again.
+  const [leaderboardOpened, setLeaderboardOpened] = useState(selectedTab === "leaderboard");
+  if (selectedTab === "leaderboard" && !leaderboardOpened) {
+    setLeaderboardOpened(true);
+  }
 
   return (
     <div className="col-span-1 lg:col-span-4 lg:col-start-2">
@@ -99,12 +106,18 @@ export function MappackContent({
           </div>
         </TabsContent>
 
-        <TabsContent value="leaderboard">
-          <LeaderboardTab
-            mappackId={mappack.id}
-            mappackRanks={mappack.mappackRanks}
-            loggedInMappack={playerId ? mappack : undefined}
-          />
+        <TabsContent
+          value="leaderboard"
+          forceMount
+          className="data-[state=inactive]:hidden"
+        >
+          {leaderboardOpened && (
+            <LeaderboardTab
+              mappackId={mappack.id}
+              mappackRanks={mappack.mappackRanks}
+              loggedInMappack={playerId ? mappack : undefined}
+            />
+          )}
         </TabsContent>
       </Tabs>
     </div>
