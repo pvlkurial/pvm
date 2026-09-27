@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/popover";
 import { RequireMappackPermission } from "@/components/common/RequireMappackPermission";
 import { MappackLinks } from "@/components/common/MappackLinks";
+import { SidebarHeading } from "@/components/common/SidebarHeading";
 import { EditMappackDialog } from "@/components/mappack-edit/EditMappackDialog";
 import { AddTrackDialog } from "./AddTrackDialog";
 
@@ -33,7 +34,7 @@ function MappackTitle({ mappack }: { mappack: Mappack }) {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="cursor-pointer pt-3 text-center font-display text-5xl leading-none text-balance transition-opacity hover:opacity-80"
+          className="cursor-pointer transition-opacity hover:opacity-80"
         >
           {mappack.name}
         </button>
@@ -50,7 +51,7 @@ function MappackTitle({ mappack }: { mappack: Mappack }) {
 
 function SidebarSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="border-t border-border pt-5">
+    <section>
       <p className="mb-3 text-center font-display text-2xl">{title}</p>
       {children}
     </section>
@@ -73,8 +74,13 @@ export function MappackSidebar({
 
   return (
     <aside className="scrollbar-hide lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:self-start lg:overflow-y-auto">
-      <div className="flex flex-col gap-5 p-4">
-        <MappackTitle mappack={mappack} />
+      <div className="p-5">
+        <SidebarHeading>
+          <MappackTitle mappack={mappack} />
+        </SidebarHeading>
+
+        {/* Each section sits between hairlines, as in My Stats. */}
+        <div className="divide-y divide-border [&>*]:py-5">
 
         <SidebarSection title="Timegoals">
           <ul className="flex flex-col gap-1.5">
@@ -125,7 +131,7 @@ export function MappackSidebar({
         )}
 
         <RequireMappackPermission mappackId={mappack.id}>
-          <div className="flex flex-col items-center gap-2 border-t border-border pt-5">
+          <div className="flex flex-col items-center gap-2">
             <AddTrackDialog timegoals={mappack.timeGoals} mappackId={mappack.id} />
             <Button variant="outline" size="sm" onClick={() => setIsEditOpen(true)}>
               Edit Mappack
@@ -138,6 +144,7 @@ export function MappackSidebar({
             />
           </div>
         </RequireMappackPermission>
+        </div>
       </div>
     </aside>
   );

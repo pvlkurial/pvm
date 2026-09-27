@@ -3,6 +3,7 @@ import { MappackRank } from "@/types/mappack.types";
 import { usePlayerStats } from "@/hooks/usePlayerStats";
 import { getRankProgress } from "@/utils/mappack.utils";
 import { ProgressBar } from "@/components/common/ProgressBar";
+import { SidebarHeading } from "@/components/common/SidebarHeading";
 import { RankDisplay } from "./RankDisplay";
 
 interface PlayerStatsProps {
@@ -15,10 +16,8 @@ interface PlayerStatsProps {
 
 function StatsFrame({ children }: { children: React.ReactNode }) {
   return (
-    <aside className="sticky top-4 self-start p-6">
-      <h3 className="border-b border-border pb-4 font-display text-[40px] leading-none">
-        My Stats
-      </h3>
+    <aside className="sticky top-4 self-start p-5">
+      <SidebarHeading>My Stats</SidebarHeading>
       {/* Each section sits between hairlines. */}
       <div className="divide-y divide-border [&>*]:py-5">{children}</div>
     </aside>

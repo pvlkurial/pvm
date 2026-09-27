@@ -8,6 +8,7 @@ import { groupTracksByTier, sortTiersByPoints } from "@/utils/mappack.utils";
 import { useTierScroll } from "@/hooks/useTierScroll";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
 import { useStoredState } from "@/hooks/useStoredState";
+import { useSidebarTitleHeight } from "@/hooks/useSidebarTitleHeight";
 import { PageStatus } from "@/components/common/PageStatus";
 import { MappackSidebar } from "@/components/mappack/MappackSidebar";
 import { MappackContent, MappackTab } from "@/components/mappack/MappackContent";
@@ -22,6 +23,7 @@ export default function MappackPage({
   const { mappack: mappackId } = use(params);
   const { user } = useAuth();
   const pathName = usePathname();
+  const gridRef = useSidebarTitleHeight<HTMLDivElement>();
   const [mappack, setMappack] = useState<Mappack | null>(null);
   const [filteredTracks, setFilteredTracks] = useState<MappackTrack[]>([]);
   const [selectedTab, setSelectedTab] = useState<MappackTab>("maps");
@@ -72,7 +74,7 @@ export default function MappackPage({
   }
 
   return (
-    <div className="grid gap-10 lg:grid-cols-6">
+    <div ref={gridRef} className="grid gap-10 lg:grid-cols-6">
       <MappackSidebar
         mappack={mappack}
         sortedTiers={sortedTiers}
