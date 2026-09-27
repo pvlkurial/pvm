@@ -13,13 +13,16 @@ export function Logo({ variant = "header" }: LogoProps) {
     <Link
       href="/"
       className={cn(
-        "font-display tracking-[-0.01em] text-foreground",
+        "group font-logo tracking-[-0.01em] text-foreground",
         isFooter ? "text-[22px]" : "text-[28px]",
       )}
     >
       pvms
       <span
-        className={cn("italic", isFooter ? "text-foreground" : "text-muted-foreground")}
+        className={cn(
+          "italic transition-colors duration-300 group-hover:text-sky-300",
+          isFooter ? "text-foreground" : "text-muted-foreground",
+        )}
       >
         .club
       </span>

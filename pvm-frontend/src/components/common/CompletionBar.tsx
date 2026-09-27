@@ -24,7 +24,7 @@ export function CompletionBar({ current, total }: CompletionBarProps) {
         animate={{ width: `${percentage}%` }}
         transition={{ duration: 1.2, ease: [0.4, 0, 0.2, 1], delay: 0.2 }}
       />
-      <span className="absolute inset-0 flex items-center justify-center text-small font-semibold tracking-wide text-foreground/80 uppercase">
+      <span className="absolute inset-0 flex items-center justify-center text-small font-medium text-foreground/85">
         Completed {current}/{total}
       </span>
     </div>

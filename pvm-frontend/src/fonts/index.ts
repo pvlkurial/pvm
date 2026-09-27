@@ -1,4 +1,4 @@
-import { DM_Serif_Display, Geist } from "next/font/google";
+import { DM_Serif_Display, Geist, Instrument_Serif } from "next/font/google";
 import localFont from "next/font/local";
 
 export const displayFont = DM_Serif_Display({
@@ -6,6 +6,14 @@ export const displayFont = DM_Serif_Display({
   style: ["normal", "italic"],
   subsets: ["latin"],
   variable: "--font-dm-serif-display",
+});
+
+/** Only for the pvms.club wordmark. */
+export const logoFont = Instrument_Serif({
+  weight: "400",
+  style: ["normal", "italic"],
+  subsets: ["latin"],
+  variable: "--font-instrument-serif",
 });
 
 export const sansFont = Geist({
@@ -19,4 +27,8 @@ export const overlayFont = localFont({
   variable: "--font-my-custom",
 });
 
-export const siteFontVariables = [displayFont.variable, sansFont.variable].join(" ");
+export const siteFontVariables = [
+  displayFont.variable,
+  logoFont.variable,
+  sansFont.variable,
+].join(" ");

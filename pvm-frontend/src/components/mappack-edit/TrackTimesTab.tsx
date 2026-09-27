@@ -64,7 +64,7 @@ export function TrackTimesTab({
           <div key={tierKey} className="space-y-3">
             <div className="flex items-center gap-3">
               <span
-                className="text-label font-semibold uppercase"
+                className="text-small font-semibold uppercase"
                 style={{ color: tierColor }}
               >
                 {tierKey}

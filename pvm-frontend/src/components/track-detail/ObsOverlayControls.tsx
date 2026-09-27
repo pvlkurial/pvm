@@ -36,7 +36,7 @@ function siteOrigin(): string {
 function Setting({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-2">
-      <p className="text-caption font-semibold tracking-wide uppercase text-muted-foreground">{label}</p>
+      <p className="text-caption text-muted-foreground">{label}</p>
       {children}
     </div>
   );

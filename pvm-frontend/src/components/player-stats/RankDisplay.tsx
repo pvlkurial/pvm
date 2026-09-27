@@ -30,9 +30,9 @@ export function RankDisplay({ rank, nextRank, currentPoints }: RankDisplayProps)
 
       {nextRank && (
         <div className="space-y-2">
-          <div className="flex items-center justify-between gap-2 tabular-nums text-caption text-faint">
-            <span className="uppercase">Next: {nextRank.name}</span>
-            <span>
+          <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1 text-caption tabular-nums text-faint">
+            <span className="whitespace-nowrap">Next: {nextRank.name}</span>
+            <span className="whitespace-nowrap">
               {(nextRank.pointsNeeded - currentPoints).toLocaleString()} pts to go
             </span>
           </div>

@@ -4,7 +4,7 @@ import { trackRowColumns } from "./trackRowLayout";
 export function TrackRowHeader({ withComparison }: { withComparison: boolean }) {
   return (
     <div
-      className="hidden items-center gap-4 px-3 pb-1 text-caption font-semibold tracking-wide uppercase text-faint md:grid"
+      className="hidden items-center gap-4 px-3 pb-1 text-caption text-faint md:grid"
       style={{ gridTemplateColumns: trackRowColumns(withComparison) }}
     >
       <span />

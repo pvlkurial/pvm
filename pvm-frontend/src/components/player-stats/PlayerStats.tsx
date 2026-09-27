@@ -13,13 +13,24 @@ interface PlayerStatsProps {
   accentColor?: string;
 }
 
-function StatsFrame({ children }: { children: React.ReactNode }) {
+/** Laid out like a mappack card: title, a colour strip, then the figures. */
+function StatsCard({
+  stripColor,
+  children,
+}: {
+  stripColor?: string;
+  children: React.ReactNode;
+}) {
   return (
-    <aside className="sticky top-4 space-y-6 self-start p-6">
-      <h3 className="border-b border-border pb-3 font-display text-title">
-        My Stats
-      </h3>
-      {children}
+    <aside className="sticky top-4 self-start p-4">
+      <div className="overflow-hidden rounded-2xl border border-border bg-surface-1">
+        <h3 className="px-5 pt-5 pb-4 font-display text-title">My Stats</h3>
+        <div
+          className="h-1.5"
+          style={{ backgroundColor: stripColor || "var(--pack-neutral)" }}
+        />
+        <div className="space-y-5 p-5">{children}</div>
+      </div>
     </aside>
   );
 }
@@ -35,13 +46,13 @@ export function PlayerStats({
 
   if (loading) {
     return (
-      <StatsFrame>
-        <div className="animate-pulse space-y-3">
-          <div className="h-12 rounded-xl bg-surface-1" />
-          <div className="h-24 rounded-xl bg-surface-1" />
-          <div className="h-2 rounded-full bg-surface-1" />
+      <StatsCard stripColor={accentColor}>
+        <div className="animate-pulse space-y-4">
+          <div className="h-10 rounded-xl bg-surface-3" />
+          <div className="h-16 rounded-xl bg-surface-3" />
+          <div className="h-2 rounded-full bg-surface-3" />
         </div>
-      </StatsFrame>
+      </StatsCard>
     );
   }
 
@@ -53,26 +64,24 @@ export function PlayerStats({
   const { current, next } = getRankProgress(entry.total_points, ranks);
 
   return (
-    <StatsFrame>
-      {/* Sized responsively because this column is only a sixth of the grid. */}
+    <StatsCard stripColor={current?.color || accentColor}>
       <div>
+        <p className="eyebrow mb-2">Points</p>
+        {/* Sized responsively because this column is only a sixth of the grid. */}
         <p className="stat-figure text-3xl xl:text-4xl">
           {entry.total_points.toLocaleString()}
-          <span className="ml-1.5 text-base text-faint xl:text-xl">PTS</span>
         </p>
-        <p className="mt-2 text-small font-semibold tracking-wide text-muted-foreground uppercase">
-          Rank #{rank}
-        </p>
+        <p className="mt-2 text-small text-muted-foreground">Rank #{rank}</p>
       </div>
 
       {current && (
         <RankDisplay rank={current} nextRank={next} currentPoints={entry.total_points} />
       )}
 
-      <div className="space-y-2">
+      <div className="space-y-2 border-t border-border-subtle pt-5">
         <div className="flex items-baseline justify-between">
           <span className="eyebrow">Maps played</span>
-          <span className="tabular-nums text-caption text-muted-foreground">
+          <span className="text-small tabular-nums text-muted-foreground">
             {entry.best_achievements_count}/{totalTracks}
           </span>
         </div>
@@ -82,6 +91,6 @@ export function PlayerStats({
           color={accentColor || undefined}
         />
       </div>
-    </StatsFrame>
+    </StatsCard>
   );
 }

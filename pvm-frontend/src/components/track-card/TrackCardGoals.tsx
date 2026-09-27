@@ -28,7 +28,7 @@ export function TrackCardGoals({ timeGoals, compact = false }: TrackCardGoalsPro
 
   const summary = (
     <div className="flex items-center justify-between">
-      <span className="text-[10px] tracking-wider uppercase text-muted-foreground">
+      <span className="text-[11px] text-muted-foreground">
         Timegoals {achievedCount}/{timeGoals.length}
       </span>
       {!compact && (
@@ -64,7 +64,7 @@ export function TrackCardGoals({ timeGoals, compact = false }: TrackCardGoalsPro
               <div className={cn(TOOLTIP, "mb-0.5 flex flex-col items-center gap-0.5 group-hover/seg:opacity-100")}>
                 <span
                   className={cn(
-                    "text-[10px] leading-none uppercase",
+                    "text-[10px] leading-none",
                     timegoal.is_achieved ? "text-green-300" : "text-muted-foreground",
                   )}
                 >
@@ -90,7 +90,7 @@ export function TrackCardGoals({ timeGoals, compact = false }: TrackCardGoalsPro
           <div
             key={timegoal.time_goal_id}
             className={cn(
-              "group/goal relative mb-1 flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium uppercase transition-all duration-200",
+              "group/goal relative mb-1 flex items-center gap-1 rounded-full border px-2 py-0.5 text-[10px] font-medium transition-all duration-200",
               timegoal.is_achieved
                 ? "border-green-400/50 bg-green-500/30 text-green-300"
                 : "border-white/10 bg-white/5 text-muted-foreground",

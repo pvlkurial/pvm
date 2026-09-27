@@ -21,7 +21,7 @@ export function TimeGoalCard({ name, time, personalBest, multiplier }: TimeGoalC
           : "border-border-subtle bg-surface-2",
       )}
     >
-      <p className="mb-2 text-caption font-semibold tracking-wide uppercase text-muted-foreground">
+      <p className="mb-2 text-caption text-muted-foreground">
         {name} | {multiplier}x
       </p>
       <p

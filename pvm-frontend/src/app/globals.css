@@ -41,6 +41,7 @@
 
 @theme inline {
   --font-display: var(--font-dm-serif-display), Georgia, serif;
+  --font-logo: var(--font-instrument-serif), Georgia, serif;
   --font-sans: var(--font-geist), system-ui, sans-serif;
 
   /* shadcn semantic names, pointed at the tokens above */
@@ -98,9 +99,6 @@
   --text-ui--line-height: 1;
   --text-small: 13px;
   --text-small--line-height: 1.45;
-  --text-label: 13px;
-  --text-label--line-height: 1;
-  --text-label--letter-spacing: 0.08em;
   --text-caption: 12px;
   --text-caption--line-height: 1;
 }
@@ -119,9 +117,10 @@
   }
 }
 
-/* Small uppercase label above a figure or group, e.g. "Current rank". */
+/* Small label above a figure or group, e.g. "Current rank". Same face and
+   case as the navbar links, just smaller. */
 @utility eyebrow {
-  @apply text-label font-semibold uppercase text-muted-foreground;
+  @apply text-small text-muted-foreground;
 }
 
 /* Big numbers and rank names: heavy and wide, unlike the condensed serif. */

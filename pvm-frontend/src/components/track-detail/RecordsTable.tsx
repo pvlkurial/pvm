@@ -88,7 +88,7 @@ function RecordRow({
         </span>
         <div className="flex items-center gap-2 md:hidden">
           {achievedGoal && (
-            <span className="text-caption font-semibold tracking-wide uppercase text-muted-foreground">
+            <span className="text-caption text-muted-foreground">
               {achievedGoal}
             </span>
           )}
@@ -100,7 +100,7 @@ function RecordRow({
         {millisecondsToTimeString(record.score)}
       </span>
 
-      <span className="hidden items-center justify-center text-caption font-semibold tracking-wide uppercase text-muted-foreground md:flex">
+      <span className="hidden items-center justify-center text-caption text-muted-foreground md:flex">
         {achievedGoal ?? <span className="text-faint">—</span>}
       </span>
 
@@ -143,7 +143,7 @@ export function RecordsTable({
     <div className="space-y-4 md:space-y-6">
       <div
         className={cn(
-          "grid gap-2 px-2 text-caption font-semibold tracking-wide uppercase text-faint md:gap-6",
+          "grid gap-2 px-2 text-caption text-faint md:gap-6",
           MOBILE_COLUMNS,
           DESKTOP_COLUMNS,
         )}

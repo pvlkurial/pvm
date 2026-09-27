@@ -85,7 +85,7 @@ export function TrackCard({
           alwaysShowDetails ? "translate-y-0" : "translate-y-full group-hover:translate-y-0",
         )}
       >
-        <div className="flex items-center justify-between gap-1.5 text-[10px] whitespace-nowrap uppercase text-muted-foreground">
+        <div className="flex items-center justify-between gap-1.5 text-[11px] whitespace-nowrap text-muted-foreground">
           <span>
             {personal_best
               ? `PB: ${millisecondsToTimeString(personal_best)}`

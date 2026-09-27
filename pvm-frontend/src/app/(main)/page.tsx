@@ -46,7 +46,7 @@ export default function HomePage() {
             {FEATURED_STYLES.map((style) => (
               <li key={style} className="flex flex-col items-center gap-1.5">
                 <MapStyleIcon styleKey={style} className="opacity-70" />
-                <span className="text-caption font-semibold tracking-wide uppercase text-faint">
+                <span className="text-caption text-faint">
                   {getMapStyleLabel(style)}
                 </span>
               </li>

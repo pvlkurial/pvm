@@ -3,12 +3,16 @@ import { useState, useEffect } from "react";
 import { Mappack } from "@/types/mappack.types";
 import { mappackService } from "@/services/mappack.service";
 import { usePermissions } from "@/hooks/usePermissions";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { MappackGrid } from "@/components/mappacks/MappackGrid";
+
+type Listing = "all" | "pvm" | "campaign";
 
 export default function MappacksPage() {
   const [mappacks, setMappacks] = useState<Mappack[]>([]);
   const [campaigns, setCampaigns] = useState<Mappack[]>([]);
   const [loading, setLoading] = useState(true);
+  const [listing, setListing] = useState<Listing>("all");
   // Only superadmins may create mappacks; admins are scoped to their grants.
   const { canCreateMappack } = usePermissions();
 
@@ -35,16 +39,27 @@ export default function MappacksPage() {
   }, []);
 
   return (
-    <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-16 px-7 pt-9 pb-18">
-      <MappackGrid
-        title="PvM"
-        mappacks={mappacks}
-        showAddCard={canCreateMappack}
-        isLoading={loading}
-        emptyMessage="No mappacks yet"
-      />
+    <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-10 px-7 pt-9 pb-18">
+      <Tabs value={listing} onValueChange={(value) => setListing(value as Listing)}>
+        <TabsList>
+          <TabsTrigger value="all">All</TabsTrigger>
+          <TabsTrigger value="pvm">PvM</TabsTrigger>
+          <TabsTrigger value="campaign">Campaign</TabsTrigger>
+        </TabsList>
+      </Tabs>
 
-      {campaigns.length > 0 && (
+      <div className="flex flex-col gap-16">
+      {listing !== "campaign" && (
+        <MappackGrid
+          title="PvM"
+          mappacks={mappacks}
+          showAddCard={canCreateMappack}
+          isLoading={loading}
+          emptyMessage="No mappacks yet"
+        />
+      )}
+
+      {listing !== "pvm" && (listing === "campaign" || campaigns.length > 0) && (
         <MappackGrid
           title="Campaign"
           mappacks={campaigns}
@@ -52,6 +67,7 @@ export default function MappacksPage() {
           emptyMessage="No campaigns yet"
         />
       )}
+      </div>
     </div>
   );
 }
