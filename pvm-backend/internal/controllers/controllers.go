@@ -14,6 +14,7 @@ type Controllers struct {
 	AuthController        AuthController
 	TmxController         TmxController
 	AdminController       AdminController
+	OverlayController     OverlayController
 }
 
 func NewControllers(services services.Services, client *clients.NadeoAPIClient, tmxClient clients.TmxApiClient) *Controllers {
@@ -25,7 +26,9 @@ func NewControllers(services services.Services, client *clients.NadeoAPIClient, 
 	authController := NewAuthController(&services.AuthService)
 	tmxController := NewTmxController(tmxClient)
 	adminController := NewAdminController(services.PermissionService, services.MappackService)
+	overlayController := NewOverlayController(services.OverlayService)
 
 	return &Controllers{MappackController: *mappackController, PlayerController: *playerController,
-		RecordController: *recordController, TrackController: *trackController, AchievementController: *achievementController, AuthController: *authController, TmxController: *tmxController, AdminController: *adminController}
+		RecordController: *recordController, TrackController: *trackController, AchievementController: *achievementController, AuthController: *authController, TmxController: *tmxController, AdminController: *adminController,
+		OverlayController: *overlayController}
 }

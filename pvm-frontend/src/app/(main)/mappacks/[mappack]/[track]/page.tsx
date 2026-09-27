@@ -13,6 +13,7 @@ import { TrackStatsGrid } from "@/components/track-detail/TrackStatsGrid";
 import { TrackTimeGoals } from "@/components/track-detail/TrackTimeGoals";
 import { TrackLeaderboard } from "@/components/track-detail/TrackLeaderboard";
 import { ObsOverlayControls } from "@/components/track-detail/ObsOverlayControls";
+import { OverlayPickButton } from "@/components/track-detail/OverlayPickButton";
 
 export default function TrackPage({
   params,
@@ -49,6 +50,7 @@ export default function TrackPage({
           >
             <FaMap />
           </ExternalIconLink>
+          <OverlayPickButton mappackId={mappack} trackId={track.id} />
         </div>
 
         <Breadcrumbs

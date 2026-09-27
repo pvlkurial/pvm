@@ -3,7 +3,8 @@ import { useState } from "react";
 import { FiMonitor, FiCheck, FiBarChart2 } from "react-icons/fi";
 import { Track } from "@/types/mappack.types";
 import { useAuth } from "@/contexts/AuthContext";
-import { getGoalsWithWorldRecord } from "@/utils/track.utils";
+import { useOverlaySelection } from "@/hooks/useOverlaySelection";
+import { findGoalByName, getGoalsWithWorldRecord } from "@/utils/track.utils";
 import { copyToClipboard } from "@/utils/clipboard";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -83,6 +84,8 @@ interface OverlayPopoverProps {
   isCopied: boolean;
   onCopy: () => void;
   copyLabel: string;
+  /** Hides the copy button, e.g. when there is no URL to give out yet. */
+  canCopy?: boolean;
   sizeHint: string;
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -97,6 +100,7 @@ function OverlayPopover({
   isCopied,
   onCopy,
   copyLabel,
+  canCopy = true,
   sizeHint,
   open,
   onOpenChange,
@@ -120,18 +124,22 @@ function OverlayPopover({
 
           {children}
 
-          <hr className="border-border-subtle" />
+          {canCopy && (
+            <>
+              <hr className="border-border-subtle" />
 
-          <Button size="sm" variant="outline" className="w-full" onClick={onCopy}>
-            {copyLabel}
-            {isCopied && <FiCheck className="size-3.5" />}
-          </Button>
+              <Button size="sm" variant="outline" className="w-full" onClick={onCopy}>
+                {copyLabel}
+                {isCopied && <FiCheck className="size-3.5" />}
+              </Button>
 
-          <p className="text-center text-small text-faint">
-            Paste as Browser Source in OBS.
-            <br />
-            {sizeHint}
-          </p>
+              <p className="text-center text-small text-faint">
+                Paste as Browser Source in OBS.
+                <br />
+                {sizeHint}
+              </p>
+            </>
+          )}
         </div>
       </PopoverContent>
     </Popover>
@@ -147,11 +155,13 @@ export function ObsOverlayControls({ track, mappackId }: ObsOverlayControlsProps
   const { user } = useAuth();
   const playerParam = user?.id ? `&playerId=${user.id}` : "";
   const goals = getGoalsWithWorldRecord(track);
+  const overlay = useOverlaySelection();
+  // The goal is saved with the account, so it follows the overlay from map to map.
+  const selectedGoal = findGoalByName(track, overlay.selection?.goal)?.name ?? "";
 
   const [copied, setCopied] = useState<"overlay" | "stats" | null>(null);
 
   const [overlayOpen, setOverlayOpen] = useState(false);
-  const [selectedIndex, setSelectedIndex] = useState("0");
   const [side, setSide] = useState<Side>("right");
   const [opacity, setOpacity] = useState(75);
   const [accent, setAccent] = useState("base");
@@ -176,7 +186,7 @@ export function ObsOverlayControls({ track, mappackId }: ObsOverlayControlsProps
   const handleCopyOverlay = () =>
     copyAndClose(
       "overlay",
-      `${siteOrigin()}/overlay/${mappackId}/${track.id}?goalIndex=${selectedIndex}&side=${side}&opacity=${opacity}&accent=${accent}${playerParam}`,
+      `${siteOrigin()}/overlay?player=${overlay.playerId}&side=${side}&opacity=${opacity}&accent=${accent}`,
       () => setOverlayOpen(false),
     );
 
@@ -196,63 +206,81 @@ export function ObsOverlayControls({ track, mappackId }: ObsOverlayControlsProps
         isCopied={copied === "overlay"}
         onCopy={handleCopyOverlay}
         copyLabel="Copy OBS URL"
+        canCopy={overlay.isSignedIn}
         sizeHint="Set width 460, height 120."
         open={overlayOpen}
         onOpenChange={setOverlayOpen}
       >
-        {goals.length > 0 ? (
-          <Setting label="Time Goal">
-            <RadioGroup value={selectedIndex} onValueChange={setSelectedIndex}>
-              {goals.map((goal, i) => (
-                <label
-                  key={i}
-                  className="flex cursor-pointer items-center gap-2 text-small text-foreground"
-                >
-                  <RadioGroupItem value={String(i)} />
-                  {goal.name}
-                </label>
-              ))}
-            </RadioGroup>
-          </Setting>
+        {!overlay.isSignedIn ? (
+          <p className="text-small text-muted-foreground">
+            Log in to get your overlay link.
+          </p>
         ) : (
-          <p className="text-small text-faint">No goals defined</p>
+          <>
+            <p className="text-small text-muted-foreground">
+              One link for every map: pick which map it shows with the monitor
+              button next to TMX.
+            </p>
+
+            {goals.length > 0 ? (
+              <Setting label="Time Goal">
+                <RadioGroup
+                  value={selectedGoal}
+                  onValueChange={overlay.selectGoal}
+                  disabled={overlay.saving}
+                >
+                  {goals.map((goal) => (
+                    <label
+                      key={goal.name}
+                      className="flex cursor-pointer items-center gap-2 text-small text-foreground"
+                    >
+                      <RadioGroupItem value={goal.name} />
+                      {goal.name}
+                    </label>
+                  ))}
+                </RadioGroup>
+              </Setting>
+            ) : (
+              <p className="text-small text-faint">No goals defined</p>
+            )}
+
+            <hr className="border-border-subtle" />
+
+            <Setting label="Text Side">
+              <div className="flex gap-1 rounded-full bg-surface-2 p-1">
+                {(["left", "right"] as const).map((s) => (
+                  <button
+                    key={s}
+                    type="button"
+                    onClick={() => setSide(s)}
+                    className={cn(
+                      "h-7 flex-1 cursor-pointer rounded-full text-small capitalize transition-colors",
+                      side === s
+                        ? "bg-primary text-primary-foreground"
+                        : "text-muted-foreground hover:text-foreground",
+                    )}
+                  >
+                    {s}
+                  </button>
+                ))}
+              </div>
+            </Setting>
+
+            <Setting label={`Background Opacity - ${opacity}%`}>
+              <Slider
+                step={5}
+                min={0}
+                max={100}
+                value={[opacity]}
+                onValueChange={([v]) => setOpacity(v)}
+              />
+            </Setting>
+
+            <Setting label="Accent Color">
+              <AccentPicker value={accent} onChange={setAccent} />
+            </Setting>
+          </>
         )}
-
-        <hr className="border-border-subtle" />
-
-        <Setting label="Text Side">
-          <div className="flex gap-1 rounded-full bg-surface-2 p-1">
-            {(["left", "right"] as const).map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setSide(s)}
-                className={cn(
-                  "h-7 flex-1 cursor-pointer rounded-full text-small capitalize transition-colors",
-                  side === s
-                    ? "bg-primary text-primary-foreground"
-                    : "text-muted-foreground hover:text-foreground",
-                )}
-              >
-                {s}
-              </button>
-            ))}
-          </div>
-        </Setting>
-
-        <Setting label={`Background Opacity - ${opacity}%`}>
-          <Slider
-            step={5}
-            min={0}
-            max={100}
-            value={[opacity]}
-            onValueChange={([v]) => setOpacity(v)}
-          />
-        </Setting>
-
-        <Setting label="Accent Color">
-          <AccentPicker value={accent} onChange={setAccent} />
-        </Setting>
       </OverlayPopover>
 
       <OverlayPopover

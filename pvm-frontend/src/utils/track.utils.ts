@@ -14,3 +14,9 @@ export function getGoalsWithWorldRecord(track: Track) {
     ? [...goals, { name: "WR", time: worldRecord.score, multiplier: Infinity }]
     : goals;
 }
+
+/** The goal named `goalName` on this track, or its easiest goal if there is none. */
+export function findGoalByName(track: Track, goalName?: string) {
+  const goals = getGoalsWithWorldRecord(track);
+  return goals.find((goal) => goal.name === goalName) ?? goals[0];
+}

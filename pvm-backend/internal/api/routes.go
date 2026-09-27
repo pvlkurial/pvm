@@ -52,6 +52,7 @@ func (r *Routes) InitRoutes() {
 		authorized.GET("/auth/me/permissions", controllers.AdminController.GetMyPermissions)
 		authorized.POST("/auth/refresh", controllers.AuthController.Refresh)
 		authorized.POST("/tracks/:track_id/records/:player_id/fetch", controllers.RecordController.FetchPlayersRecordsForTrack)
+		authorized.PATCH("/overlay", controllers.OverlayController.Update)
 	}
 
 	// Superadmin panel. Note these handlers are registered on the group itself, so
@@ -153,6 +154,9 @@ func (r *Routes) InitRoutes() {
 	r.GET("/mappacks/:mappack_id/players/:player_id/achievements", controllers.AchievementController.GetPlayerAchievements)
 	r.GET("/mappacks/:mappack_id/players/:player_id/rank", controllers.AchievementController.GetPlayerRank)
 	r.GET("/mappacks/:mappack_id/players/:player_id/leaderboard-entry", controllers.AchievementController.GetPlayerLeaderboardEntry)
+
+	// OBS overlay: read by player id so one URL follows whatever map is selected.
+	r.GET("/overlay/:player_id", controllers.OverlayController.Get)
 
 	r.Run(":8080")
 }

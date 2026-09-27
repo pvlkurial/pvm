@@ -17,6 +17,7 @@ type Services struct {
 	AchievementService AchievementService
 	AuthService        AuthService
 	PermissionService  PermissionService
+	OverlayService     OverlayService
 }
 
 func NewServices(repositories repositories.Repositories, client *clients.NadeoAPIClient, tmClient clients.TrackmaniaAPIClient, db *gorm.DB) *Services {
@@ -39,6 +40,7 @@ func NewServices(repositories repositories.Repositories, client *clients.NadeoAP
 	}
 	authService := NewAuthService(db, clientID, clientSecret, redirectURI, jwtSecret)
 	permissionService := NewPermissionService(repositories.PermissionRepository, repositories.MappackRepository)
+	overlayService := NewOverlayService(repositories.OverlayRepository, repositories.TrackRepository)
 
 	return &Services{
 		MappackService:     mappackService,
@@ -48,5 +50,6 @@ func NewServices(repositories repositories.Repositories, client *clients.NadeoAP
 		AchievementService: *achievementService,
 		AuthService:        *authService,
 		PermissionService:  permissionService,
+		OverlayService:     overlayService,
 	}
 }
