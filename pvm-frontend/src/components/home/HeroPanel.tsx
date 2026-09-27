@@ -12,7 +12,7 @@ const HERO_IMAGES = [
 const INTERVAL_MS = 5000;
 const FADE_MS = 600;
 
-/** Cycles through a few track thumbnails, fading between them. */
+/** Cycles through a few track thumbnails, fading between them, as a backdrop. */
 export function HeroPanel() {
   const [current, setCurrent] = useState(0);
   const [visible, setVisible] = useState(true);
@@ -29,16 +29,13 @@ export function HeroPanel() {
   }, []);
 
   return (
-    <div
-      className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl border border-border bg-surface-1"
-      aria-hidden
-    >
+    <div className="absolute inset-0 overflow-hidden" aria-hidden>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={HERO_IMAGES[current]}
         alt=""
         className="absolute inset-0 size-full object-cover transition-opacity duration-500"
-        style={{ opacity: visible ? 1 : 0 }}
+        style={{ opacity: visible ? 0.35 : 0 }}
       />
     </div>
   );

@@ -18,7 +18,7 @@ export function hasMapStyleIcon(styleKey: string): boolean {
   return styleKey.toLowerCase() in STYLE_LABELS;
 }
 
-export function getMapStyleLabel(styleKey: string): string {
+function getMapStyleLabel(styleKey: string): string {
   return STYLE_LABELS[styleKey.toLowerCase()] ?? styleKey;
 }
 
