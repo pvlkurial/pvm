@@ -9,7 +9,7 @@ import { formatSecondsToMMSS } from "@/utils/time.utils";
 import { Button } from "@/components/ui/button";
 
 /** Matches the backend's limit. The server enforces it; this just shows it. */
-const COOLDOWN_SECONDS = 60;
+const COOLDOWN_SECONDS = 300;
 /** One cooldown for every track, like the backend's. */
 const COOLDOWN_KEY = "record-refresh-cooldown";
 const NOTICE_MS = 4000;

@@ -15,7 +15,7 @@ import (
 // RecordRefreshCooldown is how often one user may refresh a record, across all
 // tracks. Each refresh is a Nadeo API call, so this keeps the site from
 // flooding it.
-const RecordRefreshCooldown = time.Minute
+const RecordRefreshCooldown = 5 * time.Minute
 
 var (
 	ErrRecordRefreshNotAllowed = errors.New("refreshing records is for supporters")
