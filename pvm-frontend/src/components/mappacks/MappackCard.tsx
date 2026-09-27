@@ -40,6 +40,14 @@ export function MappackCard({ mappack }: { mappack: Mappack }) {
     <div
       className={`group relative aspect-[16/11] overflow-hidden rounded-2xl border border-border bg-surface-1 transition-[scale,border-color] hover:z-10 hover:scale-[1.03] hover:border-muted-foreground/40 hover:delay-150 has-[a:focus-visible]:border-foreground ${HOVER_EASE}`}
     >
+      {/* Covers the whole card, so anywhere on it opens the mappack. */}
+      <Link
+        href={`/mappacks/${mappack.id}`}
+        draggable={false}
+        aria-label={mappack.name}
+        className="absolute inset-0 z-[1] cursor-pointer outline-none"
+      />
+
       {mappack.thumbnailURL ? (
         <>
           <div
@@ -64,24 +72,16 @@ export function MappackCard({ mappack }: { mappack: Mappack }) {
         </Badge>
       )}
 
-      <div className="absolute inset-x-0 bottom-0 flex items-center gap-3 border-t border-white/10 bg-black/45 px-4 py-3 backdrop-blur-md">
+      {/* Above the card link (the blur makes this its own stacking layer), but
+          click-through except for the link buttons. */}
+      <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] flex items-center gap-3 border-t border-white/10 bg-black/45 px-4 py-3 backdrop-blur-md">
         <div className="min-w-0 flex-1">
-          <h3 className="truncate font-display text-2xl leading-tight">
-            {/* Stretched over the whole card, so the card itself is the link. */}
-            <Link
-              href={`/mappacks/${mappack.id}`}
-              draggable={false}
-              className="outline-none after:absolute after:inset-0"
-            >
-              {mappack.name}
-            </Link>
-          </h3>
+          <h3 className="truncate font-display text-2xl leading-tight">{mappack.name}</h3>
           {mappack.organization && (
             <p className="truncate text-small text-muted-foreground">{mappack.organization}</p>
           )}
         </div>
-        {/* Raised above the stretched link so the buttons stay clickable. */}
-        <MappackLinks mappack={mappack} size="icon-sm" className="relative z-10 shrink-0 flex-nowrap" />
+        <MappackLinks mappack={mappack} size="icon-sm" className="pointer-events-auto shrink-0 flex-nowrap" />
       </div>
     </div>
   );

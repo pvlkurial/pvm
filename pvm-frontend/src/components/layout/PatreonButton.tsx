@@ -21,7 +21,7 @@ export function PatreonButton() {
           <p>If you wish, you can help me run the website here.</p>
           <p>Also updates and changes are posted there.</p>
         </div>
-        <Button asChild size="sm" className="mt-4">
+        <Button asChild size="sm" className="mt-4 bg-[#FF424D] text-white hover:bg-[#FF424D]/85">
           <a
             href="https://www.patreon.com/cw/PVMWebsite/membership"
             target="_blank"
