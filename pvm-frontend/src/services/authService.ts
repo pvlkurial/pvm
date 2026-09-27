@@ -109,6 +109,7 @@ export const authService = {
     localStorage.setItem("user_id", user.id);
     localStorage.setItem("user_name", user.name);
     localStorage.setItem("user_role", user.role);
+    localStorage.setItem("user_supporter", String(!!user.is_supporter));
   },
 
   loadAuth(): { token: string; user: User } | null {
@@ -131,6 +132,7 @@ export const authService = {
           id: user_id,
           name,
           role: role as Role,
+          is_supporter: localStorage.getItem("user_supporter") === "true",
         },
       };
     }
@@ -143,5 +145,6 @@ export const authService = {
     localStorage.removeItem("user_id");
     localStorage.removeItem("user_name");
     localStorage.removeItem("user_role");
+    localStorage.removeItem("user_supporter");
   },
 };

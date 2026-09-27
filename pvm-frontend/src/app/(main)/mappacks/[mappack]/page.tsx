@@ -1,15 +1,20 @@
 "use client";
-import React, { use, useState, useEffect } from "react";
+import { use, useState, useEffect, useMemo } from "react";
+import { usePathname } from "next/navigation";
 import { useAuth } from "@/contexts/AuthContext";
 import { Mappack, MappackTrack } from "@/types/mappack.types";
 import { mappackService } from "@/services/mappack.service";
+import { mappackCache } from "@/services/mappack.cache";
 import { groupTracksByTier, sortTiersByPoints } from "@/utils/mappack.utils";
 import { useTierScroll } from "@/hooks/useTierScroll";
-import { MappackSidebar } from "@/app/_components/MappackSidebar";
-import { MappackContent } from "@/app/_components/MappackContent";
-import { PlayerStats } from "@/app/_components/PlayerStats";
 import { useScrollPosition } from "@/hooks/useScrollPosition";
-import { usePathname } from "next/navigation";
+import { useStoredState } from "@/hooks/useStoredState";
+import { useSidebarTitleHeight } from "@/hooks/useSidebarTitleHeight";
+import { PageStatus } from "@/components/common/PageStatus";
+import { MappackSidebar } from "@/components/mappack/MappackSidebar";
+import { MappackContent, MappackTab } from "@/components/mappack/MappackContent";
+import { SortOrder } from "@/components/mappack/TierSortButton";
+import { PlayerStats } from "@/components/player-stats/PlayerStats";
 
 export default function MappackPage({
   params,
@@ -18,89 +23,98 @@ export default function MappackPage({
 }) {
   const { mappack: mappackId } = use(params);
   const { user } = useAuth();
-  const [mappack, setMappack] = useState<Mappack | null>(null);
-  const [filteredTracks, setFilteredTracks] = useState<MappackTrack[]>([]);
-  const [selectedTab, setSelectedTab] = useState("maps");
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [tierSortOrder, setTierSortOrder] = useState<"asc" | "desc">("asc");
+  const pathName = usePathname();
+  const gridRef = useSidebarTitleHeight<HTMLDivElement>();
+  const cacheKey = mappackCache.key(mappackId, user?.id);
+  const cached = mappackCache.get(cacheKey);
+  const [mappack, setMappack] = useState<Mappack | null>(cached ?? null);
+  const [filteredTracks, setFilteredTracks] = useState<MappackTrack[]>(
+    cached?.MappackTrack ?? [],
+  );
+  const [selectedTab, setSelectedTab] = useState<MappackTab>("maps");
+  const [loading, setLoading] = useState(!cached);
+  const [tierSortOrder, setTierSortOrder] = useStoredState<SortOrder>(
+    "tier-sort-order",
+    "asc",
+    (raw) => raw as SortOrder,
+  );
+
+  // Mappack and track list are set together: the track filter re-applies
+  // itself after the list changes, which a separate effect would undo.
+  const showMappack = (data: Mappack) => {
+    setMappack(data);
+    setFilteredTracks(data.MappackTrack);
+  };
+
+  const fetchMappack = async () => {
+    const data = await mappackService.getMappack(mappackId, user?.id);
+    mappackCache.set(cacheKey, data);
+    return data;
+  };
 
   useEffect(() => {
-    const fetchMappack = async () => {
-      try {
-        setLoading(true);
-        const data = await mappackService.getMappack(mappackId, user?.id);
-        setMappack(data);
-        setFilteredTracks(data.MappackTrack);
-      } catch (error) {
-        console.error("Error fetching mappack:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchMappack();
-  }, [mappackId, user?.id]);
+    let cancelled = false;
 
-  const tracksByTier = groupTracksByTier(filteredTracks);
+    // A cached copy shows immediately (the first render already has it) and
+    // the fetch below only refreshes it.
+    if (cached && cached !== mappack) showMappack(cached);
+    setLoading(!cached);
+
+    fetchMappack()
+      .then((data) => !cancelled && showMappack(data))
+      .catch((error) => console.error("Error fetching mappack:", error))
+      .finally(() => !cancelled && setLoading(false));
+
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cacheKey]);
+
+  const handleEditSave = () => {
+    fetchMappack()
+      .then(showMappack)
+      .catch((error) => console.error("Error reloading mappack:", error));
+  };
+
+  const tracksByTier = useMemo(
+    () => groupTracksByTier(filteredTracks),
+    [filteredTracks],
+  );
   const sortedTiers = sortTiersByPoints(tracksByTier, tierSortOrder);
-  const pathName = usePathname();
   const { isRestored } = useScrollPosition(pathName, !loading);
   const { activeTier, tierRefs, scrollToTier } = useTierScroll(
     tracksByTier,
     isRestored,
   );
 
-  const handleEditSave = async () => {
-    try {
-      const data = await mappackService.getMappack(mappackId, user?.id);
-      setMappack(data);
-      setFilteredTracks(data.MappackTrack);
-    } catch (error) {
-      console.error("Error reloading mappack:", error);
-    }
-  };
-
   if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-white text-xl font-ruigslay animate-pulse">
-          Loading mappack...
-        </p>
-      </div>
-    );
+    return <PageStatus pending>Loading mappack...</PageStatus>;
   }
 
   if (!mappack) {
-    return (
-      <div className="flex items-center justify-center h-screen">
-        <p className="text-white text-xl">Mappack not found</p>
-      </div>
-    );
+    return <PageStatus>Mappack not found</PageStatus>;
   }
 
   return (
-    <div className="grid lg:grid-rows-1 lg:grid-cols-6 gap-10">
-      <div className="lg:col-start-1 lg:col-span-1 col-span-1">
-        <MappackSidebar
-          mappack={mappack}
-          sortedTiers={sortedTiers}
-          tracksByTier={tracksByTier}
-          activeTier={activeTier}
-          selectedTab={selectedTab}
-          isEditOpen={isEditOpen}
-          onTierClick={scrollToTier}
-          onEditClick={() => setIsEditOpen(true)}
-          onEditClose={() => setIsEditOpen(false)}
-          onEditSave={handleEditSave}
-        />
-      </div>
+    <div ref={gridRef} className="grid gap-10 lg:grid-cols-6">
+      <MappackSidebar
+        mappack={mappack}
+        sortedTiers={sortedTiers}
+        tracksByTier={tracksByTier}
+        activeTier={activeTier}
+        showTiers={selectedTab === "maps"}
+        onTierClick={scrollToTier}
+        onEditSave={handleEditSave}
+      />
       <MappackContent
         mappack={mappack}
         sortedTiers={sortedTiers}
         tracksByTier={tracksByTier}
-        filteredTracks={filteredTracks}
         onFilterChange={setFilteredTracks}
-        onSortOrderChange={setTierSortOrder}
+        tierSortOrder={tierSortOrder}
+        onTierSortOrderChange={setTierSortOrder}
+        selectedTab={selectedTab}
         onTabChange={setSelectedTab}
         tierRefs={tierRefs}
         playerId={user?.id}
@@ -111,6 +125,7 @@ export default function MappackPage({
           playerId={user.id}
           totalTracks={mappack.MappackTrack.length}
           ranks={mappack.mappackRanks}
+          accentColor={mappack.accentColor}
         />
       )}
     </div>

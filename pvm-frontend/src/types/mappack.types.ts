@@ -44,7 +44,7 @@ export interface TimeGoalMappackTrack {
   mappack_id: string;
   time_goal_id: number;
   time: number;
-  multiplier: number;
+  multiplier?: number;
   is_achieved?: boolean;
   player_time?: number;
 }
@@ -151,7 +151,7 @@ export interface PlayerLeaderboardEntry {
     player: {
       ID: string;
       name: string;
-      Records: any;
+      Records: unknown;
     };
   };
   rank: number;

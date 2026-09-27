@@ -1,10 +1,12 @@
 export const MAP_STYLES = [
-  { label: "Tech", key: "tech", description: "Tech" },
-  { label: "Fullspeed", key: "fullspeed", description: "FS" },
-  { label: "Mixed", key: "mixed", description: "Mixed" },
-  { label: "Dirt", key: "dirt", description: "noslide heaven" },
-  { label: "RPG", key: "rpg", description: "RPG" },
-  { label: "Trial", key: "trial", description: "Trial" },
-  { label: "LOL", key: "lol", description: "lol" },
-  { label: "Ice", key: "ice", description: "icy" },
+  { label: "Tech", key: "tech" },
+  { label: "Fullspeed", key: "fullspeed" },
+  { label: "Mixed", key: "mixed" },
+  { label: "Dirt", key: "dirt" },
+  { label: "RPG", key: "rpg" },
+  { label: "Trial", key: "trial" },
+  { label: "LOL", key: "lol" },
+  { label: "Ice", key: "ice" },
 ];
+
+export const DEFAULT_MAP_STYLE = "Tech";

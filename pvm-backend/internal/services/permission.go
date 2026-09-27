@@ -22,6 +22,7 @@ type PermissionService interface {
 	ListUsers() ([]models.User, error)
 	SearchPlayers(query string, limit int) ([]repositories.PlayerWithRole, error)
 	SetUserRole(userID string, role string) error
+	SetUserSupporter(userID string, isSupporter bool) error
 
 	ListMappackIDsForUser(userID string) ([]string, error)
 	SetUserPermissions(userID string, mappackIDs []string, grantedBy string) error
@@ -30,10 +31,18 @@ type PermissionService interface {
 type permissionService struct {
 	permissionRepository repositories.PermissionRepository
 	mappackRepository    repositories.MappackRepository
+	userRepository       repositories.UserRepository
 }
 
-func NewPermissionService(permissionRepo repositories.PermissionRepository, mappackRepo repositories.MappackRepository) PermissionService {
-	return &permissionService{permissionRepository: permissionRepo, mappackRepository: mappackRepo}
+func NewPermissionService(permissionRepo repositories.PermissionRepository, mappackRepo repositories.MappackRepository,
+	userRepo repositories.UserRepository) PermissionService {
+	return &permissionService{permissionRepository: permissionRepo, mappackRepository: mappackRepo, userRepository: userRepo}
+}
+
+// SetUserSupporter marks or unmarks a user as a Patreon supporter. Only users
+// who have signed in have a row to mark.
+func (s *permissionService) SetUserSupporter(userID string, isSupporter bool) error {
+	return s.userRepository.SetSupporter(userID, isSupporter)
 }
 
 // CanManageMappack reports whether the user may edit the given mappack.

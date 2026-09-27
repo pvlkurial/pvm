@@ -19,6 +19,13 @@ export interface User {
   id: string;
   name: string;
   role: Role;
+  /** Patreon supporter on the tier that may refresh their own records. */
+  is_supporter?: boolean;
+}
+
+/** Superadmins and supporters may pull their own record for a track on demand. */
+export function canRefreshRecords(user: User | null | undefined): boolean {
+  return !!user && (user.role === "superadmin" || !!user.is_supporter);
 }
 
 // What the signed-in user is allowed to manage, from GET /auth/me/permissions.

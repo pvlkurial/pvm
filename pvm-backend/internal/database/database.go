@@ -40,6 +40,7 @@ func MigrateDatabase(db *gorm.DB) {
 	db.AutoMigrate(&models.PlayerTimeGoalAchievement{})
 	db.AutoMigrate(&models.MappackLeaderboardEntry{})
 	db.AutoMigrate(&models.MappackPermission{})
+	db.AutoMigrate(&models.OverlaySelection{})
 
 	promoteInitialSuperAdmin(db)
 }

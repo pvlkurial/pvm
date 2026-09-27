@@ -1,13 +1,13 @@
-import { Casko, myCustomFont, HeatherGreen } from "@/fonts";
+import type { Metadata } from "next";
+import { overlayFont } from "@/fonts";
 
-export default function OverlayLayout({
+/** OBS browser sources, not pages anyone should land on from search. */
+export const metadata: Metadata = { robots: { index: false, follow: false } };
+
+export default function StatsOverlayLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <span className={`${myCustomFont.variable} ${HeatherGreen.variable} ${Casko.variable}`}>
-      {children}
-    </span>
-  );
-} 
+  return <span className={overlayFont.variable}>{children}</span>;
+}

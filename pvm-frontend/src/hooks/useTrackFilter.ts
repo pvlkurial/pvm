@@ -1,79 +1,53 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { MappackTrack } from "@/types/mappack.types";
+import { filterTracksByTimeGoal } from "@/utils/track-filter.utils";
+import { useStoredState } from "./useStoredState";
 
-const STORAGE_KEY = "track-filter-time-goal";
-
+/**
+ * Filters tracks down to those where a chosen time goal is still unachieved.
+ * The choice is only applied (and remembered) once confirmed with applyFilter.
+ */
 export function useTrackFilter(
   tracks: MappackTrack[],
   onFilterChange: (filteredTracks: MappackTrack[]) => void,
 ) {
   const [isOpen, setIsOpen] = useState(false);
-  const [selectedTimeGoal, setSelectedTimeGoal] = useState<number | null>(
-    () => {
-      if (typeof window === "undefined") return null;
-      const stored = localStorage.getItem(STORAGE_KEY);
-      return stored !== null ? Number(stored) : null;
-    },
+  const [appliedTimeGoal, setAppliedTimeGoal] = useStoredState<number | null>(
+    "track-filter-time-goal",
+    null,
+    Number,
   );
-  const [isFilterActive, setIsFilterActive] = useState(() => {
-    if (typeof window === "undefined") return false;
-    return localStorage.getItem(STORAGE_KEY) !== null;
-  });
+  const [selectedTimeGoal, setSelectedTimeGoal] = useState(appliedTimeGoal);
 
-  // Apply stored filter on mount once tracks are available
+  // Re-apply the remembered filter whenever the track list is (re)loaded.
   useEffect(() => {
     if (tracks.length === 0) return;
-    if (selectedTimeGoal === null) {
-      onFilterChange(tracks);
-    } else {
-      const filtered = tracks.filter((track) => {
-        const timeGoalTrack = track.timeGoalMappackTrack?.find(
-          (tg) => tg.time_goal_id === selectedTimeGoal,
-        );
-        return !timeGoalTrack || !timeGoalTrack.is_achieved;
-      });
-      onFilterChange(filtered);
-    }
+    onFilterChange(filterTracksByTimeGoal(tracks, appliedTimeGoal));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tracks]);
 
-  const toggleTimeGoal = useCallback((id: number) => {
+  const apply = (timeGoalId: number | null) => {
+    setAppliedTimeGoal(timeGoalId);
+    onFilterChange(filterTracksByTimeGoal(tracks, timeGoalId));
+    setIsOpen(false);
+  };
+
+  const toggleTimeGoal = (id: number) => {
     setSelectedTimeGoal((prev) => (prev === id ? null : id));
-  }, []);
+  };
 
-  const applyFilter = useCallback(() => {
-    if (selectedTimeGoal === null) {
-      localStorage.removeItem(STORAGE_KEY);
-      onFilterChange(tracks);
-      setIsFilterActive(false);
-    } else {
-      localStorage.setItem(STORAGE_KEY, String(selectedTimeGoal));
-      const filtered = tracks.filter((track) => {
-        const timeGoalTrack = track.timeGoalMappackTrack?.find(
-          (tg) => tg.time_goal_id === selectedTimeGoal,
-        );
-        return !timeGoalTrack || !timeGoalTrack.is_achieved;
-      });
-      onFilterChange(filtered);
-      setIsFilterActive(true);
-    }
-    setIsOpen(false);
-  }, [tracks, selectedTimeGoal, onFilterChange]);
-
-  const clearFilter = useCallback(() => {
-    localStorage.removeItem(STORAGE_KEY);
+  const clearFilter = () => {
     setSelectedTimeGoal(null);
-    setIsFilterActive(false);
-    onFilterChange(tracks);
-    setIsOpen(false);
-  }, [tracks, onFilterChange]);
+    apply(null);
+  };
 
   return {
     isOpen,
     setIsOpen,
     selectedTimeGoal,
-    applyFilter,
+    applyFilter: () => apply(selectedTimeGoal),
     clearFilter,
     toggleTimeGoal,
-    isFilterActive,
+    isFilterActive: appliedTimeGoal !== null,
   };
 }

@@ -1,6 +1,7 @@
 package clients
 
 import (
+	"errors"
 	"bytes"
 	"encoding/base64"
 	"encoding/json"
@@ -14,6 +15,9 @@ import (
 	"strings"
 	"time"
 )
+
+// ErrNoPlayerRecord means Nadeo has no record for the player on that map.
+var ErrNoPlayerRecord = errors.New("no records found for player")
 
 type tokenData struct {
 	accessToken  string
@@ -309,7 +313,7 @@ func (c *NadeoAPIClient) FetchRecordsOfTrackForPlayer(trackID string, playerID s
 
 	if len(response) == 0 {
 		slog.Warn("no record found for player on track", "track_id", trackID, "player_id", playerID)
-		return models.Record{}, fmt.Errorf("no records found for player")
+		return models.Record{}, ErrNoPlayerRecord
 	}
 
 	return models.Record{

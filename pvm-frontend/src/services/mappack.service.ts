@@ -1,12 +1,36 @@
 import axios from "axios";
 import {
   Mappack,
+  MappackType,
   PlayerLeaderboardEntry,
   LeaderboardEntry,
 } from "@/types/mappack.types";
 import { API_BASE } from "@/constants/miscellaneous";
 
+export interface CreateMappackPayload {
+  id: string;
+  name: string;
+  description: string;
+  thumbnailURL: string;
+  isActive: boolean;
+  type: MappackType;
+  featured: boolean;
+  isNew: boolean;
+  mapStyleName: string;
+}
+
 export const mappackService = {
+  listMappacks: async (): Promise<Mappack[]> => {
+    const response = await axios.get<Mappack[]>(`${API_BASE}/mappacks`);
+    return response.data ?? [];
+  },
+
+  /** Campaigns come from their own endpoint so the two listings never mix. */
+  listCampaigns: async (): Promise<Mappack[]> => {
+    const response = await axios.get<Mappack[]>(`${API_BASE}/campaigns`);
+    return response.data ?? [];
+  },
+
   getMappack: async (
     mappackId: string,
     playerId?: string,
@@ -18,6 +42,21 @@ export const mappackService = {
     const response = await axios.get<Mappack>(url);
     return response.data;
   },
+
+  createMappack: async (mappack: CreateMappackPayload): Promise<void> => {
+    await axios.post(`${API_BASE}/mappacks`, mappack);
+  },
+
+  createTimeGoal: async (
+    mappackId: string,
+    timeGoal: { name: string; difficulty: number },
+  ): Promise<void> => {
+    await axios.post(`${API_BASE}/mappacks/${mappackId}/timegoals`, {
+      ...timeGoal,
+      mappack_id: mappackId,
+    });
+  },
+
   getLeaderboard: async (
     mappackId: string,
     limit: number,
@@ -41,4 +80,23 @@ export const mappackService = {
     );
     return response.data;
   },
+
+  searchPlayers: async (
+    mappackId: string,
+    query: string,
+    limit: number,
+  ): Promise<PlayerSearchResult[]> => {
+    const response = await axios.get<PlayerSearchResult[]>(
+      `${API_BASE}/mappacks/${mappackId}/players/search`,
+      { params: { q: query, limit } },
+    );
+    return response.data || [];
+  },
 };
+
+export interface PlayerSearchResult {
+  id: string;
+  name: string;
+  total_points: number;
+  rank?: number;
+}

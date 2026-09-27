@@ -1,11 +1,14 @@
 package controllers
 
 import (
+	"errors"
 	"example/pvm-backend/internal/clients"
 	"example/pvm-backend/internal/models"
 	"example/pvm-backend/internal/models/dtos"
 	"example/pvm-backend/internal/services"
 	"log/slog"
+	"math"
+	"strconv"
 	"time"
 
 	"fmt"
@@ -15,19 +18,21 @@ import (
 )
 
 type RecordController struct {
-	recordService     services.RecordService
-	client            *clients.NadeoAPIClient
-	trackService      services.TrackService
-	achievmentService services.AchievementService
+	recordService        services.RecordService
+	recordRefreshService services.RecordRefreshService
+	client               *clients.NadeoAPIClient
+	trackService         services.TrackService
+	achievmentService    services.AchievementService
 }
 
-func NewRecordController(recordService services.RecordService, trackService services.TrackService,
-	client *clients.NadeoAPIClient, achievmentService services.AchievementService) *RecordController {
+func NewRecordController(recordService services.RecordService, recordRefreshService services.RecordRefreshService,
+	trackService services.TrackService, client *clients.NadeoAPIClient, achievmentService services.AchievementService) *RecordController {
 	return &RecordController{
-		recordService:     recordService,
-		trackService:      trackService,
-		achievmentService: achievmentService,
-		client:            client,
+		recordService:        recordService,
+		recordRefreshService: recordRefreshService,
+		trackService:         trackService,
+		achievmentService:    achievmentService,
+		client:               client,
 	}
 }
 
@@ -161,43 +166,28 @@ func (t *RecordController) GetUIDTrackWithRecords(c *gin.Context) {
 	c.JSON(http.StatusOK, track)
 }
 
-func (t *RecordController) FetchPlayersRecordsForTrack(c *gin.Context) {
-	trackId := c.Param("track_id")
-	playerId := c.Param("player_id")
-	track, err := t.trackService.GetById(trackId)
+// RefreshOwnRecord pulls the signed-in user's own record for a track from
+// Nadeo. For supporters and superadmins, and rate-limited per user.
+func (t *RecordController) RefreshOwnRecord(c *gin.Context) {
+	user := c.MustGet("user").(*models.User)
 
-	if err != nil {
-		fmt.Printf("Error occurred while fetching Track by ID: %s\n", err)
-		c.String(http.StatusInternalServerError, "Internal Server Error")
-		return
+	err := t.recordRefreshService.RefreshOwnRecord(user, c.Param("track_id"))
+	var cooldown *services.RecordRefreshCooldownError
+	switch {
+	case err == nil:
+		c.JSON(http.StatusOK, gin.H{"message": "Record refreshed"})
+	case errors.As(err, &cooldown):
+		seconds := int(math.Ceil(cooldown.RetryAfter.Seconds()))
+		c.Header("Retry-After", strconv.Itoa(seconds))
+		c.JSON(http.StatusTooManyRequests, gin.H{"error": cooldown.Error(), "retry_after_seconds": seconds})
+	case errors.Is(err, services.ErrRecordRefreshNotAllowed):
+		c.JSON(http.StatusForbidden, gin.H{"error": err.Error()})
+	case errors.Is(err, services.ErrNoRecordOnTrack), errors.Is(err, services.ErrRefreshTrackNotFound):
+		c.JSON(http.StatusNotFound, gin.H{"error": err.Error()})
+	default:
+		slog.Error("record refresh failed", "player_id", user.ID, "track_id", c.Param("track_id"), "error", err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to refresh record"})
 	}
-
-	record, err := t.client.FetchRecordsOfTrackForPlayer(track.ID, playerId, track.MapUID)
-
-	if err != nil {
-		fmt.Println("Failed to fetch records")
-		c.String(http.StatusInternalServerError, "Failed to fetch records")
-		return
-	}
-
-	record.ID = fmt.Sprintf("%s_%s", track.ID, record.PlayerID)
-	record.UpdatedAt = time.Now()
-	records := []models.Record{record}
-
-	err = t.recordService.SaveFetchedRecords(&records)
-
-	if err == nil {
-		c.String(http.StatusOK, "No records to save")
-		return
-	}
-
-	if err != nil {
-		fmt.Printf("Error occurred while creating a Record: %s\n", err)
-		c.String(http.StatusInternalServerError, "Internal Server Error")
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"message": "Records saved successfully", "count": len(records)})
 }
 
 func (c *RecordController) SubmitPluginPB(ctx *gin.Context) {

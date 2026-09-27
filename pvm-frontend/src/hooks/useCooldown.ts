@@ -34,10 +34,11 @@ export function useCooldown(key: string, cooldownSeconds: number) {
     return () => clearInterval(interval);
   }, [isOnCooldown, secondsLeft, key]);
 
-  const startCooldown = () => {
-    const endTime = Date.now() + cooldownSeconds * 1000;
+  /** Starts the cooldown, optionally for a length other than the default (e.g. one the server sent). */
+  const startCooldown = (seconds: number = cooldownSeconds) => {
+    const endTime = Date.now() + seconds * 1000;
     localStorage.setItem(key, endTime.toString());
-    setSecondsLeft(cooldownSeconds);
+    setSecondsLeft(seconds);
     setIsOnCooldown(true);
   };
 

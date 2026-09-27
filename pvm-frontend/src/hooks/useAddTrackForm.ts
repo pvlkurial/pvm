@@ -5,34 +5,21 @@ import { TimeGoal } from "@/types/mappack.types";
 export function useAddTrackForm() {
   const [trackUuid, setTrackUuid] = useState("");
   const [tmxId, setTmxId] = useState("");
-  const [timeGoalValues, setTimeGoalValues] = useState<Record<number, string>>(
-    {},
-  );
-  const [selectedTab, setSelectedTab] = useState("search");
+  const [timeGoalValues, setTimeGoalValues] = useState<Record<number, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
   const handleTimeGoalChange = (timeGoalId: number, value: string) => {
-    setTimeGoalValues((prev) => ({
-      ...prev,
-      [timeGoalId]: value,
-    }));
+    setTimeGoalValues((prev) => ({ ...prev, [timeGoalId]: value }));
   };
 
-  const getTrackId = (): string => {
-    return trackUuid;
-  };
-
-  const getTimeGoalsWithValues = (timeGoals: TimeGoal[]) => {
-    return timeGoals
-      .filter((tg) => tg.id)
-      .filter(
-        (tg) => timeGoalValues[tg.id!] && timeGoalValues[tg.id!].trim() !== "",
-      )
+  /** The entered goal times in milliseconds, skipping goals left blank. */
+  const getTimeGoalsWithValues = (timeGoals: TimeGoal[]) =>
+    timeGoals
+      .filter((tg) => tg.id && timeGoalValues[tg.id]?.trim())
       .map((tg) => ({
         time_goal_id: tg.id!,
         time: timeStringToMilliseconds(timeGoalValues[tg.id!]),
       }));
-  };
 
   const resetForm = () => {
     setTrackUuid("");
@@ -40,30 +27,24 @@ export function useAddTrackForm() {
     setTimeGoalValues({});
   };
 
-  const validateForm = (): { isValid: boolean; error?: string } => {
-    if (!trackUuid.trim()) {
-      return { isValid: false, error: "Track UUID is required" };
-    }
-    if (!tmxId.trim()) {
-      return { isValid: false, error: "TMX ID is required" };
-    }
-    return { isValid: true };
+  /** Returns an error message, or null when the form can be submitted. */
+  const validate = (): string | null => {
+    if (!trackUuid.trim()) return "Track UUID is required";
+    if (!tmxId.trim()) return "TMX ID is required";
+    return null;
   };
 
   return {
     trackUuid,
     tmxId,
     timeGoalValues,
-    selectedTab,
     isLoading,
     setTrackUuid,
     setTmxId,
-    setSelectedTab,
     setIsLoading,
     handleTimeGoalChange,
-    getTrackId,
     getTimeGoalsWithValues,
     resetForm,
-    validateForm,
+    validate,
   };
 }

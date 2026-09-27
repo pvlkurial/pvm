@@ -1,6 +1,11 @@
 import { MappackTrack, MappackTier, MappackRank } from "@/types/mappack.types";
 
-export function groupTracksByTier(tracks: MappackTrack[]) {
+export type TracksByTier = Record<
+  string,
+  { tier: MappackTier | null; tracks: MappackTrack[] }
+>;
+
+export function groupTracksByTier(tracks: MappackTrack[]): TracksByTier {
   const grouped = tracks.reduce(
     (acc, mappackTrack) => {
       const tierName = mappackTrack.tier?.name || "Unranked";
@@ -13,7 +18,7 @@ export function groupTracksByTier(tracks: MappackTrack[]) {
       acc[tierName].tracks.push(mappackTrack);
       return acc;
     },
-    {} as Record<string, { tier: MappackTier | null; tracks: MappackTrack[] }>,
+    {} as TracksByTier,
   );
 
   for (const tierName in grouped) {
@@ -32,10 +37,7 @@ export function groupTracksByTier(tracks: MappackTrack[]) {
  * reverses the whole list.
  */
 export function sortTiersByPoints(
-  tracksByTier: Record<
-    string,
-    { tier: MappackTier | null; tracks: MappackTrack[] }
-  >,
+  tracksByTier: TracksByTier,
   order: "asc" | "desc" = "asc",
 ) {
   const direction = order === "asc" ? 1 : -1;
@@ -73,4 +75,41 @@ export function getPlayerRank(
   }
 
   return null;
+}
+
+/**
+ * Unlike getPlayerRank, a player below every threshold is bucketed into the
+ * lowest rank rather than left unranked, so the leaderboard has no stray group
+ * at the bottom.
+ */
+export function getLeaderboardRank(
+  totalPoints: number,
+  ranks: MappackRank[],
+): MappackRank | null {
+  const sorted = [...ranks].sort((a, b) => b.pointsNeeded - a.pointsNeeded);
+  return (
+    sorted.find((rank) => totalPoints >= rank.pointsNeeded) ??
+    sorted[sorted.length - 1] ??
+    null
+  );
+}
+
+/** The player's current rank, the next one up, and progress (0-100) towards it. */
+export function getRankProgress(totalPoints: number, ranks: MappackRank[]) {
+  const current = getPlayerRank(totalPoints, ranks);
+  const next = [...ranks]
+    .sort((a, b) => a.pointsNeeded - b.pointsNeeded)
+    .find((rank) => rank.pointsNeeded > totalPoints);
+
+  const progress =
+    current && next
+      ? Math.min(
+          ((totalPoints - current.pointsNeeded) /
+            (next.pointsNeeded - current.pointsNeeded)) *
+            100,
+          100,
+        )
+      : 100;
+
+  return { current, next, progress };
 }

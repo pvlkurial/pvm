@@ -1,5 +1,4 @@
 import { authService } from "./authService";
-
 import { API_BASE } from "@/constants/miscellaneous";
 
 /**
@@ -36,14 +35,4 @@ export async function authenticatedFetch(
   }
 
   return response;
-}
-
-export async function fetchUserAchievements(
-  mappackId: string,
-  playerId: string,
-) {
-  const response = await authenticatedFetch(
-    `/mappacks/${mappackId}/players/${playerId}/achievements`,
-  );
-  return response.json();
 }

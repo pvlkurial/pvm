@@ -47,6 +47,16 @@ export const adminService = {
     );
   },
 
+  /** Marks or unmarks a Patreon supporter, who may refresh their own records. */
+  setUserSupporter: async (userId: string, isSupporter: boolean): Promise<void> => {
+    await unwrap(
+      await authenticatedFetch(`/admin/users/${userId}/supporter`, {
+        method: "PATCH",
+        body: JSON.stringify({ is_supporter: isSupporter }),
+      }),
+    );
+  },
+
   /** Replaces the admin's grants with exactly mappackIds. */
   setUserPermissions: async (
     userId: string,

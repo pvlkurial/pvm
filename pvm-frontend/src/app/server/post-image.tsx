@@ -62,7 +62,7 @@ export async function postImage() {
         }
         return 0;
     }).filter((rank, r_index) => {
-        let prev_mappack_rank = mappackRanks[r_index - 1];
+        const prev_mappack_rank = mappackRanks[r_index - 1];
         if (prev_mappack_rank === undefined) {
             return (
                 players.filter(
@@ -99,7 +99,7 @@ export async function postImage() {
         return;
     }
 
-    let response = new ImageResponse(
+    const response = new ImageResponse(
         <div tw="w-full h-full bg-size-[100px_100px] px-8 pt-1 bg-transparent">
             <h1 tw="flex font-semibold text-[#FAF8F6] text-6xl block whitespace-pre my-0">
                 {<FaMedal color={accentColor} size={45} />} PvM{" "}
@@ -108,7 +108,7 @@ export async function postImage() {
             {
                 usedMappackRanks
                     .map((rank, r_index) => (
-                        <div tw="justify-start items-start grid grid-cols-2 text-white">
+                        <div key={rank.name} tw="justify-start items-start grid grid-cols-2 text-white">
                             <span
                                 tw={
                                     "pt-6 col-span-2 text-4xl font-[Geist_Mono] font-bold text-[" +
@@ -119,7 +119,7 @@ export async function postImage() {
                                 {rank.name} - {rank.pointsNeeded}pts
                             </span>
                             {players.map((player, index) => {
-                                let prev_mappack_rank = usedMappackRanks[r_index - 1];
+                                const prev_mappack_rank = usedMappackRanks[r_index - 1];
                                 if (prev_mappack_rank === undefined) {
                                     if (player.total_points < rank.pointsNeeded) {
                                         return
@@ -136,7 +136,7 @@ export async function postImage() {
                                 }
 
                                 return (
-                                    <div>
+                                    <div key={player.player_id}>
                                         {hasPlayerChanged(player, index)}
                                         <span tw="px-2 items-end" >
                                             <span tw="align-baseline font-[Geist_Mono] r-3 ">
@@ -194,7 +194,7 @@ export async function postImage() {
     prev_players = players;
 
 
-    let body = await response.bytes();
+    const body = await response.bytes();
 
     const formData = new FormData();
     formData.append(

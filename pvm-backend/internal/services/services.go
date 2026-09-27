@@ -17,6 +17,8 @@ type Services struct {
 	AchievementService AchievementService
 	AuthService        AuthService
 	PermissionService  PermissionService
+	OverlayService     OverlayService
+	RecordRefresh      RecordRefreshService
 }
 
 func NewServices(repositories repositories.Repositories, client *clients.NadeoAPIClient, tmClient clients.TrackmaniaAPIClient, db *gorm.DB) *Services {
@@ -38,7 +40,9 @@ func NewServices(repositories repositories.Repositories, client *clients.NadeoAP
 		log.Fatal("JWT_SECRET_KEY is not set: refusing to start, as an empty signing key lets anyone forge a superadmin token")
 	}
 	authService := NewAuthService(db, clientID, clientSecret, redirectURI, jwtSecret)
-	permissionService := NewPermissionService(repositories.PermissionRepository, repositories.MappackRepository)
+	permissionService := NewPermissionService(repositories.PermissionRepository, repositories.MappackRepository, repositories.UserRepository)
+	overlayService := NewOverlayService(repositories.OverlayRepository, repositories.TrackRepository)
+	recordRefreshService := NewRecordRefreshService(repositories.UserRepository, trackService, recordService, client)
 
 	return &Services{
 		MappackService:     mappackService,
@@ -48,5 +52,7 @@ func NewServices(repositories repositories.Repositories, client *clients.NadeoAP
 		AchievementService: *achievementService,
 		AuthService:        *authService,
 		PermissionService:  permissionService,
+		OverlayService:     overlayService,
+		RecordRefresh:      recordRefreshService,
 	}
 }

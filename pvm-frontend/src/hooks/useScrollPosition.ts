@@ -1,7 +1,11 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 const scrollPositions: Record<string, number> = {};
 
+/**
+ * Remembers how far down `page` was scrolled and jumps straight back there on
+ * return, once `ready` says the content is rendered.
+ */
 export function useScrollPosition(page: string, ready: boolean = true) {
   const [isRestored, setIsRestored] = useState(false);
   const lastRealPosition = useRef(scrollPositions[page] ?? 0);
@@ -10,8 +14,16 @@ export function useScrollPosition(page: string, ready: boolean = true) {
     history.scrollRestoration = "manual";
   }, []);
 
-  useEffect(() => {
+  // A layout effect so the jump happens before paint, without a flash of the
+  // top of the page.
+  useLayoutEffect(() => {
     if (!ready) return;
+
+    const savedPosition = scrollPositions[page];
+    if (savedPosition !== undefined) {
+      window.scrollTo({ top: savedPosition, behavior: "instant" });
+    }
+    setIsRestored(true);
 
     const save = () => {
       const y = window.scrollY;
@@ -19,24 +31,7 @@ export function useScrollPosition(page: string, ready: boolean = true) {
     };
     window.addEventListener("scroll", save);
 
-    const savedPosition = scrollPositions[page];
-
-    if (savedPosition === undefined) {
-      setIsRestored(true);
-      return () => {
-        window.removeEventListener("scroll", save);
-        scrollPositions[page] = lastRealPosition.current;
-        setIsRestored(false);
-      };
-    }
-
-    const timer = setTimeout(() => {
-      window.scrollTo({ top: savedPosition, behavior: "smooth" });
-      setIsRestored(true);
-    }, 200);
-
     return () => {
-      clearTimeout(timer);
       window.removeEventListener("scroll", save);
       scrollPositions[page] = lastRealPosition.current;
       setIsRestored(false);

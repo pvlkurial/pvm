@@ -1,8 +1,8 @@
 "use client";
-
 import { useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { authService } from "@/services/authService";
+import { PageStatus } from "@/components/common/PageStatus";
 
 function CallbackContent() {
   const router = useRouter();
@@ -34,31 +34,12 @@ function CallbackContent() {
     handleCallback();
   }, [searchParams, router]);
 
-  return (
-    <div className="flex items-center justify-center min-h-screen">
-      <div className="text-center">
-        <h2 className="text-2xl font-bold mb-4 font-ruigslay animate-pulse">
-          Authenticating...
-        </h2>
-        <p className="text-label">Please wait while we log you in.</p>
-      </div>
-    </div>
-  );
+  return <PageStatus pending>Authenticating...</PageStatus>;
 }
 
 export default function CallbackPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="flex items-center justify-center min-h-screen">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold mb-4 font-ruigslay">
-              Logging you in...
-            </h2>
-          </div>
-        </div>
-      }
-    >
+    <Suspense fallback={<PageStatus>Logging you in...</PageStatus>}>
       <CallbackContent />
     </Suspense>
   );

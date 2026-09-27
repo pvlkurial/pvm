@@ -1,63 +1,37 @@
-"use client";
-
-import { Navbar, NavbarBrand, NavbarContent, NavbarItem } from "@heroui/navbar";
 import "@/app/globals.css";
-import React from "react";
-import Link from "next/link";
-import Footer from "@/app/_components/Footer";
-import LoginButton from "@/app/_components/LoginButton";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { AuthProvider } from "@/contexts/AuthContext";
-import PatreonButton from "@/app/_components/PatreonButton";
-import RequireRole from "@/app/_components/RequireRole";
+import { SiteHeader } from "@/components/layout/SiteHeader";
+import { SiteFooter } from "@/components/layout/SiteFooter";
+import { SITE_NAME, SITE_URL } from "@/lib/site";
 
-export default function RootLayout({
+const GA_ID = process.env.NEXT_PUBLIC_GA_ID;
+
+/** Tells search engines the site's name, which they show above results. */
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: SITE_NAME,
+  alternateName: "Player vs Map",
+  url: SITE_URL,
+};
+
+export default function MainLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
   return (
     <AuthProvider>
-      <Navbar position="static" isBlurred isBordered>
-        <NavbarBrand>
-          <Link className="text-heading scale-140 hover:animate-pulse" href="/">
-            <span className="sm:hidden">PvM</span>
-            <span className="hidden md:inline">Player vs Map</span>
-          </Link>
-        </NavbarBrand>
-        <NavbarContent className="hidden sm:flex gap-4" justify="center">
-          <NavbarItem>
-            <Link
-              color="foreground"
-              href="/mappacks"
-              className="nav-link text-label"
-            >
-              Mappacks
-            </Link>
-          </NavbarItem>
-          <RequireRole role="superadmin">
-            <NavbarItem>
-              <Link
-                color="foreground"
-                href="/admin"
-                className="nav-link text-label"
-              >
-                Admin
-              </Link>
-            </NavbarItem>
-          </RequireRole>
-        </NavbarContent>
-        <NavbarContent justify="end">
-          <NavbarItem>
-            <LoginButton />
-          </NavbarItem>
-          <NavbarItem>
-            <PatreonButton />
-          </NavbarItem>
-        </NavbarContent>
-      </Navbar>
-      <hr className="divider" />
-      <div className="w-full smooth-scroll flex-1">{children}</div>
-      <Footer />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+      />
+      <SiteHeader />
+      <main className="w-full flex-1">{children}</main>
+      <SiteFooter />
+      {/* Only on the site itself: the OBS overlays would inflate the numbers. */}
+      {GA_ID && <GoogleAnalytics gaId={GA_ID} />}
     </AuthProvider>
   );
 }
