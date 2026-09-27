@@ -24,8 +24,9 @@ export function TrackLeaderboard({
   return (
     <Card>
       <CardContent>
-        <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <h2 className="font-display text-display-m">Leaderboard</h2>
+        <div className="mb-6 flex items-center gap-4">
+          {/* Indented so the title starts where the table's "#" column does. */}
+          <h2 className="pl-[25px] font-display text-display-m md:pl-[30px]">Leaderboard</h2>
           <RequireMappackPermission mappackId={mappackId}>
             <UpdateRecordsButton
               trackId={trackId}

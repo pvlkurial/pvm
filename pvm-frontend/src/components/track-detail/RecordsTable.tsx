@@ -66,7 +66,7 @@ function RecordRow({
   return (
     <div
       className={cn(
-        "grid gap-2 border-b border-border-subtle px-2 py-3 transition-colors hover:bg-surface-2 md:gap-6 md:py-4",
+        "grid gap-2 border-b border-border px-2 py-3 transition-colors hover:bg-surface-2 md:gap-6 md:py-4",
         MOBILE_COLUMNS,
         DESKTOP_COLUMNS,
         isLoggedInPlayer && "border-l-2 border-l-foreground bg-surface-2",
@@ -140,10 +140,10 @@ export function RecordsTable({
   });
 
   return (
-    <div className="space-y-4 md:space-y-6">
+    <div>
       <div
         className={cn(
-          "grid gap-2 px-2 text-caption text-faint md:gap-6",
+          "grid gap-2 border-b border-border px-2 pb-3 text-caption text-faint md:gap-6",
           MOBILE_COLUMNS,
           DESKTOP_COLUMNS,
         )}
@@ -185,7 +185,7 @@ export function RecordsTable({
             ))}
           </div>
 
-          <div className="flex flex-col items-center justify-between gap-4 border-t border-border-subtle pt-4 md:flex-row md:pt-6">
+          <div className="flex flex-col items-center justify-between gap-4 mt-4 border-t border-border pt-4 md:mt-6 md:flex-row md:pt-6">
             <p className="tabular-nums text-caption text-faint">
               {totalRecords.toLocaleString()} {totalRecords === 1 ? "record" : "records"}
             </p>

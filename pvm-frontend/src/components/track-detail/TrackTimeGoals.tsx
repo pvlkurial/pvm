@@ -1,4 +1,5 @@
 import type { CSSProperties } from "react";
+import { FaTrophy } from "react-icons/fa6";
 import { Track } from "@/types/mappack.types";
 import { millisecondsToTimeString } from "@/utils/time.utils";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,16 +17,17 @@ export function TrackTimeGoals({ timeGoals, personalBest }: TrackTimeGoalsProps)
 
   return (
     <Card>
+      <FaTrophy className="absolute -right-4 -bottom-4 size-32 text-foreground/5" />
       <CardContent>
-        <div className="mb-4 flex items-baseline justify-between gap-3">
-          <p className="eyebrow">Time goals</p>
+        <div className="mb-4 flex items-center gap-3">
+          <p className="eyebrow">Time Goals</p>
           {!!personalBest && (
-            <p className="text-small text-muted-foreground">
-              PB{" "}
-              <span className="tabular-nums text-foreground">
-                {millisecondsToTimeString(personalBest)}
+            <>
+              <span className="text-faint">|</span>
+              <span className="tabular-nums text-caption text-muted-foreground">
+                PB: {millisecondsToTimeString(personalBest)}
               </span>
-            </p>
+            </>
           )}
         </div>
 
