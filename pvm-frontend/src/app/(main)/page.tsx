@@ -15,7 +15,7 @@ export default function HomePage() {
 
         <div className="relative flex flex-col items-center text-center">
           <h1 className="font-display text-[clamp(56px,10vw,120px)] leading-none">
-            Player <span className="text-muted-foreground italic">vs</span> Map
+            Player <span className="italic">vs</span> Map
           </h1>
 
           <div className="mt-10 flex flex-wrap justify-center gap-3">
@@ -24,7 +24,7 @@ export default function HomePage() {
             </Button>
             <Button asChild size="lg" variant="outline">
               <a href={OPENPLANET_URL} target="_blank" rel="noopener noreferrer">
-                Openplanet
+                Openplanet Plugin
               </a>
             </Button>
             <Button

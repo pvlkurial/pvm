@@ -29,7 +29,7 @@ export function HeroPanel() {
   }, []);
 
   return (
-    <div className="absolute inset-0 overflow-hidden" aria-hidden>
+    <div className="absolute inset-0 overflow-hidden blur" aria-hidden>
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
         src={HERO_IMAGES[current]}

@@ -20,7 +20,7 @@ export function Logo({ variant = "header" }: LogoProps) {
       pvms
       <span
         className={cn(
-          "italic transition-colors duration-300 group-hover:text-sky-300",
+          "italic transition-colors duration-300 group-hover:text-blue-300",
           isFooter ? "text-foreground" : "text-muted-foreground",
         )}
       >
