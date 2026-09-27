@@ -33,7 +33,7 @@ function MappackTitle({ mappack }: { mappack: Mappack }) {
       <PopoverTrigger asChild>
         <button
           type="button"
-          className="cursor-pointer pt-3 text-center font-display text-[40px] leading-none text-balance transition-opacity hover:opacity-80"
+          className="cursor-pointer pt-3 text-center font-display text-5xl leading-none text-balance transition-opacity hover:opacity-80"
         >
           {mappack.name}
         </button>

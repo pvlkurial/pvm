@@ -15,9 +15,12 @@ interface PlayerStatsProps {
 
 function StatsFrame({ children }: { children: React.ReactNode }) {
   return (
-    <aside className="sticky top-4 space-y-6 self-start p-6">
-      <h3 className="font-display text-title">My Stats</h3>
-      {children}
+    <aside className="sticky top-4 self-start p-6">
+      <h3 className="border-b border-border pb-4 font-display text-[40px] leading-none">
+        My Stats
+      </h3>
+      {/* Each section sits between hairlines. */}
+      <div className="divide-y divide-border [&>*]:py-5">{children}</div>
     </aside>
   );
 }
