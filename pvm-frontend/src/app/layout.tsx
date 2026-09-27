@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Casko, myCustomFont, HeatherGreen } from "@/fonts";
+import { siteFontVariables } from "@/fonts";
+
 export const metadata: Metadata = {
   title: "pvms.club",
   description: "Player vs Map Tracking Platform",
@@ -11,10 +12,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      className={`${myCustomFont.variable} ${HeatherGreen.variable} ${Casko.variable}`}
-    >
+    <html lang="en" className={siteFontVariables}>
       <body>{children}</body>
     </html>
   );

@@ -1,35 +1,139 @@
 @import "tailwindcss";
-@import "tailwindcss";
-@plugin '../../hero.ts';
-@source '../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}';
-@custom-variant dark (&:is(.dark *));
+@import "tw-animate-css";
 
+/* Dark only. These are the raw tokens from the style guide; everything else in
+   this file maps them onto Tailwind utilities. */
 :root {
-  --background: #171717;
-  --foreground: #171717;
-}
-@theme {
-  --font-ruigslay: var(--font-my-custom);
-  --font-heathergreen: var(--font-heathergreen);
-  --font-casko: var(--font-casko);
-}
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  color-scheme: dark;
+
+  /* surfaces */
+  --bg: #111110;
+  --surface-1: #1a1a18;
+  --surface-2: #232320;
+  --surface-3: #2c2c29;
+
+  /* lines */
+  --border: #2e2d2a;
+  --border-subtle: #242421;
+  --border-strong: #edebe6;
+
+  /* text */
+  --text: #edebe6;
+  --text-muted: #a19d94;
+  --text-faint: #85817a;
+
+  /* inverse (selected tab, primary button, featured chip) */
+  --inverse-bg: #edebe6;
+  --inverse-text: #111110;
+
+  /* type accents, only for the small dot in a type chip */
+  --pvm: #6f8bff;
+  --campaign: #f07a45;
+
+  /* per-pack fallback when accentColor is empty */
+  --pack-neutral: #8a867e;
+
+  /* thumbnail dot grid */
+  --dot: rgba(237, 235, 230, 0.08);
+
+  --danger: #f2555a;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #262626;
-    --foreground: #ededed;
+@theme inline {
+  --font-display: var(--font-instrument-serif), Georgia, serif;
+  --font-sans: var(--font-geist), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* shadcn semantic names, pointed at the tokens above */
+  --color-background: var(--bg);
+  --color-foreground: var(--text);
+  --color-card: var(--surface-1);
+  --color-card-foreground: var(--text);
+  --color-popover: var(--surface-1);
+  --color-popover-foreground: var(--text);
+  --color-primary: var(--inverse-bg);
+  --color-primary-foreground: var(--inverse-text);
+  --color-secondary: var(--surface-2);
+  --color-secondary-foreground: var(--text);
+  --color-muted: var(--surface-2);
+  --color-muted-foreground: var(--text-muted);
+  --color-accent: var(--surface-3);
+  --color-accent-foreground: var(--text);
+  --color-destructive: var(--danger);
+  --color-border: var(--border);
+  --color-input: var(--border);
+  --color-ring: var(--text-muted);
+
+  /* style-guide names that have no shadcn equivalent */
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-border-subtle: var(--border-subtle);
+  --color-border-strong: var(--border-strong);
+  --color-faint: var(--text-faint);
+  --color-pvm: var(--pvm);
+  --color-campaign: var(--campaign);
+  --color-pack-neutral: var(--pack-neutral);
+  --color-dot: var(--dot);
+}
+
+/* Type scale. Pair the display sizes with font-display. */
+@theme {
+  --text-display-xl: 136px;
+  --text-display-xl--line-height: 0.9;
+  --text-display-xl--letter-spacing: -0.03em;
+  --text-display-l: 80px;
+  --text-display-l--line-height: 0.9;
+  --text-display-l--letter-spacing: -0.02em;
+  --text-display-m: 48px;
+  --text-display-m--line-height: 1;
+  --text-display-count: 40px;
+  --text-display-count--line-height: 1;
+  --text-title: 30px;
+  --text-title--line-height: 1.05;
+  --text-body-l: 18px;
+  --text-body-l--line-height: 1.55;
+  --text-body: 15px;
+  --text-body--line-height: 1.5;
+  --text-ui: 14px;
+  --text-ui--line-height: 1;
+  --text-small: 13px;
+  --text-small--line-height: 1.45;
+  --text-label: 13px;
+  --text-label--line-height: 1;
+  --text-label--letter-spacing: 0.08em;
+  --text-mono-s: 12px;
+  --text-mono-s--line-height: 1;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    background-color: var(--bg);
+  }
+
+  body {
+    @apply min-h-screen w-full flex flex-col bg-background text-foreground font-sans text-body antialiased;
   }
 }
 
-body {
-  color: var(--foreground);
-  font-family: Verdana, Geneva, sans-serif;
+/* Mono uppercase eyebrow, e.g. "01 — PVM" or a stat label. */
+@utility eyebrow {
+  @apply font-mono text-label uppercase text-muted-foreground;
+}
+
+@utility page-container {
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full;
+}
+
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .react-colorful {
@@ -49,82 +153,6 @@ body {
 .react-colorful__pointer {
   width: 20px;
   height: 20px;
-}
-
-@layer base {
-  html {
-    background-color: #000;
-  }
-
-  body {
-    @apply antialiased min-h-screen w-full flex flex-col;
-    background: linear-gradient(to bottom, #18181b, #18181b, #000);
-  }
-}
-
-@utility text-label {
-  @apply font-bold uppercase text-sm tracking-widest text-white/60;
-}
-
-@utility text-heading {
-  @apply text-lg font-ruigslay text-white;
-}
-
-@utility text-subheading {
-  @apply text-sm font-ruigslay text-white/80;
-}
-
-@utility text-muted {
-  @apply text-white/50 text-sm;
-}
-
-/* Surfaces */
-@utility surface {
-  @apply bg-white/5 border border-white/10 rounded-xl;
-}
-
-@utility surface-hover {
-  @apply bg-white/5 border border-white/10 rounded-xl
-         hover:bg-white/10 hover:border-white/20 transition-all duration-200;
-}
-
-/* Buttons */
-@utility btn-ghost {
-  @apply w-10 h-10 flex items-center justify-center
-         bg-white/5 hover:bg-white/10
-         border border-white/10 hover:border-white/20
-         rounded-lg transition-all duration-200
-         hover:scale-105 active:scale-95 cursor-pointer;
-}
-
-@utility btn-primary {
-  @apply px-4 py-2 rounded-lg font-bold text-sm
-         bg-white text-black
-         hover:bg-white/90 active:scale-95
-         transition-all duration-200 cursor-pointer;
-}
-
-@utility btn-secondary {
-  @apply px-4 py-2 rounded-lg font-bold text-sm
-         bg-white/5 text-white border border-white/10
-         hover:bg-white/10 hover:border-white/20
-         active:scale-95 transition-all duration-200 cursor-pointer;
-}
-
-/* Nav */
-@utility nav-link {
-  @apply p-3 rounded-lg text-white/80
-         hover:bg-neutral-600 hover:text-white
-         transition-all duration-200;
-}
-
-/* Layout */
-@utility page-container {
-  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full;
-}
-
-@utility section {
-  @apply py-8 sm:py-12;
 }
 
 /* Leaderboard rank cosmetics. These live here rather than in a styled-jsx block

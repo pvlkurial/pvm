@@ -1,13 +1,9 @@
-import { Casko, myCustomFont, HeatherGreen } from "@/fonts";
+import { overlayFont } from "@/fonts";
 
-export default function OverlayLayout({
+export default function StatsOverlayLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <span className={`${myCustomFont.variable} ${HeatherGreen.variable} ${Casko.variable}`}>
-      {children}
-    </span>
-  );
-} 
+  return <span className={overlayFont.variable}>{children}</span>;
+}

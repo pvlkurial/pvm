@@ -3,8 +3,9 @@
 import React, { useEffect, useState } from "react";
 import { Track } from "@/types/mappack.types";
 import { millisecondsToTimeString } from "@/utils/time.utils";
-import { FormattedText } from "@/utils/textConverter";
+import { FormattedText } from "@/components/common/FormattedText";
 import { trackService } from "@/services/track.service";
+import { getGoalsWithWorldRecord } from "@/utils/track.utils";
 
 interface OverlayPageProps {
   params: Promise<{ mappackId: string; trackId: string }>;
@@ -54,14 +55,7 @@ export default function OverlayPage({ params, searchParams }: OverlayPageProps) 
 
   if (!track) return null;
 
-  const wrRecord = track.records?.length
-    ? track.records.reduce((best, r) => (r.score < best.score ? r : best))
-    : null;
-
-  const baseGoals = [...(track.timegoals ?? [])].sort((a, b) => a.multiplier - b.multiplier);
-  const allGoals = wrRecord
-    ? [...baseGoals, { name: "WR", time: wrRecord.score, multiplier: Infinity }]
-    : baseGoals;
+  const allGoals = getGoalsWithWorldRecord(track);
 
   const goal = allGoals[goalIndex] ?? allGoals[0];
   const isAchieved = track.personalBest != null && goal != null && track.personalBest <= goal.time;

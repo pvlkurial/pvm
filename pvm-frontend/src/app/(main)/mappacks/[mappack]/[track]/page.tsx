@@ -1,17 +1,18 @@
 "use client";
 import { use } from "react";
+import { FaHeartbeat, FaMap } from "react-icons/fa";
 import { useAuth } from "@/contexts/AuthContext";
 import { useTrackDetails } from "@/hooks/useTrackDetails";
-import { TrackHero } from "@/app/_components/track-detail/TrackHero";
-import { TrackInfoCard } from "@/app/_components/track-detail/TrackInfoCard";
-import { TrackStatsGrid } from "@/app/_components/track-detail/TrackStatsGrid";
-import { TrackTimeGoals } from "@/app/_components/track-detail/TrackTimeGoals";
-import { TrackLeaderboard } from "@/app/_components/track-detail/TrackLeaderboard";
-import { BackButton } from "@/app/_components/BackButton";
-import { TrackmaniaIoButton } from "@/app/_components/track-detail/TrackmaniaIoButton";
-import { TmxButton } from "@/app/_components/track-detail/TmxButton";
-import { Breadcrumbs } from "@/app/_components/Breadcrumbs";
-import { TrackCardOBS } from "@/app/_components/TrackCardOBS";
+import { BackButton } from "@/components/common/BackButton";
+import { Breadcrumbs } from "@/components/common/Breadcrumbs";
+import { ExternalIconLink } from "@/components/common/ExternalIconLink";
+import { PageStatus } from "@/components/common/PageStatus";
+import { TrackHero } from "@/components/track-detail/TrackHero";
+import { TrackInfoCard } from "@/components/track-detail/TrackInfoCard";
+import { TrackStatsGrid } from "@/components/track-detail/TrackStatsGrid";
+import { TrackTimeGoals } from "@/components/track-detail/TrackTimeGoals";
+import { TrackLeaderboard } from "@/components/track-detail/TrackLeaderboard";
+import { ObsOverlayControls } from "@/components/track-detail/ObsOverlayControls";
 
 export default function TrackPage({
   params,
@@ -23,50 +24,43 @@ export default function TrackPage({
   const { track, loading, error } = useTrackDetails(mappack, trackId, user?.id);
 
   if (loading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-2xl font-ruigslay text-white/70 animate-pulse">
-          Loading...
-        </div>
-      </div>
-    );
+    return <PageStatus pending>Loading...</PageStatus>;
   }
 
   if (error || !track) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-2xl font-ruigslay text-red-500">
-          Track not found
-        </div>
-      </div>
-    );
+    return <PageStatus>Track not found</PageStatus>;
   }
 
   return (
-    <div className="max-w-[90rem] mx-auto px-4 py-8">
-      <div className="flex items-center justify-between mb-6">
+    <div className="mx-auto max-w-[90rem] px-4 py-8">
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-2">
           <BackButton href={`/mappacks/${mappack}`} />
-          <TrackmaniaIoButton mapUID={track.mapUid} />
-          <TmxButton tmxId={track.tmxId ?? track.tmxID} />
+          <ExternalIconLink
+            href={`https://trackmania.io/#/leaderboard/${track.mapUid}`}
+            label="View on Trackmania.io"
+          >
+            <FaHeartbeat />
+          </ExternalIconLink>
+          <ExternalIconLink
+            href={`https://trackmania.exchange/mapshow/${track.tmxId ?? track.tmxID}`}
+            label="View on TrackMania Exchange"
+          >
+            <FaMap />
+          </ExternalIconLink>
         </div>
 
-        <div className="flex items-center gap-2">
-          <Breadcrumbs
-            items={[
-              { label: "Mappacks", href: "/mappacks" },
-              { label: mappack, href: `/mappacks/${mappack}` },
-              { label: track.name, useFormat: true },
-            ]}
-          />
-        </div>
+        <Breadcrumbs
+          items={[
+            { label: "Mappacks", href: "/mappacks" },
+            { label: mappack, href: `/mappacks/${mappack}` },
+            { label: track.name, useFormat: true },
+          ]}
+        />
       </div>
 
-      <div className="grid lg:grid-cols-[500px_1fr] gap-6 mb-8">
-        <TrackHero
-          thumbnailUrl={track.thumbnailUrl}
-          dominantColor={track.dominantColor}
-        />
+      <div className="mb-8 grid gap-6 lg:grid-cols-[500px_1fr]">
+        <TrackHero thumbnailUrl={track.thumbnailUrl} />
 
         <div className="flex flex-col gap-6">
           <TrackInfoCard
@@ -74,13 +68,10 @@ export default function TrackPage({
             authorName={track.author}
             dominantColor={track.dominantColor}
           />
-
           <TrackStatsGrid
             tier={track.tier}
             recordsCount={track.records?.length || 0}
-            dominantColor={track.dominantColor}
           />
-
           <TrackTimeGoals
             timeGoals={track.timegoals}
             personalBest={track.personalBest}
@@ -88,7 +79,6 @@ export default function TrackPage({
         </div>
       </div>
 
-      {/* Leaderboard Section */}
       <TrackLeaderboard
         records={track.records}
         timeGoals={track.timegoals}
@@ -96,7 +86,9 @@ export default function TrackPage({
         mappackId={mappack}
       />
 
-      <TrackCardOBS track={track} mappackId={mappack} />
+      <div className="mt-3">
+        <ObsOverlayControls track={track} mappackId={mappack} />
+      </div>
     </div>
   );
 }

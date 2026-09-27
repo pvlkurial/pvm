@@ -1,13 +1,11 @@
 "use client";
-import React, { useState, useEffect } from "react";
-import axios from "axios";
+import { useState, useEffect } from "react";
 import { Mappack } from "@/types/mappack.types";
+import { mappackService } from "@/services/mappack.service";
 import { usePermissions } from "@/hooks/usePermissions";
-import { MappackGrid } from "@/app/_components/mappacks/MappackGrid";
-import { API_BASE } from "@/constants/miscellaneous";
-import "./mappacks.css";
+import { MappackGrid } from "@/components/mappacks/MappackGrid";
 
-export default function MapppacksPage() {
+export default function MappacksPage() {
   const [mappacks, setMappacks] = useState<Mappack[]>([]);
   const [campaigns, setCampaigns] = useState<Mappack[]>([]);
   const [loading, setLoading] = useState(true);
@@ -15,47 +13,45 @@ export default function MapppacksPage() {
   const { canCreateMappack } = usePermissions();
 
   useEffect(() => {
-    // Campaigns come from their own endpoint so the two listings never mix.
     // Settled rather than all: one endpoint failing must not blank the other.
     Promise.allSettled([
-      axios.get(`${API_BASE}/mappacks`),
-      axios.get(`${API_BASE}/campaigns`),
+      mappackService.listMappacks(),
+      mappackService.listCampaigns(),
     ])
       .then(([mappackResult, campaignResult]) => {
         if (mappackResult.status === "fulfilled") {
-          setMappacks(mappackResult.value.data ?? []);
+          setMappacks(mappackResult.value);
         } else {
           console.log("Failed to load mappacks:", mappackResult.reason?.message);
         }
 
         if (campaignResult.status === "fulfilled") {
-          setCampaigns(campaignResult.value.data ?? []);
+          setCampaigns(campaignResult.value);
         } else {
-          console.log(
-            "Failed to load campaigns:",
-            campaignResult.reason?.message,
-          );
+          console.log("Failed to load campaigns:", campaignResult.reason?.message);
         }
       })
       .finally(() => setLoading(false));
   }, []);
 
   return (
-    <div className="mp-page">
+    <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-16 px-7 pt-9 pb-18">
       <MappackGrid
-        label="PVM"
+        eyebrow="01 — PVM"
+        title="PvM"
         mappacks={mappacks}
         showAddCard={canCreateMappack}
         isLoading={loading}
-        emptyMessage="no mappacks yet"
+        emptyMessage="No mappacks yet"
       />
 
       {campaigns.length > 0 && (
         <MappackGrid
-          label="Campaign"
+          eyebrow="02 — Campaign"
+          title="Campaign"
           mappacks={campaigns}
           isLoading={loading}
-          emptyMessage="no campaigns yet"
+          emptyMessage="No campaigns yet"
         />
       )}
     </div>

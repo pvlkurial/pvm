@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import {
   Mappack,
+  MappackTrack,
   TimeGoal,
   MappackTier,
   MappackRank,
@@ -26,7 +27,7 @@ export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
         timeGoals: deepCopy.timeGoals || [],
         mappackTiers: deepCopy.mappackTiers || [],
         mappackRanks: deepCopy.mappackRanks || [],
-        MappackTrack: (deepCopy.MappackTrack || []).map((track: any) => ({
+        MappackTrack: (deepCopy.MappackTrack || []).map((track: MappackTrack) => ({
           ...track,
           timeGoalMappackTrack: track.timeGoalMappackTrack || [],
           tier: track.tier || null,
@@ -284,13 +285,13 @@ export function useEditMappack(mappack: Mappack | null, isOpen: boolean) {
   };
 
   const updateOrderPosition = (trackId: string, value: number) => {
-  if (!editData) return;
-  setEditData({
-    ...editData,
-    MappackTrack: editData.MappackTrack.map((t) =>
-      t.track_id === trackId ? { ...t, orderPosition: value } : t,
-    ),
-  });
+    if (!editData) return;
+    setEditData({
+      ...editData,
+      MappackTrack: editData.MappackTrack.map((t) =>
+        t.track_id === trackId ? { ...t, orderPosition: value } : t,
+      ),
+    });
   };
 
   const removeTrackFromState = (trackId: string) => {

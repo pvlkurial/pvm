@@ -1,5 +1,6 @@
-import { MappackTrack, TimeGoal } from "@/types/mappack.types";
+import { MappackTrack } from "@/types/mappack.types";
 
+/** Tracks on which the given time goal has not been achieved yet. */
 export function filterTracksByTimeGoal(
   tracks: MappackTrack[],
   timeGoalId: number | null,
@@ -20,9 +21,5 @@ export function getNotAchievedCount(
   tracks: MappackTrack[],
   timeGoalId: number,
 ): number {
-  return tracks.filter((track) => {
-    const goals = track.timeGoalMappackTrack ?? [];
-    const tg = goals.find((t) => t.time_goal_id === timeGoalId);
-    return !tg || tg.is_achieved !== true;
-  }).length;
+  return filterTracksByTimeGoal(tracks, timeGoalId).length;
 }

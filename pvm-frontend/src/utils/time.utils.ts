@@ -1,12 +1,23 @@
-export const millisecondsToTimeString = (ms: number): string => {
-  if (!ms || ms === 0) return "";
+function pad(value: number, length: number): string {
+  return value.toString().padStart(length, "0");
+}
 
+/** Formats a duration as M:SS:mmm, the notation Trackmania players read times in. */
+function formatDuration(ms: number): string {
   const totalSeconds = Math.floor(ms / 1000);
   const minutes = Math.floor(totalSeconds / 60);
   const seconds = totalSeconds % 60;
-  const milliseconds = ms % 1000;
+  return `${minutes}:${pad(seconds, 2)}:${pad(ms % 1000, 3)}`;
+}
 
-  return `${minutes}:${seconds.toString().padStart(2, "0")}:${milliseconds.toString().padStart(3, "0")}`;
+/** A difference between two times, with an explicit sign in front. */
+export function formatSignedDuration(deltaMs: number, sign: "+" | "-"): string {
+  return `${sign}${formatDuration(Math.abs(deltaMs))}`;
+}
+
+export const millisecondsToTimeString = (ms: number): string => {
+  if (!ms) return "";
+  return formatDuration(ms);
 };
 
 /**
@@ -66,24 +77,14 @@ export function calculateTimeDelta(
   const delta = personalBest - goalTime;
   const isAchieved = delta <= 0;
 
-  const absDelta = Math.abs(delta);
-  const totalSeconds = Math.floor(absDelta / 1000);
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  const milliseconds = absDelta % 1000;
-
-  const sign = isAchieved ? "-" : "+";
-  const formatted = `${sign}${minutes}:${seconds.toString().padStart(2, "0")}:${milliseconds.toString().padStart(3, "0")}`;
-
   return {
     delta,
     isAchieved,
-    formatted,
+    formatted: formatSignedDuration(delta, isAchieved ? "-" : "+"),
   };
 }
 
 export function formatSecondsToMMSS(seconds: number): string {
   const minutes = Math.floor(seconds / 60);
-  const secs = seconds % 60;
-  return `${minutes}:${secs.toString().padStart(2, "0")}`;
+  return `${minutes}:${pad(seconds % 60, 2)}`;
 }

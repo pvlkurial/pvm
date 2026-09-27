@@ -1,0 +1,28 @@
+import Link from "next/link";
+import { cn } from "@/lib/utils";
+
+interface LogoProps {
+  /** The footer sets `.club` in the primary text colour and a smaller size. */
+  variant?: "header" | "footer";
+}
+
+export function Logo({ variant = "header" }: LogoProps) {
+  const isFooter = variant === "footer";
+
+  return (
+    <Link
+      href="/"
+      className={cn(
+        "font-display tracking-[-0.01em] text-foreground",
+        isFooter ? "text-[22px]" : "text-[28px]",
+      )}
+    >
+      pvms
+      <span
+        className={cn("italic", isFooter ? "text-foreground" : "text-muted-foreground")}
+      >
+        .club
+      </span>
+    </Link>
+  );
+}

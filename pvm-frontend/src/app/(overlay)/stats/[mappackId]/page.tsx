@@ -3,7 +3,7 @@
 import { mappackService } from "@/services/mappack.service";
 import { Mappack, PlayerLeaderboardEntry } from "@/types/mappack.types";
 import React, { useEffect, useState } from "react";
-import { getPlayerRank } from "@/utils/mappack.utils";
+import { getRankProgress } from "@/utils/mappack.utils";
 
 interface StatsPageProps {
   params: Promise<{ mappackId: string }>;
@@ -42,18 +42,11 @@ export default function StatsPage({ params, searchParams }: StatsPageProps) {
   if (!leaderboard || !mappack) return null;
 
   const { entry, rank } = leaderboard;
-  const sortedRanks = [...(mappack.mappackRanks ?? [])].sort(
-    (a, b) => a.pointsNeeded - b.pointsNeeded,
-  );
-  const playerRank = getPlayerRank(entry.total_points, sortedRanks);
-  const nextRank = sortedRanks.find((r) => r.pointsNeeded > entry.total_points);
-  const progress = playerRank && nextRank
-    ? Math.min(
-        ((entry.total_points - playerRank.pointsNeeded) /
-          (nextRank.pointsNeeded - playerRank.pointsNeeded)) * 100,
-        100,
-      )
-    : 100;
+  const {
+    current: playerRank,
+    next: nextRank,
+    progress,
+  } = getRankProgress(entry.total_points, mappack.mappackRanks ?? []);
 
   return (
     <>

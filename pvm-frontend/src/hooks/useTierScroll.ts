@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { MappackTrack, MappackTier } from '@/types/mappack.types';
+import { TracksByTier } from '@/utils/mappack.utils';
 
 export function useTierScroll(
-  tracksByTier: Record<string, { tier: MappackTier | null; tracks: MappackTrack[] }>,
+  tracksByTier: TracksByTier,
   enabled: boolean = true
 ) {
   const [activeTier, setActiveTier] = useState<string>("");
