@@ -72,7 +72,7 @@ export function PlayerStats({
       <div className="space-y-2">
         <div className="flex items-baseline justify-between">
           <span className="eyebrow">Maps played</span>
-          <span className="font-mono text-mono-s text-muted-foreground">
+          <span className="tabular-nums text-caption text-muted-foreground">
             {entry.best_achievements_count}/{totalTracks}
           </span>
         </div>

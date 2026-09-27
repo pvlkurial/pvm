@@ -100,7 +100,7 @@ function TmxSearch({
                 <span className="mt-1 block text-small text-muted-foreground">
                   by {track.AuthorName}
                 </span>
-                <span className="mt-1 block font-mono text-mono-s text-faint">
+                <span className="mt-1 block tabular-nums text-caption text-faint">
                   TMX ID: {track.TrackID}
                 </span>
               </span>

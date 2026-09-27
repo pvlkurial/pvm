@@ -73,7 +73,7 @@ export function AdminUserRow({
       <div className="flex items-center gap-3 px-4 py-3">
         <div className="min-w-0 flex-1">
           <p className="truncate text-ui font-medium">{user.name}</p>
-          <p className="mt-1 truncate font-mono text-mono-s text-faint">{user.id}</p>
+          <p className="mt-1 truncate tabular-nums text-caption text-faint">{user.id}</p>
         </div>
 
         <Badge variant={user.role === "user" ? "default" : "inverse"}>{user.role}</Badge>
@@ -118,7 +118,7 @@ export function AdminUserRow({
                     onCheckedChange={() => toggle(mappack.id)}
                   />
                   {mappack.name}
-                  <span className="font-mono text-mono-s text-faint">
+                  <span className="tabular-nums text-caption text-faint">
                     ({mappack.type || "pvm"})
                   </span>
                 </label>

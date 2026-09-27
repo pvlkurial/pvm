@@ -109,14 +109,14 @@ export function PlayerSearch({
                 onClick={() => selectPlayer(player)}
                 className="flex w-full cursor-pointer items-center gap-3 border-b border-border-subtle px-4 py-3 text-left transition-colors last:border-b-0 hover:bg-surface-3"
               >
-                <span className="w-8 shrink-0 text-right font-mono text-mono-s text-faint">
+                <span className="w-8 shrink-0 text-right tabular-nums text-caption text-faint">
                   #{player.rank}
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-ui text-foreground">
                     {player.name}
                   </span>
-                  <span className="mt-1 block font-mono text-mono-s text-muted-foreground">
+                  <span className="mt-1 block tabular-nums text-caption text-muted-foreground">
                     {player.total_points.toLocaleString()} pts
                   </span>
                 </span>

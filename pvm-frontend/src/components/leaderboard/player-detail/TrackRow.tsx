@@ -73,7 +73,7 @@ export function TrackRow({ track, playerMappack, loggedInMappack }: TrackRowProp
             <p className="font-medium">{bestGoal ? bestGoal.name : "-"}</p>
           </MobileStat>
           <MobileStat label="Time">
-            <p className="font-mono">
+            <p className="tabular-nums">
               {playerTime ? millisecondsToTimeString(playerTime) : "-"}
             </p>
           </MobileStat>
@@ -91,7 +91,7 @@ export function TrackRow({ track, playerMappack, loggedInMappack }: TrackRowProp
           </MobileStat>
           {timeDelta && (
             <MobileStat label="Δ Time">
-              <p className={cn("font-mono font-semibold", timeDelta.color)}>
+              <p className={cn("tabular-nums font-semibold", timeDelta.color)}>
                 {timeDelta.formatted}
               </p>
             </MobileStat>
@@ -115,12 +115,12 @@ export function TrackRow({ track, playerMappack, loggedInMappack }: TrackRowProp
           {bestGoal ? bestGoal.name : EMPTY}
         </p>
 
-        <p className="text-center font-mono">
+        <p className="text-center tabular-nums">
           {playerTime ? millisecondsToTimeString(playerTime) : EMPTY}
         </p>
 
         {loggedInMappack && (
-          <p className={cn("text-center font-mono", timeDelta?.color)}>
+          <p className={cn("text-center tabular-nums", timeDelta?.color)}>
             {timeDelta ? timeDelta.formatted : EMPTY}
           </p>
         )}

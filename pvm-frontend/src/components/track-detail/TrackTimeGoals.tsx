@@ -24,7 +24,7 @@ export function TrackTimeGoals({ timeGoals, personalBest }: TrackTimeGoalsProps)
           {!!personalBest && (
             <>
               <span className="text-faint">|</span>
-              <span className="font-mono text-mono-s text-muted-foreground">
+              <span className="tabular-nums text-caption text-muted-foreground">
                 PB: {millisecondsToTimeString(personalBest)}
               </span>
             </>

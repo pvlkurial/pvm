@@ -30,7 +30,7 @@ export function HowItWorks() {
             key={step.title}
             className="flex items-start gap-5 rounded-2xl border border-border bg-surface-1 p-6 transition-colors hover:bg-surface-3"
           >
-            <span className="shrink-0 font-mono text-mono-s text-faint pt-2">
+            <span className="shrink-0 tabular-nums text-caption text-faint pt-2">
               {String(index + 1).padStart(2, "0")}
             </span>
             <div>

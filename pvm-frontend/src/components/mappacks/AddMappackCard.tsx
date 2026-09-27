@@ -9,7 +9,7 @@ export function AddMappackCard() {
         className="flex min-h-64 cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed border-border text-muted-foreground transition-colors outline-none hover:border-muted-foreground/60 hover:bg-surface-1 hover:text-foreground focus-visible:border-foreground"
       >
         <span className="font-display text-display-m leading-none">+</span>
-        <span className="font-mono text-label uppercase">Add Mappack</span>
+        <span className="text-label font-semibold uppercase">Add Mappack</span>
       </button>
     </CreateMappackDialog>
   );

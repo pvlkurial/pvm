@@ -21,12 +21,12 @@ export function TimeGoalCard({ name, time, personalBest, multiplier }: TimeGoalC
           : "border-border-subtle bg-surface-2",
       )}
     >
-      <p className="mb-2 font-mono text-mono-s uppercase text-muted-foreground">
+      <p className="mb-2 text-caption font-semibold tracking-wide uppercase text-muted-foreground">
         {name} | {multiplier}x
       </p>
       <p
         className={cn(
-          "mb-2 font-mono text-xl leading-none",
+          "mb-2 tabular-nums text-xl leading-none",
           isAchieved ? "text-foreground" : "text-muted-foreground",
         )}
       >
@@ -35,7 +35,7 @@ export function TimeGoalCard({ name, time, personalBest, multiplier }: TimeGoalC
       {delta ? (
         <p
           className={cn(
-            "font-mono text-xs font-semibold",
+            "tabular-nums text-xs font-semibold",
             delta.isAchieved ? "text-blue-400" : "text-red-400",
           )}
         >

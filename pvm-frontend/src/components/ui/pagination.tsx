@@ -54,7 +54,7 @@ function Pagination({ page, total, onChange, className }: PaginationProps) {
             aria-current={slot === page ? "page" : undefined}
             onClick={() => onChange(slot)}
             className={cn(
-              "font-mono text-mono-s",
+              "tabular-nums text-caption",
               slot === page && "bg-surface-3 text-foreground",
             )}
           >
@@ -63,7 +63,7 @@ function Pagination({ page, total, onChange, className }: PaginationProps) {
         ) : (
           <span
             key={slot}
-            className="w-8 text-center font-mono text-mono-s text-faint"
+            className="w-8 text-center tabular-nums text-caption text-faint"
           >
             …
           </span>

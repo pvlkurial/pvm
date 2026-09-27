@@ -40,9 +40,8 @@
 }
 
 @theme inline {
-  --font-display: var(--font-instrument-serif), Georgia, serif;
+  --font-display: var(--font-dm-serif-display), Georgia, serif;
   --font-sans: var(--font-geist), system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
 
   /* shadcn semantic names, pointed at the tokens above */
   --color-background: var(--bg);
@@ -102,8 +101,8 @@
   --text-label: 13px;
   --text-label--line-height: 1;
   --text-label--letter-spacing: 0.08em;
-  --text-mono-s: 12px;
-  --text-mono-s--line-height: 1;
+  --text-caption: 12px;
+  --text-caption--line-height: 1;
 }
 
 @layer base {
@@ -120,9 +119,9 @@
   }
 }
 
-/* Mono uppercase eyebrow, e.g. "01 — PVM" or a stat label. */
+/* Small uppercase label above a figure or group, e.g. "Current rank". */
 @utility eyebrow {
-  @apply font-mono text-label uppercase text-muted-foreground;
+  @apply text-label font-semibold uppercase text-muted-foreground;
 }
 
 /* Big numbers and rank names: heavy and wide, unlike the condensed serif. */

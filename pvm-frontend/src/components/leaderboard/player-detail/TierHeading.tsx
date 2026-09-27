@@ -16,7 +16,7 @@ export function TierHeading({ tierName, tier }: TierHeadingProps) {
         {tierName}
       </span>
       {tier && (
-        <span className="font-mono text-mono-s text-faint">{tier.points} pts</span>
+        <span className="tabular-nums text-caption text-faint">{tier.points} pts</span>
       )}
     </h3>
   );

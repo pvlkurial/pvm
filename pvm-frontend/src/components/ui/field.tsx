@@ -18,7 +18,7 @@ function Field({ label, description, className, children }: FieldProps) {
       <span className="text-small text-muted-foreground">{label}</span>
       {children}
       {description && (
-        <span className="text-mono-s font-mono text-faint">{description}</span>
+        <span className="text-caption tabular-nums text-faint">{description}</span>
       )}
     </label>
   );

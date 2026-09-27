@@ -56,8 +56,8 @@ export function ColorPicker({
             style={{ backgroundColor: value }}
           />
           <span className="flex min-w-0 flex-col items-start">
-            <span className="text-mono-s text-muted-foreground">{label}</span>
-            <span className="font-mono text-mono-s text-foreground">
+            <span className="text-caption text-muted-foreground">{label}</span>
+            <span className="tabular-nums text-caption text-foreground">
               {value.toUpperCase()}
             </span>
           </span>
@@ -70,7 +70,7 @@ export function ColorPicker({
           value={hexInput}
           onChange={(e) => handleHexChange(e.target.value)}
           placeholder="#FFFFFF"
-          className="font-mono"
+          className="tabular-nums"
         />
         <div className="flex flex-wrap justify-center gap-1">
           {PRESET_COLORS.map((presetColor) => (

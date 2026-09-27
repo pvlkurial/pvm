@@ -82,7 +82,7 @@ export function TrackFilterPanel({
                 >
                   {tg.name}
                 </p>
-                <p className="mt-0.5 font-mono text-mono-s text-faint">
+                <p className="mt-0.5 tabular-nums text-caption text-faint">
                   ×{tg.multiplier} · {getNotAchievedCount(tracks, tg.id!)} left
                 </p>
               </div>

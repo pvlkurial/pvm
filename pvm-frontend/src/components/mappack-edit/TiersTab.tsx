@@ -155,11 +155,11 @@ export function TiersTab({
                     {group.tier?.name || "Unassigned"}
                   </span>
                   {group.tier && (
-                    <span className="font-mono text-mono-s whitespace-nowrap text-faint">
+                    <span className="tabular-nums text-caption whitespace-nowrap text-faint">
                       {group.tier.points} pts
                     </span>
                   )}
-                  <span className="font-mono text-mono-s whitespace-nowrap text-faint">
+                  <span className="tabular-nums text-caption whitespace-nowrap text-faint">
                     {group.tracks.length}
                   </span>
                   <div className="h-px flex-1 bg-border" />

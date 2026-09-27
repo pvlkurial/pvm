@@ -39,7 +39,7 @@ function RecordDate({ timestamp }: { timestamp: number }) {
       <div className="cursor-default text-small text-faint">
         {formatRelativeTime(date.toDateString())}
       </div>
-      <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 flex -translate-x-1/2 flex-col items-center rounded-md border border-border bg-surface-1 px-2 py-1 font-mono text-mono-s whitespace-nowrap text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
+      <div className="pointer-events-none absolute bottom-full left-1/2 z-50 mb-2 flex -translate-x-1/2 flex-col items-center rounded-md border border-border bg-surface-1 px-2 py-1 tabular-nums text-caption whitespace-nowrap text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100">
         <span>{date.toLocaleDateString()}</span>
         <span className="mt-1">{date.toLocaleTimeString()}</span>
       </div>
@@ -74,7 +74,7 @@ function RecordRow({
     >
       <span
         className={cn(
-          "flex items-center justify-center font-mono text-ui",
+          "flex items-center justify-center tabular-nums text-ui",
           PODIUM_COLORS[position] ?? "text-muted-foreground",
         )}
       >
@@ -88,7 +88,7 @@ function RecordRow({
         </span>
         <div className="flex items-center gap-2 md:hidden">
           {achievedGoal && (
-            <span className="font-mono text-mono-s uppercase text-muted-foreground">
+            <span className="text-caption font-semibold tracking-wide uppercase text-muted-foreground">
               {achievedGoal}
             </span>
           )}
@@ -96,11 +96,11 @@ function RecordRow({
         </div>
       </div>
 
-      <span className="flex items-center justify-end font-mono text-ui md:justify-center">
+      <span className="flex items-center justify-end tabular-nums text-ui md:justify-center">
         {millisecondsToTimeString(record.score)}
       </span>
 
-      <span className="hidden items-center justify-center font-mono text-mono-s uppercase text-muted-foreground md:flex">
+      <span className="hidden items-center justify-center text-caption font-semibold tracking-wide uppercase text-muted-foreground md:flex">
         {achievedGoal ?? <span className="text-faint">—</span>}
       </span>
 
@@ -143,7 +143,7 @@ export function RecordsTable({
     <div className="space-y-4 md:space-y-6">
       <div
         className={cn(
-          "grid gap-2 px-2 font-mono text-mono-s uppercase text-faint md:gap-6",
+          "grid gap-2 px-2 text-caption font-semibold tracking-wide uppercase text-faint md:gap-6",
           MOBILE_COLUMNS,
           DESKTOP_COLUMNS,
         )}
@@ -186,7 +186,7 @@ export function RecordsTable({
           </div>
 
           <div className="flex flex-col items-center justify-between gap-4 border-t border-border-subtle pt-4 md:flex-row md:pt-6">
-            <p className="font-mono text-mono-s text-faint">
+            <p className="tabular-nums text-caption text-faint">
               {totalRecords.toLocaleString()} {totalRecords === 1 ? "record" : "records"}
             </p>
             {pageCount > 1 && (

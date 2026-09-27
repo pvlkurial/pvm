@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import { FaDiscord, FaGlobe, FaTable } from "react-icons/fa6";
 import { Mappack } from "@/types/mappack.types";
 import { TracksByTier } from "@/utils/mappack.utils";
 import { cn } from "@/lib/utils";
@@ -11,7 +10,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { RequireMappackPermission } from "@/components/common/RequireMappackPermission";
-import { ExternalIconLink } from "@/components/common/ExternalIconLink";
+import { MappackLinks } from "@/components/common/MappackLinks";
 import { EditMappackDialog } from "@/components/mappack-edit/EditMappackDialog";
 import { AddTrackDialog } from "./AddTrackDialog";
 
@@ -29,12 +28,6 @@ interface MappackSidebarProps {
 }
 
 function MappackTitle({ mappack }: { mappack: Mappack }) {
-  const links = [
-    { href: mappack.sheeturl, label: "Spreadsheet", icon: <FaTable /> },
-    { href: mappack.discordurl, label: "Discord", icon: <FaDiscord /> },
-    { href: mappack.websiteurl, label: "Website", icon: <FaGlobe /> },
-  ].filter((link) => link.href);
-
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -49,15 +42,7 @@ function MappackTitle({ mappack }: { mappack: Mappack }) {
         <p className="text-center text-small break-words text-muted-foreground">
           {mappack.description}
         </p>
-        {links.length > 0 && (
-          <div className="mt-3 flex justify-center gap-2">
-            {links.map((link) => (
-              <ExternalIconLink key={link.label} href={link.href} label={link.label}>
-                {link.icon}
-              </ExternalIconLink>
-            ))}
-          </div>
-        )}
+        <MappackLinks mappack={mappack} className="mt-3 justify-center" />
       </PopoverContent>
     </Popover>
   );
@@ -99,7 +84,7 @@ export function MappackSidebar({
                 className="flex items-center justify-center gap-1.5 text-small"
               >
                 <span className="font-medium text-foreground">{timeGoal.name}</span>
-                <span className="font-mono text-mono-s text-faint">
+                <span className="tabular-nums text-caption text-faint">
                   {timeGoal.multiplier}x
                 </span>
               </li>

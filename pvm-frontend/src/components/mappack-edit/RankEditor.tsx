@@ -109,7 +109,7 @@ export function RankEditor({ rank, index, onUpdate, onRemove }: RankEditorProps)
         <span className="flex-1 text-ui font-medium">
           {rank.name || <span className="text-muted-foreground italic">Unnamed Rank</span>}
         </span>
-        <span className="shrink-0 font-mono text-mono-s text-faint">
+        <span className="shrink-0 tabular-nums text-caption text-faint">
           {rank.pointsNeeded} pts
         </span>
         <LuChevronDown

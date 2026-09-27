@@ -1,21 +1,16 @@
-import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
+import { DM_Serif_Display, Geist } from "next/font/google";
 import localFont from "next/font/local";
 
-export const displayFont = Instrument_Serif({
+export const displayFont = DM_Serif_Display({
   weight: "400",
   style: ["normal", "italic"],
   subsets: ["latin"],
-  variable: "--font-instrument-serif",
+  variable: "--font-dm-serif-display",
 });
 
 export const sansFont = Geist({
   subsets: ["latin"],
   variable: "--font-geist",
-});
-
-export const monoFont = Geist_Mono({
-  subsets: ["latin"],
-  variable: "--font-geist-mono",
 });
 
 /** Only used by the OBS overlays, which keep their original look. */
@@ -24,8 +19,4 @@ export const overlayFont = localFont({
   variable: "--font-my-custom",
 });
 
-export const siteFontVariables = [
-  displayFont.variable,
-  sansFont.variable,
-  monoFont.variable,
-].join(" ");
+export const siteFontVariables = [displayFont.variable, sansFont.variable].join(" ");

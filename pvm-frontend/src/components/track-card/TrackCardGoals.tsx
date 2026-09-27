@@ -18,7 +18,7 @@ const TOOLTIP =
 export function TrackCardGoals({ timeGoals, compact = false }: TrackCardGoalsProps) {
   if (timeGoals.length === 0) {
     return (
-      <p className="py-1 text-center font-mono text-[10px] text-faint">
+      <p className="py-1 text-center text-[10px] tabular-nums text-faint">
         No time goals
       </p>
     );
@@ -70,7 +70,7 @@ export function TrackCardGoals({ timeGoals, compact = false }: TrackCardGoalsPro
                 >
                   {timegoal.name}
                 </span>
-                <span className="font-mono text-[10px] leading-none text-muted-foreground">
+                <span className="text-[10px] tabular-nums leading-none text-muted-foreground">
                   {millisecondsToTimeString(timegoal.time)}
                 </span>
               </div>
@@ -98,10 +98,10 @@ export function TrackCardGoals({ timeGoals, compact = false }: TrackCardGoalsPro
           >
             {timegoal.name}
             <div className={cn(TOOLTIP, "mb-1 flex flex-col items-center gap-0.5 normal-case group-hover/goal:opacity-100")}>
-              <span className="font-mono text-foreground">
+              <span className="tabular-nums text-foreground">
                 {millisecondsToTimeString(timegoal.time)}
               </span>
-              <span className="font-mono text-[9px] text-muted-foreground">
+              <span className="text-[9px] tabular-nums text-muted-foreground">
                 ×{timegoal.multiplier.toFixed(1)}
               </span>
             </div>

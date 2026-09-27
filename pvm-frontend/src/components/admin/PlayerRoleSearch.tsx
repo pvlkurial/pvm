@@ -113,7 +113,7 @@ export function PlayerRoleSearch({
           >
             <div className="min-w-0 flex-1">
               <p className="truncate text-small">{player.name}</p>
-              <p className="mt-1 truncate font-mono text-mono-s text-faint">{player.id}</p>
+              <p className="mt-1 truncate tabular-nums text-caption text-faint">{player.id}</p>
             </div>
 
             {!player.has_login && <Badge>never signed in</Badge>}

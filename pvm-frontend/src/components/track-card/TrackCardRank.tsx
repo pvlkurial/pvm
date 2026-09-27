@@ -22,7 +22,7 @@ export function TrackCardRank({ position }: { position: number }) {
       style={medalColor ? { color: medalColor } : undefined}
     >
       {medalColor && <FaTrophy className="size-3 shrink-0" />}
-      <span className="font-mono text-mono-s">
+      <span className="tabular-nums text-caption">
         {position === 1 ? "WR" : `#${position}`}
       </span>
     </div>
