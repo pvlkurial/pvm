@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { LuUser } from "react-icons/lu";
 import { MappackRank } from "@/types/mappack.types";
 import { usePlayerStats } from "@/hooks/usePlayerStats";
 import { getRankProgress } from "@/utils/mappack.utils";
@@ -40,17 +41,14 @@ export function ModalPlayerStats({
       <div className="flex flex-wrap items-end gap-x-5 gap-y-3 pr-10">
         <div className="min-w-0 max-w-full">
           <p className="eyebrow mb-2">Player</p>
-          <h2 className="truncate font-display text-display-m">
-            <Link
-              href={`/players/${playerId}`}
-              className="transition-colors hover:text-muted-foreground"
-            >
-              {playerName}
-            </Link>
-          </h2>
+          <h2 className="truncate font-display text-display-m">{playerName}</h2>
         </div>
-        <Button variant="outline" size="sm" className="mb-1" asChild>
-          <Link href={`/players/${playerId}`}>Profile</Link>
+        {/* h-12 matches the name's line height. */}
+        <Button variant="outline" className="h-12 px-5" asChild>
+          <Link href={`/players/${playerId}`}>
+            <LuUser className="size-5" />
+            Profile
+          </Link>
         </Button>
       </div>
 
