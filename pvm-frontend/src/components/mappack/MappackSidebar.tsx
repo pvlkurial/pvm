@@ -12,7 +12,6 @@ import {
 import { RequireMappackPermission } from "@/components/common/RequireMappackPermission";
 import { MappackLinks } from "@/components/common/MappackLinks";
 import { SidebarHeading } from "@/components/common/SidebarHeading";
-import { MapStyleIcon, hasMapStyleIcon } from "@/components/common/MapStyleIcon";
 import { EditMappackDialog } from "@/components/mappack-edit/EditMappackDialog";
 import { AddTrackDialog } from "./AddTrackDialog";
 
@@ -27,18 +26,6 @@ interface MappackSidebarProps {
   showTiers: boolean;
   onTierClick: (tier: string) => void;
   onEditSave: () => void;
-}
-
-/** The map style icon beside the name, one line of the name tall. */
-function StyledTitle({ mappack, children }: { mappack: Mappack; children: React.ReactNode }) {
-  if (!mappack.mapStyleName || !hasMapStyleIcon(mappack.mapStyleName)) return children;
-
-  return (
-    <div className="flex items-center gap-3">
-      <MapStyleIcon styleKey={mappack.mapStyleName} size={48} className="size-12 shrink-0" />
-      <div className="min-w-0">{children}</div>
-    </div>
-  );
 }
 
 function MappackTitle({ mappack }: { mappack: Mappack }) {
@@ -89,9 +76,7 @@ export function MappackSidebar({
     <aside className="scrollbar-hide lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)] lg:self-start lg:overflow-y-auto">
       <div className="p-5">
         <SidebarHeading>
-          <StyledTitle mappack={mappack}>
-            <MappackTitle mappack={mappack} />
-          </StyledTitle>
+          <MappackTitle mappack={mappack} />
         </SidebarHeading>
 
         {/* Each section sits between hairlines, as in My Stats. */}
