@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"example/pvm-backend/internal/models"
+	"example/pvm-backend/internal/models/dtos"
 	"time"
 
 	"github.com/lib/pq"
@@ -24,6 +25,9 @@ type AchievementRepository interface {
 
 	GetPlayerBestTimesForTrack(trackID string) (map[string]int, error)
 	DeleteMappackAchievements(mappackID string) error
+
+	GetPlayerMappackProgress(playerID string) ([]dtos.PlayerMappackProgress, error)
+	GetRecentAchievements(playerID string, limit, offset int) ([]dtos.RecentAchievement, error)
 }
 
 type achievementRepository struct {
@@ -231,4 +235,100 @@ func (r *achievementRepository) GetPlayerTrackPositions(playerID string, trackID
 		posMap[r.TrackID] = r.Position
 	}
 	return posMap, err
+}
+
+// GetPlayerMappackProgress returns the player's standing in every active
+// mappack they have a leaderboard entry in, highest points first. Goals only
+// count when the player's time still beats them, as in CalculatePlayerPoints,
+// and tracks in hidden tiers only once the player has the points to see them.
+func (r *achievementRepository) GetPlayerMappackProgress(playerID string) ([]dtos.PlayerMappackProgress, error) {
+	var progress []dtos.PlayerMappackProgress
+	err := r.db.Raw(`
+    WITH standings AS (
+        SELECT
+            player_id,
+            mappack_id,
+            total_points,
+            RANK() OVER (
+                PARTITION BY mappack_id
+                ORDER BY total_points DESC, best_achievements_count DESC
+            ) AS rank
+        FROM mappack_leaderboard_entries
+    ),
+    player_standings AS (
+        SELECT * FROM standings WHERE player_id = ?
+    ),
+    visible_goals AS (
+        SELECT tgmt.mappack_id, tgmt.track_id, tgmt.timegoal_id, tgmt.time
+        FROM time_goal_mappack_tracks tgmt
+        JOIN mappack_tracks mpt ON mpt.mappack_id = tgmt.mappack_id AND mpt.track_id = tgmt.track_id
+        JOIN player_standings ps ON ps.mappack_id = tgmt.mappack_id
+        LEFT JOIN mappack_tiers mt ON mt.id = mpt.tier_id
+        WHERE mt.id IS NULL OR NOT mt.is_hidden OR ps.total_points >= mt.threshold
+    )
+    SELECT
+        m.id               AS mappack_id,
+        m.name             AS mappack_name,
+        m.thumbnail_url,
+        m.accent_color,
+        m.map_style_name,
+        m."type",
+        ps.total_points,
+        ps.rank,
+        COUNT(pta.time_goal_id) AS achieved_goals,
+        COUNT(vg.timegoal_id)   AS total_goals
+    FROM player_standings ps
+    JOIN mappacks m ON m.id = ps.mappack_id AND m.is_active
+    LEFT JOIN visible_goals vg ON vg.mappack_id = ps.mappack_id
+    LEFT JOIN player_time_goal_achievements pta
+        ON pta.player_id = ps.player_id
+        AND pta.mappack_id = vg.mappack_id
+        AND pta.track_id = vg.track_id
+        AND pta.time_goal_id = vg.timegoal_id
+        AND pta.player_time <= vg.time
+    GROUP BY m.id, ps.total_points, ps.rank
+    ORDER BY ps.total_points DESC, LOWER(m.name) ASC
+`, playerID).Scan(&progress).Error
+	return progress, err
+}
+
+// GetRecentAchievements returns the player's time goal achievements newest
+// first, one entry per track: the best goal reached. An improved time moves every
+// goal on the track to the new time and date, so that entry is the latest run.
+// Visibility follows GetPlayerMappackProgress.
+func (r *achievementRepository) GetRecentAchievements(playerID string, limit, offset int) ([]dtos.RecentAchievement, error) {
+	var achievements []dtos.RecentAchievement
+	err := r.db.Raw(`
+    SELECT * FROM (
+        SELECT DISTINCT ON (pta.mappack_id, pta.track_id)
+            pta.mappack_id,
+            m.name       AS mappack_name,
+            pta.track_id,
+            t.name       AS track_name,
+            mt.name      AS tier_name,
+            mt.color     AS tier_color,
+            tg.name      AS goal_name,
+            pta.player_time,
+            pta.achieved_at
+        FROM player_time_goal_achievements pta
+        JOIN time_goals tg ON tg.id = pta.time_goal_id
+        JOIN time_goal_mappack_tracks tgmt
+            ON tgmt.timegoal_id = pta.time_goal_id
+            AND tgmt.track_id = pta.track_id
+            AND tgmt.mappack_id = pta.mappack_id
+        JOIN mappack_tracks mpt ON mpt.mappack_id = pta.mappack_id AND mpt.track_id = pta.track_id
+        JOIN mappacks m ON m.id = pta.mappack_id AND m.is_active
+        JOIN tracks t ON t.id = pta.track_id
+        LEFT JOIN mappack_tiers mt ON mt.id = mpt.tier_id
+        LEFT JOIN mappack_leaderboard_entries le
+            ON le.player_id = pta.player_id AND le.mappack_id = pta.mappack_id
+        WHERE pta.player_id = ?
+            AND pta.player_time <= tgmt.time
+            AND (mt.id IS NULL OR NOT mt.is_hidden OR COALESCE(le.total_points, 0) >= mt.threshold)
+        ORDER BY pta.mappack_id, pta.track_id, tg.multiplier DESC
+    ) AS best_per_track
+    ORDER BY achieved_at DESC, track_name ASC
+    LIMIT ? OFFSET ?
+`, playerID, limit, offset).Scan(&achievements).Error
+	return achievements, err
 }

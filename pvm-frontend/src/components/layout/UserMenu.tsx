@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import { useAuth } from "@/contexts/AuthContext";
 import { ROLE_LABELS, ROLE_DESCRIPTIONS } from "@/constants/roles";
 import { Button } from "@/components/ui/button";
@@ -49,6 +50,9 @@ export function UserMenu() {
           </p>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link href={`/players/${user.id}`}>Profile</Link>
+        </DropdownMenuItem>
         <DropdownMenuItem variant="destructive" onSelect={logout}>
           Logout
         </DropdownMenuItem>

@@ -24,6 +24,7 @@ type MappackRepository interface {
 	DeleteTiersNotIn(mappackID string, keepIDs []int) error
 	DeleteAllTiers(mappackID string) error
 
+	GetRanksByMappackIDs(mappackIDs []string) ([]models.MappackRank, error)
 	DeleteRanksNotIn(mappackID string, keepIDs []int) error
 	DeleteAllRanks(mappackID string) error
 
@@ -195,6 +196,17 @@ func (r *mappackRepository) DeleteTiersNotIn(mappackID string, keepIDs []int) er
 
 func (r *mappackRepository) DeleteAllTiers(mappackID string) error {
 	return r.db.Where("mappack_id = ?", mappackID).Delete(&models.MappackTier{}).Error
+}
+
+// GetRanksByMappackIDs returns the ranks of several mappacks in one query,
+// lowest threshold first.
+func (r *mappackRepository) GetRanksByMappackIDs(mappackIDs []string) ([]models.MappackRank, error) {
+	var ranks []models.MappackRank
+	if len(mappackIDs) == 0 {
+		return ranks, nil
+	}
+	err := r.db.Where("mappack_id IN ?", mappackIDs).Order("points_needed ASC").Find(&ranks).Error
+	return ranks, err
 }
 
 func (r *mappackRepository) DeleteRanksNotIn(mappackID string, keepIDs []int) error {

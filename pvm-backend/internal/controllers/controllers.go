@@ -19,7 +19,7 @@ type Controllers struct {
 
 func NewControllers(services services.Services, client *clients.NadeoAPIClient, tmxClient clients.TmxApiClient) *Controllers {
 	mappackController := NewMappackController(services.MappackService, &services.AchievementService)
-	playerController := NewPlayerController(services.PlayerService)
+	playerController := NewPlayerController(services.PlayerService, services.PlayerProfile)
 	recordController := NewRecordController(services.RecordService, services.RecordRefresh, services.TracksService, client, services.AchievementService)
 	trackController := NewTrackController(services.TracksService)
 	achievementController := NewAchievementController(&services.AchievementService)

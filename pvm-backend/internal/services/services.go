@@ -19,6 +19,7 @@ type Services struct {
 	PermissionService  PermissionService
 	OverlayService     OverlayService
 	RecordRefresh      RecordRefreshService
+	PlayerProfile      PlayerProfileService
 }
 
 func NewServices(repositories repositories.Repositories, client *clients.NadeoAPIClient, tmClient clients.TrackmaniaAPIClient, db *gorm.DB) *Services {
@@ -43,6 +44,7 @@ func NewServices(repositories repositories.Repositories, client *clients.NadeoAP
 	permissionService := NewPermissionService(repositories.PermissionRepository, repositories.MappackRepository, repositories.UserRepository)
 	overlayService := NewOverlayService(repositories.OverlayRepository, repositories.TrackRepository)
 	recordRefreshService := NewRecordRefreshService(repositories.UserRepository, trackService, recordService, client)
+	playerProfileService := NewPlayerProfileService(repositories.PlayerRepository, repositories.AchievementRepository, repositories.MappackRepository)
 
 	return &Services{
 		MappackService:     mappackService,
@@ -54,5 +56,6 @@ func NewServices(repositories repositories.Repositories, client *clients.NadeoAP
 		PermissionService:  permissionService,
 		OverlayService:     overlayService,
 		RecordRefresh:      recordRefreshService,
+		PlayerProfile:      playerProfileService,
 	}
 }

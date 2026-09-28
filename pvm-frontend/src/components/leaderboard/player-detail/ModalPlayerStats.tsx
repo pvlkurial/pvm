@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { MappackRank } from "@/types/mappack.types";
 import { usePlayerStats } from "@/hooks/usePlayerStats";
 import { getRankProgress } from "@/utils/mappack.utils";
@@ -37,7 +38,14 @@ export function ModalPlayerStats({
     <div className="flex flex-col gap-6">
       <div className="min-w-0 pr-10">
         <p className="eyebrow mb-2">Player</p>
-        <h2 className="truncate font-display text-display-m">{playerName}</h2>
+        <h2 className="truncate font-display text-display-m">
+          <Link
+            href={`/players/${playerId}`}
+            className="transition-colors hover:text-muted-foreground"
+          >
+            {playerName}
+          </Link>
+        </h2>
       </div>
 
       {/* Equal-weight tiles so no single figure dominates the dialog. */}

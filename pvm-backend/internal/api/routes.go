@@ -134,6 +134,8 @@ func (r *Routes) InitRoutes() {
 	r.GET("/tracks/:track_id", controllers.TrackController.GetById)
 
 	r.GET("/players", controllers.PlayerController.GetAll)
+	r.GET("/players/:player_id/profile", controllers.PlayerController.GetProfile)
+	r.GET("/players/:player_id/achievements", controllers.PlayerController.GetRecentAchievements)
 
 	r.GET("/mappacks/:mappack_id/players/search", controllers.PlayerController.SearchPlayersInMappack)
 	r.GET("/mappacks/:mappack_id/timegoals", controllers.MappackController.GetAllMappackTimeGoals)
