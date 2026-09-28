@@ -32,6 +32,9 @@ interface RecordsTableProps {
 
 /** "3d ago", with the exact date and time on hover. */
 function RecordDate({ timestamp }: { timestamp: number }) {
+  // Some older records were saved without the date they were driven.
+  if (!timestamp) return <span className="text-small text-faint">—</span>;
+
   const date = new Date(timestamp * 1000);
 
   return (

@@ -350,6 +350,7 @@ func (t *recordService) checkAchievementsForRecords(records []models.Record) {
 				mappackID,
 				record.TrackID,
 				record.RecordTime,
+				record.DrivenAt(),
 			)
 			if err != nil {
 				fmt.Printf("Error checking achievements for player %s on track %s in mappack %s: %v\n",

@@ -316,10 +316,23 @@ func (c *NadeoAPIClient) FetchRecordsOfTrackForPlayer(trackID string, playerID s
 		return models.Record{}, ErrNoPlayerRecord
 	}
 
+	drivenAt, err := time.Parse(time.RFC3339, response[0].Timestamp)
+	if err != nil {
+		// Still worth saving the time itself; now is the closest known bound.
+		slog.Warn("could not parse player record timestamp, using now",
+			"track_id", trackID,
+			"player_id", playerID,
+			"timestamp", response[0].Timestamp,
+			"error", err,
+		)
+		drivenAt = time.Now()
+	}
+
 	return models.Record{
 		PlayerID:   playerID,
 		TrackID:    trackID,
 		RecordTime: response[0].RecordScore.Time,
+		Timestamp:  drivenAt.Unix(),
 		Position:   0,
 		ZoneID:     "-",
 		ZoneName:   "World",

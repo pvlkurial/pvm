@@ -5,6 +5,7 @@ import (
 	"example/pvm-backend/internal/repositories"
 	"fmt"
 	"log"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -22,7 +23,10 @@ func NewAchievementService(achievementRepo repositories.AchievementRepository, t
 }
 
 // if anyone reads this, claude is goated for debug
-func (s *AchievementService) CheckAndUpdateAchievements(playerID, mappackID, trackID string, playerTime int) error {
+//
+// achievedAt is when the time was driven, which becomes the achievement's
+// date, rather than when it reached the site.
+func (s *AchievementService) CheckAndUpdateAchievements(playerID, mappackID, trackID string, playerTime int, achievedAt time.Time) error {
 	//	log.Printf("=== CheckAndUpdateAchievements ===")
 	//	log.Printf("Player: %s, Mappack: %s, Track: %s, Time: %d", playerID, mappackID, trackID, playerTime)
 
@@ -55,6 +59,7 @@ func (s *AchievementService) CheckAndUpdateAchievements(playerID, mappackID, tra
 					TrackID:    trackID,
 					TimeGoalID: tg.TimegoalID,
 					PlayerTime: playerTime,
+					AchievedAt: achievedAt,
 				}
 
 				//log.Printf("Creating new achievement...")
@@ -67,7 +72,7 @@ func (s *AchievementService) CheckAndUpdateAchievements(playerID, mappackID, tra
 				//	playerID, tg.TimegoalID, trackID)
 			} else if err == nil && playerTime < existing.PlayerTime {
 				log.Printf("Updating achievement with better time: %d -> %d", existing.PlayerTime, playerTime)
-				if err := s.achievementRepo.UpdateAchievementTime(playerID, mappackID, trackID, tg.TimegoalID, playerTime); err != nil {
+				if err := s.achievementRepo.UpdateAchievementTime(playerID, mappackID, trackID, tg.TimegoalID, playerTime, achievedAt); err != nil {
 					log.Printf("ERROR updating achievement time: %v", err)
 					return err
 				}
@@ -146,7 +151,7 @@ func (s *AchievementService) RecalculateMappackAchievements(mappackID string) er
 	for _, track := range tracks {
 		log.Printf("Processing track: %s", track.TrackID)
 
-		playerBestTimes, err := s.achievementRepo.GetPlayerBestTimesForTrack(track.TrackID)
+		bestRecords, err := s.achievementRepo.GetPlayerBestRecordsForTrack(track.TrackID)
 		if err != nil {
 			log.Printf("Error getting best times for track %s: %v", track.TrackID, err)
 			continue
@@ -154,8 +159,8 @@ func (s *AchievementService) RecalculateMappackAchievements(mappackID string) er
 
 		//log.Printf("Found %d players with records on this track", len(playerBestTimes))
 
-		for playerID, bestTime := range playerBestTimes {
-			err := s.CheckAndUpdateAchievements(playerID, mappackID, track.TrackID, bestTime)
+		for _, record := range bestRecords {
+			err := s.CheckAndUpdateAchievements(record.PlayerID, mappackID, track.TrackID, record.RecordTime, record.DrivenAt())
 			if err != nil {
 				//log.Printf("Error recalculating for player %s: %v", playerID, err)
 			}

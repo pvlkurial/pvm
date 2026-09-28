@@ -12,7 +12,7 @@ import (
 type AchievementRepository interface {
 	GetAchievement(playerID, mappackID, trackID string, timeGoalID int) (*models.PlayerTimeGoalAchievement, error)
 	CreateAchievement(achievement *models.PlayerTimeGoalAchievement) error
-	UpdateAchievementTime(playerID, mappackID, trackID string, timeGoalID int, playerTime int) error
+	UpdateAchievementTime(playerID, mappackID, trackID string, timeGoalID int, playerTime int, achievedAt time.Time) error
 	GetPlayerAchievements(playerID, mappackID string) ([]models.PlayerTimeGoalAchievement, error)
 	GetPlayerAchievementsByTrack(playerID, mappackID, trackID string) ([]models.PlayerTimeGoalAchievement, error)
 	GetPlayerTrackPositions(playerID string, trackIDs []string) (map[string]int, error)
@@ -23,7 +23,7 @@ type AchievementRepository interface {
 	GetPlayerRank(playerID, mappackID string) (int, error)
 	CalculatePlayerPoints(playerID, mappackID string) (totalPoints, achievementsCount, bestAchievementsCount int, err error)
 
-	GetPlayerBestTimesForTrack(trackID string) (map[string]int, error)
+	GetPlayerBestRecordsForTrack(trackID string) ([]models.Record, error)
 	DeleteMappackAchievements(mappackID string) error
 
 	GetPlayerMappackProgress(playerID string) ([]dtos.PlayerMappackProgress, error)
@@ -52,17 +52,19 @@ func (r *achievementRepository) GetAchievement(playerID, mappackID, trackID stri
 }
 
 func (r *achievementRepository) CreateAchievement(achievement *models.PlayerTimeGoalAchievement) error {
-	achievement.AchievedAt = time.Now()
+	if achievement.AchievedAt.IsZero() {
+		achievement.AchievedAt = time.Now()
+	}
 	return r.db.Create(achievement).Error
 }
 
-func (r *achievementRepository) UpdateAchievementTime(playerID, mappackID, trackID string, timeGoalID int, playerTime int) error {
+func (r *achievementRepository) UpdateAchievementTime(playerID, mappackID, trackID string, timeGoalID int, playerTime int, achievedAt time.Time) error {
 	return r.db.Model(&models.PlayerTimeGoalAchievement{}).
 		Where("player_id = ? AND mappack_id = ? AND track_id = ? AND time_goal_id = ?",
 			playerID, mappackID, trackID, timeGoalID).
 		Updates(map[string]interface{}{
 			"player_time": playerTime,
-			"achieved_at": time.Now(),
+			"achieved_at": achievedAt,
 		}).Error
 }
 
@@ -171,32 +173,22 @@ func (r *achievementRepository) CalculatePlayerPoints(playerID, mappackID string
 
 	return result.TotalPoints, result.AchievementsCount, result.BestAchievementsCount, err
 }
-func (r *achievementRepository) GetPlayerBestTimesForTrack(trackID string) (map[string]int, error) {
-	type PlayerBestTime struct {
-		PlayerID string
-		BestTime int
-	}
 
-	var results []PlayerBestTime
+// GetPlayerBestRecordsForTrack returns each player's fastest record on the
+// track, with when it was driven.
+func (r *achievementRepository) GetPlayerBestRecordsForTrack(trackID string) ([]models.Record, error) {
+	var records []models.Record
 	err := r.db.Raw(`
-        SELECT
+        SELECT DISTINCT ON (player_id)
             player_id,
-            MIN(record_time) as best_time
+            track_id,
+            record_time,
+            timestamp
         FROM records
         WHERE track_id = ?
-        GROUP BY player_id
-    `, trackID).Scan(&results).Error
-
-	if err != nil {
-		return nil, err
-	}
-
-	playerBestTimes := make(map[string]int)
-	for _, result := range results {
-		playerBestTimes[result.PlayerID] = result.BestTime
-	}
-
-	return playerBestTimes, nil
+        ORDER BY player_id, record_time ASC
+    `, trackID).Scan(&records).Error
+	return records, err
 }
 
 func (r *achievementRepository) DeleteMappackAchievements(mappackID string) error {

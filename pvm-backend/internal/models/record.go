@@ -16,6 +16,15 @@ type Record struct {
 	Timestamp  int64     `json:"timestamp" gorm:"column:timestamp"`
 }
 
+// DrivenAt is when the record was set. Records saved before this was stored
+// have no timestamp, and the closest known bound for those is now.
+func (r Record) DrivenAt() time.Time {
+	if r.Timestamp > 0 {
+		return time.Unix(r.Timestamp, 0)
+	}
+	return time.Now()
+}
+
 type TrackRecordsResponse struct {
 	GroupUID string `json:"groupUid"`
 	MapUID   string `json:"mapUid"`
@@ -34,5 +43,7 @@ type RecordScore struct {
 
 type PlayerRecordResponse struct {
 	RecordScore RecordScore `json:"recordScore"`
-	//Timestamp   string      `json:"timestamp" gorm:"column:timestamp"`
+	// When the record was driven, as ISO 8601 (the leaderboard endpoint gives
+	// unix seconds instead, which is what Record.Timestamp holds).
+	Timestamp string `json:"timestamp"`
 }

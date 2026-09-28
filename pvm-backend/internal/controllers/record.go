@@ -208,12 +208,15 @@ func (c *RecordController) SubmitPluginPB(ctx *gin.Context) {
 		return
 	}
 
+	// The plugin submits a PB as soon as it is driven, so it was set just now.
+	now := time.Now()
 	record := models.Record{
 		ID:         fmt.Sprintf("%s_%s", track.ID, user.ID),
 		TrackID:    track.ID,
 		PlayerID:   user.ID,
 		RecordTime: req.Time,
-		UpdatedAt:  time.Now(),
+		Timestamp:  now.Unix(),
+		UpdatedAt:  now,
 	}
 	records := []models.Record{record}
 
@@ -242,6 +245,7 @@ func (c *RecordController) SubmitPluginPB(ctx *gin.Context) {
 			mappackTrack.MappackID,
 			mappackTrack.TrackID,
 			req.Time,
+			now,
 		); err != nil {
 			slog.Error("failed to update achievements",
 				"mappack_id", mappackTrack.MappackID,
