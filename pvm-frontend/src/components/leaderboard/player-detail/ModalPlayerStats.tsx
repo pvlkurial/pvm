@@ -38,16 +38,12 @@ export function ModalPlayerStats({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-end gap-x-5 gap-y-3 pr-10">
-        <div className="min-w-0 max-w-full">
-          <p className="eyebrow mb-2">Player</p>
-          <h2 className="truncate font-display text-display-m">{playerName}</h2>
-        </div>
-        {/* h-12 matches the name's line height. */}
-        <Button variant="outline" className="h-12 px-5" asChild>
+      <div className="min-w-0 pr-10">
+        <p className="eyebrow mb-2">Player</p>
+        <Button variant="outline" className="h-12 max-w-full px-5 text-body-l" asChild>
           <Link href={`/players/${playerId}`}>
             <LuUser className="size-5" />
-            Profile
+            <span className="truncate">{playerName}</span>
           </Link>
         </Button>
       </div>
