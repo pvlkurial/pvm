@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { PlayerMappackProgress } from "@/types/player.types";
 import { getRankProgress } from "@/utils/mappack.utils";
-import { ProgressBar } from "@/components/common/ProgressBar";
+import { CompletionBar } from "@/components/common/CompletionBar";
 import { MapStyleIcon } from "@/components/common/MapStyleIcon";
 
 function Thumbnail({ progress, accentColor }: { progress: PlayerMappackProgress; accentColor: string }) {
@@ -46,23 +46,14 @@ export function MappackProgressCard({ progress }: { progress: PlayerMappackProgr
           </p>
         </div>
 
-        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 text-small text-muted-foreground">
-          <p>
-            #{progress.rank}
-            {current && (
-              <span className="ml-2" style={{ color: current.color }}>{current.name}</span>
-            )}
-          </p>
-          <p className="shrink-0 tabular-nums">
-            {progress.achieved_goals}/{progress.total_goals}
-          </p>
-        </div>
+        <p className="text-small text-muted-foreground">
+          #{progress.rank}
+          {current && (
+            <span className="ml-2" style={{ color: current.color }}>{current.name}</span>
+          )}
+        </p>
 
-        <ProgressBar
-          current={progress.achieved_goals}
-          total={progress.total_goals}
-          color={progress.accent_color || undefined}
-        />
+        <CompletionBar current={progress.achieved_goals} total={progress.total_goals} />
       </div>
     </Link>
   );
