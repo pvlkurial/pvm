@@ -21,7 +21,7 @@ export function TrackLeaderboard({
   return (
     <Card>
       <CardContent>
-        <div className="mb-6 flex items-center gap-4">
+        <div className="mb-6 flex flex-wrap items-center gap-4">
           {/* Indented so the title starts where the table's "#" column does. */}
           <h2 className="pl-[25px] font-display text-display-m md:pl-[30px]">Leaderboard</h2>
           <UpdateRecordsButton trackId={trackId} onSuccess={() => window.location.reload()} />
