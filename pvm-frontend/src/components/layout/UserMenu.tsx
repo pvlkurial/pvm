@@ -8,7 +8,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
@@ -33,7 +32,9 @@ export function UserMenu() {
   }
 
   return (
-    <DropdownMenu>
+    // Non-modal: a modal menu locks page scroll, and hiding the scrollbar
+    // shifts the layout while the menu is open.
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="text-foreground">
           {user.name}
@@ -43,16 +44,15 @@ export function UserMenu() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuLabel>
-          <p className="text-ui text-foreground">{user.name}</p>
-          <p className="mt-1 text-small text-muted-foreground">
-            {ROLE_DESCRIPTIONS[user.role] ?? ROLE_DESCRIPTIONS.user}
-          </p>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
-          <Link href={`/players/${user.id}`}>Profile</Link>
+          <Link href={`/players/${user.id}`} className="flex-col items-start gap-1">
+            <span className="text-ui text-foreground">{user.name}</span>
+            <span className="text-small text-muted-foreground">
+              {ROLE_DESCRIPTIONS[user.role] ?? ROLE_DESCRIPTIONS.user}
+            </span>
+          </Link>
         </DropdownMenuItem>
+        <DropdownMenuSeparator />
         <DropdownMenuItem variant="destructive" onSelect={logout}>
           Logout
         </DropdownMenuItem>
