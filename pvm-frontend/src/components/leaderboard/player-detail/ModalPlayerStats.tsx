@@ -2,6 +2,7 @@ import Link from "next/link";
 import { MappackRank } from "@/types/mappack.types";
 import { usePlayerStats } from "@/hooks/usePlayerStats";
 import { getRankProgress } from "@/utils/mappack.utils";
+import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 import { RankDisplay } from "@/components/player-stats/RankDisplay";
 import { StatTile } from "@/components/player-stats/StatTile";
@@ -36,16 +37,21 @@ export function ModalPlayerStats({
 
   return (
     <div className="flex flex-col gap-6">
-      <div className="min-w-0 pr-10">
-        <p className="eyebrow mb-2">Player</p>
-        <h2 className="truncate font-display text-display-m">
-          <Link
-            href={`/players/${playerId}`}
-            className="transition-colors hover:text-muted-foreground"
-          >
-            {playerName}
-          </Link>
-        </h2>
+      <div className="flex flex-wrap items-end gap-x-5 gap-y-3 pr-10">
+        <div className="min-w-0 max-w-full">
+          <p className="eyebrow mb-2">Player</p>
+          <h2 className="truncate font-display text-display-m">
+            <Link
+              href={`/players/${playerId}`}
+              className="transition-colors hover:text-muted-foreground"
+            >
+              {playerName}
+            </Link>
+          </h2>
+        </div>
+        <Button variant="outline" size="sm" className="mb-1" asChild>
+          <Link href={`/players/${playerId}`}>Profile</Link>
+        </Button>
       </div>
 
       {/* Equal-weight tiles so no single figure dominates the dialog. */}
