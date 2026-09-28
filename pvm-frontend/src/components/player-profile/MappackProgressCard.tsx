@@ -8,7 +8,7 @@ function Thumbnail({ progress, accentColor }: { progress: PlayerMappackProgress;
   if (progress.thumbnail_url) {
     return (
       <div
-        className="aspect-[16/11] w-24 shrink-0 rounded-xl bg-cover bg-center brightness-[0.8] transition-[filter] duration-300 group-hover:brightness-100 sm:w-32"
+        className="aspect-[16/11] w-20 shrink-0 rounded-xl bg-cover bg-center brightness-[0.8] transition-[filter] duration-300 group-hover:brightness-100 sm:w-32"
         style={{ backgroundImage: `url(${progress.thumbnail_url})` }}
       />
     );
@@ -16,7 +16,7 @@ function Thumbnail({ progress, accentColor }: { progress: PlayerMappackProgress;
 
   return (
     <div
-      className="flex aspect-[16/11] w-24 shrink-0 items-center justify-center rounded-xl sm:w-32"
+      className="flex aspect-[16/11] w-20 shrink-0 items-center justify-center rounded-xl sm:w-32"
       style={{ backgroundColor: `color-mix(in srgb, ${accentColor} 18%, var(--surface-2))` }}
     >
       {progress.map_style_name && (
@@ -39,17 +39,18 @@ export function MappackProgressCard({ progress }: { progress: PlayerMappackProgr
       <Thumbnail progress={progress} accentColor={accentColor} />
 
       <div className="flex min-w-0 flex-1 flex-col gap-2.5 pr-1">
-        <div className="flex items-baseline justify-between gap-4">
-          <h3 className="truncate font-display text-2xl leading-tight">{progress.mappack_name}</h3>
+        <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+          <h3 className="min-w-0 truncate font-display text-2xl leading-tight">{progress.mappack_name}</h3>
           <p className="shrink-0 font-display text-2xl leading-none tabular-nums">
             {progress.total_points.toLocaleString()}
+            <span className="ml-1.5 text-body text-muted-foreground">Pts</span>
           </p>
         </div>
 
-        <p className="text-small text-muted-foreground">
+        <p className="text-body-l font-semibold tabular-nums">
           #{progress.rank}
           {current && (
-            <span className="ml-2" style={{ color: current.color }}>{current.name}</span>
+            <span className="ml-3" style={{ color: current.color }}>{current.name}</span>
           )}
         </p>
 
