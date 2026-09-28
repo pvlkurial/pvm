@@ -40,8 +40,6 @@ type RecentAchievement struct {
 	MappackName string    `json:"mappack_name"`
 	TrackID     string    `json:"track_id"`
 	TrackName   string    `json:"track_name"`
-	TierName    *string   `json:"tier_name"`
-	TierColor   *string   `json:"tier_color"`
 	GoalName    string    `json:"goal_name"`
 	PlayerTime  int       `json:"player_time"`
 	AchievedAt  time.Time `json:"achieved_at"`

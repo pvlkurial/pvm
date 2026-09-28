@@ -305,8 +305,6 @@ func (r *achievementRepository) GetRecentAchievements(playerID string, limit, of
             m.name       AS mappack_name,
             pta.track_id,
             t.name       AS track_name,
-            mt.name      AS tier_name,
-            mt.color     AS tier_color,
             tg.name      AS goal_name,
             pta.player_time,
             pta.achieved_at

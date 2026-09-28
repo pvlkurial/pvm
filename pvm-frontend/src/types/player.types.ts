@@ -32,8 +32,6 @@ export interface RecentAchievement {
   mappack_name: string;
   track_id: string;
   track_name: string;
-  tier_name: string | null;
-  tier_color: string | null;
   goal_name: string;
   player_time: number;
   achieved_at: string;

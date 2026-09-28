@@ -50,11 +50,11 @@ export function MappackProgressCard({ progress }: { progress: PlayerMappackProgr
           <p>
             #{progress.rank}
             {current && (
-              <span style={{ color: current.color }}> · {current.name}</span>
+              <span className="ml-2" style={{ color: current.color }}>{current.name}</span>
             )}
           </p>
           <p className="shrink-0 tabular-nums">
-            Timegoals {progress.achieved_goals}/{progress.total_goals}
+            {progress.achieved_goals}/{progress.total_goals}
           </p>
         </div>
 

@@ -7,13 +7,6 @@ import { FormattedText } from "@/components/common/FormattedText";
 export function AchievementLogEntry({ achievement }: { achievement: RecentAchievement }) {
   return (
     <li className="flex items-center gap-3 py-3">
-      <span
-        aria-hidden
-        className="h-9 w-1 shrink-0 rounded-full"
-        style={{ backgroundColor: achievement.tier_color ?? "var(--surface-3)" }}
-        title={achievement.tier_name ?? undefined}
-      />
-
       <div className="min-w-0 flex-1">
         <Link
           href={`/mappacks/${achievement.mappack_id}/${achievement.track_id}`}
@@ -30,17 +23,19 @@ export function AchievementLogEntry({ achievement }: { achievement: RecentAchiev
       </div>
 
       <div className="shrink-0 text-right">
-        <p className="text-ui leading-snug text-green-300">{achievement.goal_name}</p>
-        <p className="text-small tabular-nums text-muted-foreground">
-          {millisecondsToTimeString(achievement.player_time)}
-          <span className="text-faint"> · </span>
-          <time
-            dateTime={achievement.achieved_at}
-            title={new Date(achievement.achieved_at).toLocaleString()}
-          >
-            {formatRelativeTime(achievement.achieved_at)}
-          </time>
+        <p className="text-ui leading-snug tabular-nums">
+          {achievement.goal_name}
+          <span className="ml-2 text-muted-foreground">
+            {millisecondsToTimeString(achievement.player_time)}
+          </span>
         </p>
+        <time
+          dateTime={achievement.achieved_at}
+          title={new Date(achievement.achieved_at).toLocaleString()}
+          className="text-small text-faint"
+        >
+          {formatRelativeTime(achievement.achieved_at)}
+        </time>
       </div>
     </li>
   );
