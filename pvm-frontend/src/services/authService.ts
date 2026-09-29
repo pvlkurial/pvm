@@ -110,6 +110,12 @@ export const authService = {
     localStorage.setItem("user_name", user.name);
     localStorage.setItem("user_role", user.role);
     localStorage.setItem("user_supporter", String(!!user.is_supporter));
+    localStorage.setItem("user_patreon_supporter", String(!!user.patreon_supporter));
+    if (user.patreon_user_id) {
+      localStorage.setItem("user_patreon_id", user.patreon_user_id);
+    } else {
+      localStorage.removeItem("user_patreon_id");
+    }
   },
 
   loadAuth(): { token: string; user: User } | null {
@@ -133,6 +139,8 @@ export const authService = {
           name,
           role: role as Role,
           is_supporter: localStorage.getItem("user_supporter") === "true",
+          patreon_user_id: localStorage.getItem("user_patreon_id") ?? undefined,
+          patreon_supporter: localStorage.getItem("user_patreon_supporter") === "true",
         },
       };
     }
@@ -146,5 +154,7 @@ export const authService = {
     localStorage.removeItem("user_name");
     localStorage.removeItem("user_role");
     localStorage.removeItem("user_supporter");
+    localStorage.removeItem("user_patreon_id");
+    localStorage.removeItem("user_patreon_supporter");
   },
 };

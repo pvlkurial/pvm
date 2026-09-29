@@ -161,6 +161,18 @@ createdb pvm
 3. Set redirect URI to: `http://localhost:3000/auth/callback` (or your domain)
 4. Copy Client ID and Secret to `.env`
 
+### Patreon Connection (optional)
+
+Users can connect their Patreon profile from their own player page; an active pledge then unlocks supporter benefits automatically.
+
+1. Register a client at https://www.patreon.com/portal/registration/register-clients
+2. Set its redirect URI to: `http://localhost:3000/auth/patreon/callback` (or your domain)
+3. Copy Client ID and Secret into `PATREON_CLIENT_ID` / `PATREON_CLIENT_SECRET`, and the redirect URI into `PATREON_REDIRECT_URI`
+4. Add a webhook pointing at `<api>/patreon/webhook` with the `members:create`, `members:update`, `members:delete` and `members:pledge:*` triggers, and copy its secret into `PATREON_WEBHOOK_SECRET`. This keeps supporter status in sync when pledges change.
+5. Optionally restrict to `PATREON_CAMPAIGN_ID` and to the tiers in `PATREON_SUPPORTER_TIER_IDS` (comma separated). With no tiers set, any active pledge counts.
+
+The superadmin "Patreon supporter" toggle still works as a manual grant alongside this.
+
 ### Nadeo API Credentials
 
 1. Using a dedicated server account

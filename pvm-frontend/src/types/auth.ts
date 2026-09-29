@@ -19,13 +19,20 @@ export interface User {
   id: string;
   name: string;
   role: Role;
-  /** Patreon supporter on the tier that may refresh their own records. */
+  /** Patreon supporter on the tier that may refresh their own records, granted by hand. */
   is_supporter?: boolean;
+  /** Set once the user has connected their Patreon profile. */
+  patreon_user_id?: string;
+  /** Supporter status synced from the connected Patreon profile. */
+  patreon_supporter?: boolean;
 }
 
 /** Superadmins and supporters may pull their own record for a track on demand. */
 export function canRefreshRecords(user: User | null | undefined): boolean {
-  return !!user && (user.role === "superadmin" || !!user.is_supporter);
+  return (
+    !!user &&
+    (user.role === "superadmin" || !!user.is_supporter || !!user.patreon_supporter)
+  );
 }
 
 // What the signed-in user is allowed to manage, from GET /auth/me/permissions.

@@ -20,9 +20,10 @@ type Services struct {
 	OverlayService     OverlayService
 	RecordRefresh      RecordRefreshService
 	PlayerProfile      PlayerProfileService
+	PatreonService     PatreonService
 }
 
-func NewServices(repositories repositories.Repositories, client *clients.NadeoAPIClient, tmClient clients.TrackmaniaAPIClient, db *gorm.DB) *Services {
+func NewServices(repositories repositories.Repositories, client *clients.NadeoAPIClient, tmClient clients.TrackmaniaAPIClient, patreonClient *clients.PatreonAPIClient, db *gorm.DB) *Services {
 	achievementService := NewAchievementService(repositories.AchievementRepository, repositories.TrackRepository)
 	mappackService := NewMappackService(repositories.MappackRepository, repositories.PlayerRepository, tmClient, achievementService)
 	playerService := NewPlayerService(repositories.PlayerRepository)
@@ -45,6 +46,7 @@ func NewServices(repositories repositories.Repositories, client *clients.NadeoAP
 	overlayService := NewOverlayService(repositories.OverlayRepository, repositories.TrackRepository)
 	recordRefreshService := NewRecordRefreshService(repositories.UserRepository, trackService, recordService, client)
 	playerProfileService := NewPlayerProfileService(repositories.PlayerRepository, repositories.AchievementRepository, repositories.MappackRepository)
+	patreonService := NewPatreonService(patreonClient, repositories.UserRepository, jwtSecret)
 
 	return &Services{
 		MappackService:     mappackService,
@@ -57,5 +59,6 @@ func NewServices(repositories repositories.Repositories, client *clients.NadeoAP
 		OverlayService:     overlayService,
 		RecordRefresh:      recordRefreshService,
 		PlayerProfile:      playerProfileService,
+		PatreonService:     patreonService,
 	}
 }

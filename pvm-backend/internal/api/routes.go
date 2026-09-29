@@ -23,8 +23,9 @@ func (r *Routes) InitRoutes() {
 	nadeoClient := clients.NewNadeoAPIClient()
 	trackmaniaClient := clients.NewTrackmaniaAPIClient()
 	tmxClient := clients.TmxApiClient{}
+	patreonClient := clients.NewPatreonAPIClient()
 	repositories := repositories.NewRepositories(r.DB)
-	services := services.NewServices(*repositories, nadeoClient, *trackmaniaClient, r.DB)
+	services := services.NewServices(*repositories, nadeoClient, *trackmaniaClient, patreonClient, r.DB)
 	controllers := controllers.NewControllers(*services, nadeoClient, tmxClient)
 
 	workers := workers.NewWorkers(*services, *nadeoClient)
@@ -54,7 +55,14 @@ func (r *Routes) InitRoutes() {
 		// A user refreshing their own record: supporters and superadmins, rate-limited.
 		authorized.POST("/tracks/:track_id/records/refresh", controllers.RecordController.RefreshOwnRecord)
 		authorized.PATCH("/overlay", controllers.OverlayController.Update)
+		// Connecting a Patreon profile, which keeps supporter status automatic.
+		authorized.GET("/auth/patreon/connect", controllers.PatreonController.Connect)
+		authorized.POST("/auth/patreon/callback", controllers.PatreonController.Callback)
+		authorized.DELETE("/auth/patreon", controllers.PatreonController.Disconnect)
 	}
+
+	// Called by Patreon, authenticated by the signature over the body.
+	r.POST("/patreon/webhook", controllers.PatreonController.Webhook)
 
 	// Superadmin panel. Note these handlers are registered on the group itself, so
 	// the middleware below actually applies to them.

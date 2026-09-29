@@ -101,7 +101,13 @@ export function AdminUserRow({
 
       <SwitchField
         label="Patreon supporter"
-        description="Can update their own records, once every 5 minutes"
+        description={
+          user.patreon_supporter
+            ? "Already a supporter through their connected Patreon"
+            : user.patreon_user_id
+              ? "Patreon connected, not on the Support tier. Can update their own records, once every 5 minutes"
+              : "Can update their own records, once every 5 minutes"
+        }
         checked={!!user.is_supporter}
         onCheckedChange={handleSupporterChange}
         disabled={isSaving}

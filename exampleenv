@@ -7,6 +7,18 @@ TRACKMANIA_CLIENT_ID=get_from_trackmania_dev_portal
 TRACKMANIA_CLIENT_SECRET=get_from_trackmania_dev_portal
 TRACKMANIA_REDIRECT_URI=http://localhost:3000/auth/callback
 
+# Patreon (optional; get from https://www.patreon.com/portal/registration/register-clients)
+# Lets users connect their Patreon profile so supporter benefits apply automatically.
+PATREON_CLIENT_ID=get_from_patreon_portal
+PATREON_CLIENT_SECRET=get_from_patreon_portal
+PATREON_REDIRECT_URI=http://localhost:3000/auth/patreon/callback
+# Secret of the webhook for the members:* events, pointed at <api>/patreon/webhook
+PATREON_WEBHOOK_SECRET=get_from_patreon_portal
+# Only count pledges to this campaign, and on these tiers (comma separated).
+# Leave the tiers empty to count any active pledge.
+PATREON_CAMPAIGN_ID=
+PATREON_SUPPORTER_TIER_IDS=
+
 # JWT Secret (generate with: openssl rand -base64 32)
 JWT_SECRET=generate_random_32_char_string
 

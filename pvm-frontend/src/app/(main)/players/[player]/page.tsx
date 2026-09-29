@@ -1,14 +1,17 @@
 "use client";
 import { use } from "react";
 import { usePlayerProfile } from "@/hooks/usePlayerProfile";
+import { useAuth } from "@/contexts/AuthContext";
 import { PageStatus } from "@/components/common/PageStatus";
 import { SectionHeading } from "@/components/common/SectionHeading";
 import { MappackProgressCard } from "@/components/player-profile/MappackProgressCard";
 import { AchievementLog } from "@/components/player-profile/AchievementLog";
+import { PatreonConnectButton } from "@/components/player-profile/PatreonConnectButton";
 
 export default function PlayerProfilePage({ params }: { params: Promise<{ player: string }> }) {
   const { player: playerId } = use(params);
   const state = usePlayerProfile(playerId);
+  const { user } = useAuth();
 
   if (state.status === "loading") {
     return <PageStatus pending>Loading player...</PageStatus>;
@@ -24,7 +27,10 @@ export default function PlayerProfilePage({ params }: { params: Promise<{ player
 
   return (
     <div className="mx-auto flex w-full max-w-[1440px] flex-col gap-10 px-7 pt-9 pb-18">
-      <h1 className="truncate font-display text-display-m">{player.name}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h1 className="min-w-0 truncate font-display text-display-m">{player.name}</h1>
+        {user?.id === playerId && <PatreonConnectButton />}
+      </div>
 
       <div className="grid grid-cols-[minmax(0,1fr)] gap-16 lg:grid-cols-[minmax(0,3fr)_minmax(0,2fr)] lg:gap-12">
         <section>

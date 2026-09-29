@@ -14,4 +14,7 @@ const (
 	NadeoOAuthTokenURL             = "https://api.trackmania.com/api/access_token"
 	NadeoAPIBaseURL                = "https://api.trackmania.com/api"
 	GetMapRecordByAccountURL       = "https://prod.trackmania.core.nadeo.online/v2/mapRecords/"
+	PatreonAuthorizeURL            = "https://www.patreon.com/oauth2/authorize"
+	PatreonTokenURL                = "https://www.patreon.com/api/oauth2/token"
+	PatreonIdentityURL             = "https://www.patreon.com/api/oauth2/v2/identity"
 )
